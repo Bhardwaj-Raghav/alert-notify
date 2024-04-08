@@ -1,11 +1,12 @@
 {
   "name": "alert-notify",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Alert Notification for Javascript, Can be used anywhere.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": "https://github.com/Bhardwaj-Raghav/alert-notify",
   "author": "Raghav Bhardwaj",
   "license": "MIT"
 }
