@@ -1,6 +1,6 @@
 {
   "name": "alert-notify",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Alert Notification for Javascript, Can be used anywhere.",
   "main": "index.js",
   "scripts": {
