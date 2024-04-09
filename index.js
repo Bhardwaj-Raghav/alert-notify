@@ -32,7 +32,7 @@ const showAlert = (type, text, options = {}) => {
       setTimeout(function () {
         alertNotice.remove();
       }, 300);
-    }, 5000);
+    }, options?.timeout);
   }, 100);
 };
 
