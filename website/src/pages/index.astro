@@ -1,0 +1,1023 @@
+---
+import Base from "../layouts/Base.astro";
+import size from "../data/size.json";
+
+const frameworks = [
+  { id: "vanilla", label: "Vanilla" },
+  { id: "react", label: "React" },
+  { id: "vue", label: "Vue" },
+  { id: "svelte", label: "Svelte" },
+  { id: "angular", label: "Angular" },
+  { id: "astro", label: "Astro" },
+  { id: "cdn", label: "CDN" },
+] as const;
+---
+
+<Base>
+  <header class="nav">
+    <a class="brand" href="./">alert-notify</a>
+    <nav>
+      <a href="#demo">Demo</a>
+      <a href="#api">API</a>
+      <a href="#guides">Guides</a>
+      <a href="#theming">Theming</a>
+      <a href="https://github.com/Bhardwaj-Raghav/alert-notify" rel="noopener noreferrer">GitHub</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="eyebrow">Framework-agnostic · zero deps</p>
+      <h1>alert-notify</h1>
+      <p class="lede">
+        The tiny toast package. <strong>~{size.jsGzipKb}KB</strong> gzipped JS.
+        Works in React, Vue, Svelte, Angular, Astro, and plain HTML — no root provider required.
+      </p>
+      <div class="cta">
+        <a class="btn primary" href="#demo">Try it</a>
+        <a class="btn" href="#guides">How to use</a>
+        <div class="install">
+          <code>npm i alert-notify</code>
+          <button
+            type="button"
+            class="copy-btn"
+            data-copy="npm i alert-notify"
+            aria-label="Copy install command"
+            title="Copy"
+          >
+            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2"></path>
+            </svg>
+            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="demo" class="section panel">
+      <h2>Live demo</h2>
+      <p class="section-copy">Fire toasts from the browser. Same API every framework gets.</p>
+      <div class="demo-grid">
+        <button type="button" data-toast="success">Success</button>
+        <button type="button" data-toast="error">Error</button>
+        <button type="button" data-toast="warning">Warning</button>
+        <button type="button" data-toast="info">Info</button>
+        <button type="button" data-toast="message">Message</button>
+        <button type="button" data-toast="loading">Loading</button>
+        <button type="button" data-toast="promise" class="wide">Promise</button>
+        <button type="button" data-toast="undo" class="wide">Undo action</button>
+        <button type="button" data-toast="stack" class="wide">Stack 5</button>
+        <button type="button" data-toast="dismiss" class="wide ghost">Dismiss all</button>
+      </div>
+      <div class="demo-controls">
+        <div class="mode-toggle" role="group" aria-label="Toast theme">
+          <span class="mode-label">Mode</span>
+          <button type="button" class="mode-btn active" data-mode="light" aria-pressed="true">Light</button>
+          <button type="button" class="mode-btn" data-mode="dark" aria-pressed="false">Dark</button>
+          <button type="button" class="mode-btn" data-mode="system" aria-pressed="false">System</button>
+        </div>
+        <label>
+          Position
+          <select id="position">
+            <option value="top-right">top-right</option>
+            <option value="top-center">top-center</option>
+            <option value="top-left">top-left</option>
+            <option value="bottom-right">bottom-right</option>
+            <option value="bottom-center">bottom-center</option>
+            <option value="bottom-left">bottom-left</option>
+          </select>
+        </label>
+        <label class="check">
+          <input type="checkbox" id="rich" checked />
+          Rich colors
+        </label>
+      </div>
+    </section>
+
+    <section id="api" class="section panel">
+      <h2>Complete API reference</h2>
+      <p class="section-copy">
+        Nothing is required beyond importing the package and CSS.
+        The portal auto-mounts. Below is every method, option, and default.
+      </p>
+
+      <h3 class="api-h">Required setup</h3>
+      <pre class="api"><code>{`import { toast } from "alert-notify";
+import "alert-notify/style.css";
+
+// That's it. No provider. No root container.
+toast.success("Hello");`}</code></pre>
+
+      <h3 class="api-h">Methods</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Method</th><th>Returns</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>toast(title, options?)</code></td><td><code>ToastId</code></td><td>Generic toast (<code>message</code> type)</td></tr>
+            <tr><td><code>toast.success(title, options?)</code></td><td><code>ToastId</code></td><td>Success toast</td></tr>
+            <tr><td><code>toast.error(title, options?)</code></td><td><code>ToastId</code></td><td>Error toast</td></tr>
+            <tr><td><code>toast.warning(title, options?)</code></td><td><code>ToastId</code></td><td>Warning toast</td></tr>
+            <tr><td><code>toast.info(title, options?)</code></td><td><code>ToastId</code></td><td>Info toast</td></tr>
+            <tr><td><code>toast.loading(title, options?)</code></td><td><code>ToastId</code></td><td>Loading toast (sticky by default)</td></tr>
+            <tr><td><code>toast.message(title, options?)</code></td><td><code>ToastId</code></td><td>Neutral message toast</td></tr>
+            <tr><td><code>toast.promise(promise, messages)</code></td><td><code>Promise&lt;T&gt;</code></td><td>Loading → success/error on same id</td></tr>
+            <tr><td><code>toast.dismiss(id?)</code></td><td><code>void</code></td><td>Dismiss one toast, or all if omitted</td></tr>
+            <tr><td><code>toast.config(partial)</code></td><td><code>void</code></td><td>Update global toaster defaults</td></tr>
+            <tr><td><code>toast.getConfig()</code></td><td><code>ToasterConfig</code></td><td>Read current global config</td></tr>
+            <tr><td><code>toast.getToasts()</code></td><td><code>ToastRecord[]</code></td><td>Current toast list (headless)</td></tr>
+            <tr><td><code>toast.subscribe(listener)</code></td><td><code>() =&gt; void</code></td><td>Subscribe to toast list changes</td></tr>
+            <tr><td><code>toast.destroy()</code></td><td><code>void</code></td><td>Dismiss all + remove portal</td></tr>
+            <tr><td><code>createToaster(config?, options?)</code></td><td><code>ToasterInstance</code></td><td>Isolated toaster (multi-instance)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="api-h">Per-toast options</h3>
+      <p class="section-copy">Passed as the second argument to any <code>toast.*</code> method.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>id</code></td><td><code>string</code></td><td>auto UUID</td><td>Stable id. Same id updates in place (coalesce)</td></tr>
+            <tr><td><code>type</code></td><td><code>ToastType</code></td><td>from method</td><td><code>success | error | warning | info | loading | message</code></td></tr>
+            <tr><td><code>description</code></td><td><code>string</code></td><td>—</td><td>Secondary text under the title</td></tr>
+            <tr><td><code>duration</code></td><td><code>number</code></td><td>config / <code>Infinity</code> for loading</td><td>Ms until auto-close. Use <code>Infinity</code> for sticky</td></tr>
+            <tr><td><code>icon</code></td><td><code>string | HTMLElement | false</code></td><td>built-in SVG</td><td>Custom icon HTML/node, or <code>false</code> to hide</td></tr>
+            <tr><td><code>html</code></td><td><code>string</code></td><td>—</td><td>Opt-in unescaped title HTML (prefer plain text)</td></tr>
+            <tr><td><code>action</code></td><td><code>{"{ label, onClick }"}</code></td><td>—</td><td>Primary action button (e.g. Undo)</td></tr>
+            <tr><td><code>cancel</code></td><td><code>{"{ label, onClick }"}</code></td><td>—</td><td>Secondary cancel button</td></tr>
+            <tr><td><code>closeButton</code></td><td><code>boolean</code></td><td>from config (<code>true</code>)</td><td>Show × button</td></tr>
+            <tr><td><code>dismissible</code></td><td><code>boolean</code></td><td>from config (<code>true</code>)</td><td>Allow swipe / close dismiss</td></tr>
+            <tr><td><code>important</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Jump to front of the queue</td></tr>
+            <tr><td><code>className</code></td><td><code>string</code></td><td>—</td><td>Extra class on the toast element</td></tr>
+            <tr><td><code>style</code></td><td><code>object</code></td><td>—</td><td>Inline styles on the toast</td></tr>
+            <tr><td><code>onDismiss</code></td><td><code>(toast) =&gt; void</code></td><td>—</td><td>Manual dismiss (close / swipe / dismiss)</td></tr>
+            <tr><td><code>onAutoClose</code></td><td><code>(toast) =&gt; void</code></td><td>—</td><td>Fired when duration timer ends</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="api-h">Global config (<code>toast.config</code>)</h3>
+      <p class="section-copy">Sets defaults for all toasts. Optional wrappers pass the same props.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Key</th><th>Type</th><th>Default</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>position</code></td><td><code>ToastPosition</code></td><td><code>"top-right"</code></td><td>6 corners + top/bottom center</td></tr>
+            <tr><td><code>theme</code></td><td><code>"light" | "dark" | "system"</code></td><td><code>"system"</code></td><td>Color scheme. System also tracks <code>html.dark</code> / <code>data-theme</code></td></tr>
+            <tr><td><code>duration</code></td><td><code>number</code></td><td><code>4000</code></td><td>Default auto-close ms</td></tr>
+            <tr><td><code>closeButton</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Show close button by default</td></tr>
+            <tr><td><code>dismissible</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Allow dismiss by default</td></tr>
+            <tr><td><code>richColors</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Tinted success/error/warning/info surfaces</td></tr>
+            <tr><td><code>visibleToasts</code></td><td><code>number</code></td><td><code>3</code></td><td>Max visible in the stack</td></tr>
+            <tr><td><code>expand</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Always expand stack (else expand on hover)</td></tr>
+            <tr><td><code>gap</code></td><td><code>number</code></td><td><code>12</code></td><td>Gap between expanded toasts (px)</td></tr>
+            <tr><td><code>offset</code></td><td><code>number | string</code></td><td><code>16</code></td><td>Distance from viewport edge</td></tr>
+            <tr><td><code>dir</code></td><td><code>"ltr" | "rtl" | "auto"</code></td><td><code>"auto"</code></td><td>Text direction</td></tr>
+            <tr><td><code>pauseOnHover</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Pause timers while hovering the stack</td></tr>
+            <tr><td><code>pauseOnWindowBlur</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Pause timers when the window loses focus</td></tr>
+            <tr><td><code>progressBar</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Show duration progress bar</td></tr>
+            <tr><td><code>toasterClassName</code></td><td><code>string</code></td><td>—</td><td>Class on the toaster container</td></tr>
+            <tr><td><code>style</code></td><td><code>object</code></td><td>—</td><td>Inline styles on the toaster container</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="api-h">Promise API</h3>
+      <pre class="api"><code>{`toast.promise(uploadFile(), {
+  loading: "Uploading…",
+  success: (file) => \`Uploaded \${file.name}\`,
+  error: (err) => (err instanceof Error ? err.message : "Failed"),
+});
+
+// Or pass full option objects:
+toast.promise(save(), {
+  loading: { title: "Saving…", description: "Please wait" },
+  success: { title: "Saved", duration: 3000 },
+  error: { title: "Failed", important: true },
+});`}</code></pre>
+
+      <h3 class="api-h">Multiple toasters &amp; headless</h3>
+      <pre class="api"><code>{`import { createToaster } from "alert-notify";
+
+// Isolated instance (own portal + config)
+const modalToast = createToaster({ position: "bottom-center" });
+modalToast.success("Saved in modal");
+
+// Headless — you render the UI
+const headless = createToaster({}, { headless: true });
+headless.subscribe((toasts) => {
+  // render custom UI from toasts[]
+});`}</code></pre>
+
+      <h3 class="api-h">Optional framework wrappers</h3>
+      <p class="section-copy">
+        Not required. They only sync config from props. Accept the same keys as <code>toast.config</code>.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Import</th><th>Usage</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>alert-notify/react</code></td><td><code>{"<Toaster position=\"top-right\" richColors />"}</code></td></tr>
+            <tr><td><code>alert-notify/vue</code></td><td><code>{"<Toaster position=\"top-right\" :rich-colors=\"true\" />"}</code></td></tr>
+            <tr><td><code>alert-notify/svelte</code></td><td><code>{"<Toaster position=\"top-right\" richColors />"}</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="api-h">Behavior notes</h3>
+      <ul class="notes">
+        <li>Title/description are HTML-escaped by default. Use <code>html</code> only when you intend markup.</li>
+        <li><code>loading</code> toasts default to <code>duration: Infinity</code> until updated (e.g. via promise).</li>
+        <li>Same <code>id</code> coalesces — updates the existing toast instead of stacking a duplicate.</li>
+        <li>Escape dismisses the focused toast. Swipe/drag dismisses when <code>dismissible</code> is true.</li>
+        <li>SSR-safe: no DOM work until <code>document</code> exists.</li>
+        <li>CSS import is recommended but optional if you ship your own styles using the same class names / variables.</li>
+      </ul>
+    </section>
+
+    <section id="size" class="section">
+      <h2>Built for the smallest useful toast</h2>
+      <p class="section-copy">
+        Core JS is about <strong>{size.jsGzipKb}KB gzip</strong>
+        ({size.jsRaw.toLocaleString()} bytes minified). CSS is optional and ~{size.cssGzipKb}KB gzip.
+        No runtime dependencies. Tree-shake friendly ESM + CJS + CDN builds.
+      </p>
+      <div class="size-row">
+        <div>
+          <span class="metric">{size.jsGzipKb}KB</span>
+          <span class="metric-label">JS gzip</span>
+        </div>
+        <div>
+          <span class="metric">{size.cssGzipKb}KB</span>
+          <span class="metric-label">CSS gzip</span>
+        </div>
+        <div>
+          <span class="metric">0</span>
+          <span class="metric-label">deps</span>
+        </div>
+      </div>
+      <div class="compare">
+        <p>Compared with common React-only toast libs (approx. gzip JS):</p>
+        <ul>
+          <li><strong>alert-notify</strong> ~{size.jsGzipKb}KB — any framework</li>
+          <li>react-hot-toast ~4–5KB — React only</li>
+          <li>Sonner ~10–12KB — React only</li>
+          <li>react-toastify ~40KB+ — React only</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="guides" class="section panel">
+      <h2>How to use</h2>
+      <p class="section-copy">
+        Import styles once. Call <code>toast.*</code> from anywhere.
+        Optional <code>&lt;Toaster /&gt;</code> wrappers only sync config props — the portal auto-mounts.
+      </p>
+
+      <div class="tabs" role="tablist" aria-label="Framework guides">
+        {frameworks.map((fw, i) => (
+          <button
+            type="button"
+            class:list={["tab", { active: i === 0 }]}
+            role="tab"
+            aria-selected={i === 0}
+            data-tab={fw.id}
+          >
+            {fw.label}
+          </button>
+        ))}
+      </div>
+
+      <div class="tab-panels">
+        <pre class="tab-panel active" data-panel="vanilla"><code>{`import { toast } from "alert-notify";
+import "alert-notify/style.css";
+
+toast.success("Saved");
+toast.error("Failed", { description: "Try again" });
+// No container. Portal mounts itself.`}</code></pre>
+
+        <pre class="tab-panel" data-panel="react"><code>{`// App.tsx
+import { toast } from "alert-notify";
+import { Toaster } from "alert-notify/react";
+import "alert-notify/style.css";
+
+export function App() {
+  return (
+    <>
+      <Toaster position="top-right" richColors />
+      <button onClick={() => toast.success("Saved")}>Save</button>
+    </>
+  );
+}`}</code></pre>
+
+        <pre class="tab-panel" data-panel="vue"><code>{`<!-- App.vue -->
+<script setup>
+import { toast } from "alert-notify";
+import { Toaster } from "alert-notify/vue";
+import "alert-notify/style.css";
+</script>
+
+<template>
+  <Toaster position="top-right" rich-colors />
+  <button @click="toast.success('Saved')">Save</button>
+</template>`}</code></pre>
+
+        <pre class="tab-panel" data-panel="svelte"><code>{`<!-- +layout.svelte / App.svelte -->
+<script>
+  import { toast } from "alert-notify";
+  import Toaster from "alert-notify/svelte";
+  import "alert-notify/style.css";
+</script>
+
+<Toaster position="top-right" richColors />
+<button on:click={() => toast.success("Saved")}>Save</button>`}</code></pre>
+
+        <pre class="tab-panel" data-panel="angular"><code>{`// any.component.ts
+import { toast } from "alert-notify";
+import "alert-notify/style.css";
+
+show() {
+  toast.success("Saved");
+}
+
+// Optional: call toast.config({...}) once in AppComponent.ngOnInit
+// No Angular module or container component required.`}</code></pre>
+
+        <pre class="tab-panel" data-panel="astro"><code>{`---
+// client script or framework island
+---
+<script>
+  import { toast } from "alert-notify";
+  import "alert-notify/style.css";
+  document.querySelector("button")?.addEventListener("click", () => {
+    toast.success("Saved");
+  });
+</script>`}</code></pre>
+
+        <pre class="tab-panel" data-panel="cdn"><code>{`<link rel="stylesheet" href="https://unpkg.com/alert-notify@2/dist/style.css" />
+<script src="https://unpkg.com/alert-notify@2/dist/alert-notify.global.js"></script>
+<script>
+  AlertNotify.toast.success("Hello from CDN");
+</script>`}</code></pre>
+      </div>
+    </section>
+
+    <section id="theming" class="section panel">
+      <h2>Dark mode &amp; CSS variables</h2>
+      <p class="section-copy">
+        Set <code>theme</code> to <code>light</code>, <code>dark</code>, or <code>system</code>.
+        System mode follows the OS, plus <code>html.dark</code> / <code>data-theme="dark"</code>.
+        Rebrand colors by overriding CSS variables in your own stylesheet.
+      </p>
+      <pre class="api"><code>{`// Dark mode
+toast.config({ theme: "system" }); // OS + html.dark / data-theme
+toast.config({ theme: "dark" });
+toast.config({ theme: "light" });
+toast.config({ richColors: true }); // soft tinted fills`}</code></pre>
+      <pre class="api" style="margin-top: 12px"><code>{`/* your-app.css — after alert-notify/style.css */
+.an-toaster {
+  --an-bg: #ffffff;
+  --an-fg: #0f172a;
+  --an-muted: #64748b;
+  --an-border: rgba(15, 23, 42, 0.1);
+
+  --an-success: #16a34a;
+  --an-error: #e11d48;
+  --an-warning: #ca8a04;
+  --an-info: #2563eb;
+
+  /* Soft rich fills */
+  --an-success-bg: #ecfdf5;
+  --an-success-border: #a7f3d0;
+  --an-error-bg: #fff1f2;
+  --an-error-border: #fecdd3;
+  --an-warning-bg: #fffbeb;
+  --an-warning-border: #fde68a;
+  --an-info-bg: #eff6ff;
+  --an-info-border: #bfdbfe;
+}
+
+.an-toaster[data-theme="dark"] {
+  --an-bg: #1e293b;
+  --an-fg: #f8fafc;
+  --an-success: #4ade80;
+  --an-error: #fb7185;
+  --an-warning: #facc15;
+  --an-info: #60a5fa;
+  --an-success-bg: #14532d;
+  --an-error-bg: #4c0519;
+  --an-warning-bg: #422006;
+  --an-info-bg: #1e3a8a;
+}`}</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>Exports</h2>
+      <pre class="api"><code>{`import {
+  toast,
+  createToaster,
+} from "alert-notify";
+
+import { Toaster } from "alert-notify/react"; // optional
+import { Toaster } from "alert-notify/vue";   // optional
+import Toaster from "alert-notify/svelte";   // optional
+import "alert-notify/style.css";`}</code></pre>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>MIT · <a href="https://github.com/Bhardwaj-Raghav/alert-notify">GitHub</a> · <a href="https://www.npmjs.com/package/alert-notify">npm</a></p>
+  </footer>
+</Base>
+
+<script>
+  import { toast } from "alert-notify";
+
+  toast.config({ richColors: true, progressBar: true, theme: "light" });
+
+  function setMode(mode) {
+    toast.config({ theme: mode });
+    document.documentElement.dataset.demoTheme = mode === "system" ? "" : mode;
+    if (mode === "dark") {
+      document.documentElement.classList.add("demo-dark");
+      document.documentElement.classList.remove("demo-light");
+    } else if (mode === "light") {
+      document.documentElement.classList.add("demo-light");
+      document.documentElement.classList.remove("demo-dark");
+    } else {
+      document.documentElement.classList.remove("demo-dark", "demo-light");
+    }
+    document.querySelectorAll("[data-mode]").forEach((btn) => {
+      const active = btn.getAttribute("data-mode") === mode;
+      btn.classList.toggle("active", active);
+      btn.setAttribute("aria-pressed", active ? "true" : "false");
+    });
+  }
+
+  document.querySelectorAll("[data-mode]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const mode = btn.getAttribute("data-mode");
+      if (mode) setMode(mode);
+    });
+  });
+
+  document.querySelectorAll("[data-toast]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const kind = button.getAttribute("data-toast");
+      if (kind === "promise") {
+        const upload = new Promise((resolve) => setTimeout(() => resolve("photo.jpg"), 1600));
+        toast.promise(upload, {
+          loading: "Uploading…",
+          success: (name) => `Uploaded ${name}`,
+          error: "Upload failed",
+        });
+        return;
+      }
+      if (kind === "undo") {
+        toast.success("Item deleted", {
+          description: "You can restore it.",
+          action: { label: "Undo", onClick: () => toast.message("Restored") },
+        });
+        return;
+      }
+      if (kind === "stack") {
+        for (let i = 1; i <= 5; i += 1) toast.message(`Toast ${i}`);
+        return;
+      }
+      if (kind === "dismiss") {
+        toast.dismiss();
+        return;
+      }
+      if (kind) {
+        toast[kind](`${kind[0].toUpperCase()}${kind.slice(1)} toast`, {
+          description: "~4.6KB gzip · any framework",
+        });
+      }
+    });
+  });
+
+  document.getElementById("position")?.addEventListener("change", (event) => {
+    const target = event.target;
+    if (target instanceof HTMLSelectElement) toast.config({ position: target.value });
+  });
+  document.getElementById("rich")?.addEventListener("change", (event) => {
+    const target = event.target;
+    if (target instanceof HTMLInputElement) toast.config({ richColors: target.checked });
+  });
+
+  document.querySelectorAll("[data-tab]").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const id = tab.getAttribute("data-tab");
+      document.querySelectorAll("[data-tab]").forEach((el) => {
+        el.classList.toggle("active", el === tab);
+        el.setAttribute("aria-selected", el === tab ? "true" : "false");
+      });
+      document.querySelectorAll("[data-panel]").forEach((panel) => {
+        panel.classList.toggle("active", panel.getAttribute("data-panel") === id);
+      });
+    });
+  });
+
+  document.querySelectorAll("[data-copy]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const text = btn.getAttribute("data-copy");
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+      }
+      btn.classList.add("copied");
+      btn.setAttribute("aria-label", "Copied");
+      window.setTimeout(() => {
+        btn.classList.remove("copied");
+        btn.setAttribute("aria-label", "Copy install command");
+      }, 1400);
+    });
+  });
+</script>
+
+<style>
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    width: min(980px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 22px 0 8px;
+  }
+
+  .brand {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.15rem;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  nav a:hover {
+    color: var(--ink);
+  }
+
+  main {
+    width: min(980px, calc(100% - 32px));
+    margin: 0 auto 64px;
+  }
+
+  .hero {
+    min-height: min(72vh, 640px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 48px 0 36px;
+  }
+
+  .eyebrow {
+    margin: 0 0 12px;
+    color: var(--accent-2);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+  }
+
+  h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 8vw, 5.4rem);
+    line-height: 0.95;
+    letter-spacing: -0.05em;
+  }
+
+  .lede {
+    max-width: 34rem;
+    margin: 18px 0 0;
+    font-size: 1.15rem;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+
+  .lede strong {
+    color: var(--ink);
+  }
+
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-top: 28px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 18px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  .btn.primary {
+    background: var(--accent);
+    border-color: transparent;
+    color: #ecfdf8;
+  }
+
+  .install {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 8px 8px 14px;
+    border-radius: 12px;
+    background: rgba(16, 35, 31, 0.06);
+    font-size: 0.92rem;
+  }
+
+  .install code {
+    font: inherit;
+  }
+
+  .copy-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+  }
+
+  .copy-btn .check-icon {
+    display: none;
+  }
+
+  .copy-btn.copied .copy-icon {
+    display: none;
+  }
+
+  .copy-btn.copied .check-icon {
+    display: block;
+  }
+
+  .copy-btn:hover {
+    background: rgba(16, 35, 31, 0.08);
+    color: var(--ink);
+  }
+
+  .copy-btn.copied {
+    color: var(--accent);
+  }
+
+  html.demo-dark .copy-btn:hover {
+    background: rgba(226, 232, 240, 0.1);
+  }
+
+
+  .section {
+    padding: 28px 0 8px;
+  }
+
+  .panel {
+    margin-top: 12px;
+    padding: 28px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+    backdrop-filter: blur(10px);
+  }
+
+  h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    letter-spacing: -0.03em;
+  }
+
+  .section-copy {
+    margin: 10px 0 20px;
+    color: var(--muted);
+    max-width: 40rem;
+    line-height: 1.55;
+  }
+
+  .demo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+  }
+
+  .demo-grid button,
+  .demo-controls select {
+    font: inherit;
+  }
+
+  .demo-grid button {
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .demo-grid button:hover {
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  }
+
+  .demo-grid .wide {
+    grid-column: span 2;
+  }
+
+  .demo-grid .ghost {
+    background: transparent;
+  }
+
+  .demo-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 18px;
+    color: var(--muted);
+    font-size: 0.95rem;
+    align-items: center;
+  }
+
+  .demo-controls label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .demo-controls select {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 8px 10px;
+    background: #fff;
+  }
+
+  .mode-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.7);
+  }
+
+  .mode-label {
+    padding: 0 8px 0 10px;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+
+  .mode-btn {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+
+  .mode-btn.active {
+    background: var(--ink);
+    color: #ecfdf8;
+  }
+
+  .api-h {
+    margin: 28px 0 10px;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    letter-spacing: -0.02em;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.55);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  th,
+  td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+
+  th {
+    font-weight: 700;
+    background: rgba(16, 35, 31, 0.04);
+    white-space: nowrap;
+  }
+
+  tr:last-child td {
+    border-bottom: 0;
+  }
+
+  td code {
+    font-size: 0.82rem;
+  }
+
+  .notes {
+    margin: 8px 0 0;
+    padding-left: 1.2rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  html.demo-dark body {
+    background:
+      radial-gradient(ellipse 80% 50% at 10% -10%, rgba(15, 118, 110, 0.2), transparent 55%),
+      linear-gradient(180deg, #0b1220 0%, #121a2b 50%, #0f172a 100%);
+    color: #e2e8f0;
+  }
+
+  html.demo-dark {
+    --ink: #e2e8f0;
+    --muted: #94a3b8;
+    --paper: #0f172a;
+    --panel: rgba(30, 41, 59, 0.82);
+    --line: rgba(226, 232, 240, 0.12);
+  }
+
+  html.demo-dark .panel,
+  html.demo-dark .demo-grid button,
+  html.demo-dark .demo-controls select,
+  html.demo-dark .tab,
+  html.demo-dark .table-wrap,
+  html.demo-dark .mode-toggle {
+    background: rgba(30, 41, 59, 0.9);
+    color: #e2e8f0;
+  }
+
+  html.demo-dark .brand,
+  html.demo-dark h1,
+  html.demo-dark h2,
+  html.demo-dark .api-h,
+  html.demo-dark .lede strong,
+  html.demo-dark .metric {
+    color: #f8fafc;
+  }
+
+  html.demo-dark .mode-btn.active,
+  html.demo-dark .tab.active {
+    background: #f8fafc;
+    color: #0f172a;
+  }
+
+  .size-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin: 24px 0;
+  }
+
+  .size-row > div {
+    padding: 18px;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.55);
+  }
+
+  .metric {
+    display: block;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    letter-spacing: -0.04em;
+  }
+
+  .metric-label {
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .compare ul {
+    margin: 8px 0 0;
+    padding-left: 1.1rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .tab {
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 999px;
+    padding: 8px 12px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    color: var(--muted);
+  }
+
+  .tab.active {
+    background: var(--ink);
+    color: #ecfdf8;
+    border-color: transparent;
+  }
+
+  .tab-panel {
+    display: none;
+    margin: 0;
+    padding: 16px;
+    overflow: auto;
+    border-radius: 14px;
+    background: #10231f;
+    color: #d7ebe4;
+    font-size: 0.88rem;
+    line-height: 1.55;
+  }
+
+  .tab-panel.active {
+    display: block;
+  }
+
+  .api {
+    margin: 16px 0 0;
+    padding: 16px;
+    border-radius: 14px;
+    background: rgba(16, 35, 31, 0.92);
+    color: #d7ebe4;
+    overflow: auto;
+  }
+
+  .footer {
+    width: min(980px, calc(100% - 32px));
+    margin: 0 auto 40px;
+    color: var(--muted);
+  }
+
+  @media (max-width: 640px) {
+    .demo-grid .wide {
+      grid-column: span 1;
+    }
+
+    .size-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

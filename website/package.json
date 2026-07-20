@@ -1,0 +1,16 @@
+{
+  "name": "alert-notify-website",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "alert-notify": "file:..",
+    "astro": "^7.1.1"
+  }
+}
