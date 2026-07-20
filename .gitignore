@@ -1,5 +1,6 @@
 node_modules
 dist
+website/dist
 site-dist
 coverage
 storybook-static
@@ -11,8 +12,7 @@ storybook-static
 .vscode
 *.local
 .env
-.env.local
-.env.*.local
+.env.*
 !.env.example
 .cache
 *.tgz

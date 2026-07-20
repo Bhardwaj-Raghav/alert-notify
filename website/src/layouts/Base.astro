@@ -1,0 +1,165 @@
+---
+import "alert-notify/style.css";
+import size from "../data/size.json";
+import pkg from "../../../package.json";
+
+const siteName = "alert-notify";
+const title = `${siteName} — tiny toast notifications for React, Vue, Svelte & more`;
+const description = `Tiny framework-agnostic toast notifications. ~${size.jsGzipKb}KB gzip JS. Works in React, Vue, Svelte, Angular, Astro, and plain HTML — no provider required.`;
+const ogTitle = `${siteName} — ~${size.jsGzipKb}KB gzip toasts`;
+
+const baseURL = import.meta.env.BASE_URL.endsWith("/")
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImageURL = new URL(`${baseURL}og-image.png`, Astro.site);
+const sitemapURL = new URL(`${baseURL}sitemap-index.xml`, Astro.site);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${canonicalURL.href}#website`,
+      url: canonicalURL.href,
+      name: siteName,
+      description,
+      publisher: { "@id": `${canonicalURL.href}#software` },
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": `${canonicalURL.href}#software`,
+      name: siteName,
+      applicationCategory: "DeveloperApplication",
+      operatingSystem: "Any",
+      description,
+      url: canonicalURL.href,
+      downloadUrl: "https://www.npmjs.com/package/alert-notify",
+      codeRepository: "https://github.com/Bhardwaj-Raghav/alert-notify",
+      license: "https://opensource.org/licenses/MIT",
+      author: {
+        "@type": "Person",
+        name: "Raghav Bhardwaj",
+      },
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD",
+      },
+      softwareVersion: pkg.version,
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta
+      name="keywords"
+      content="toast, toast notifications, alert-notify, react toast, vue toast, svelte toast, javascript toast, lightweight toast"
+    />
+    <meta name="author" content="Raghav Bhardwaj" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="theme-color" content="#0f766e" />
+    <meta name="color-scheme" content="light" />
+
+    <link rel="canonical" href={canonicalURL} />
+    <link rel="sitemap" type="application/xml" href={sitemapURL} />
+
+    <link rel="icon" href={`${baseURL}favicon.svg`} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={`${baseURL}apple-touch-icon.png`} />
+    <link rel="manifest" href={`${baseURL}site.webmanifest`} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={ogTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:image:alt" content={`${siteName} — tiny framework-agnostic toast notifications`} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={ogTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
+    <meta name="twitter:image:alt" content={`${siteName} — tiny framework-agnostic toast notifications`} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --ink: #10231f;
+    --muted: #5b6f69;
+    --paper: #f3f7f5;
+    --panel: rgba(255, 255, 255, 0.72);
+    --line: rgba(16, 35, 31, 0.1);
+    --accent: #0f766e;
+    --accent-2: #115e59;
+    --glow: rgba(15, 118, 110, 0.18);
+    --radius: 18px;
+    --font-display: "Syne", system-ui, sans-serif;
+    --font-body: "Figtree", system-ui, sans-serif;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--ink);
+    font-family: var(--font-body);
+    background:
+      radial-gradient(ellipse 80% 50% at 10% -10%, var(--glow), transparent 55%),
+      radial-gradient(ellipse 60% 40% at 90% 0%, rgba(17, 94, 89, 0.12), transparent 50%),
+      linear-gradient(180deg, #e8f2ef 0%, var(--paper) 42%, #eef4f1 100%);
+  }
+
+  a {
+    color: var(--accent-2);
+  }
+
+  code,
+  pre {
+    font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+  }
+</style>

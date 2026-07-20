@@ -1,12 +1,113 @@
 {
   "name": "alert-notify",
-  "version": "1.0.3",
-  "description": "Alert Notification for Javascript, Can be used anywhere.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": "https://github.com/Bhardwaj-Raghav/alert-notify",
+  "version": "2.0.0",
+  "description": "Tiny framework-agnostic toast notifications. ~5KB gzip. Works everywhere.",
+  "license": "MIT",
   "author": "Raghav Bhardwaj",
-  "license": "MIT"
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.js",
+      "require": "./dist/react.cjs"
+    },
+    "./vue": {
+      "types": "./dist/vue.d.ts",
+      "import": "./dist/vue.js",
+      "require": "./dist/vue.cjs"
+    },
+    "./svelte": {
+      "types": "./dist/svelte/Toaster.svelte",
+      "svelte": "./dist/svelte/Toaster.svelte",
+      "default": "./dist/svelte/Toaster.svelte"
+    },
+    "./style.css": "./dist/style.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "unpkg": "./dist/alert-notify.global.js",
+  "jsdelivr": "./dist/alert-notify.global.js",
+  "sideEffects": [
+    "*.css"
+  ],
+  "scripts": {
+    "build": "tsup && node scripts/copy-css.mjs",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "size": "npm run build",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build -o storybook-static",
+    "website:dev": "npm run dev --prefix website",
+    "website:build": "npm run build --prefix website",
+    "prepublishOnly": "npm run typecheck && npm run test && npm run build"
+  },
+  "peerDependencies": {
+    "react": ">=17",
+    "vue": ">=3",
+    "svelte": ">=5"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    },
+    "svelte": {
+      "optional": true
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bhardwaj-Raghav/alert-notify.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Bhardwaj-Raghav/alert-notify/issues"
+  },
+  "homepage": "https://github.com/Bhardwaj-Raghav/alert-notify#readme",
+  "keywords": [
+    "toast",
+    "notification",
+    "alert",
+    "snackbar",
+    "vanilla",
+    "typescript",
+    "framework-agnostic",
+    "lightweight",
+    "small",
+    "toastify",
+    "sonner"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@storybook/html": "^10.5.2",
+    "@storybook/html-vite": "^10.5.2",
+    "@types/node": "^22.13.10",
+    "@types/react": "^19.0.12",
+    "jsdom": "^26.0.0",
+    "react": "^19.0.0",
+    "storybook": "^10.5.2",
+    "svelte": "^5.0.0",
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.9",
+    "vue": "^3.5.13",
+    "@storybook/addon-docs": "^10.5.2"
+  }
 }

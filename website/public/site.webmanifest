@@ -1,0 +1,17 @@
+{
+  "name": "alert-notify",
+  "short_name": "alert-notify",
+  "description": "Tiny framework-agnostic toast notifications.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#e8f2ef",
+  "theme_color": "#0f766e",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
