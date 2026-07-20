@@ -30,8 +30,6 @@ const sizes = {
   cssGzipKb: Number((gzCss.length / 1024).toFixed(1)),
 };
 
-writeFileSync(join(dist, "size.json"), `${JSON.stringify(sizes, null, 2)}\n`);
-
 mkdirSync(websiteData, { recursive: true });
 writeFileSync(join(websiteData, "size.json"), `${JSON.stringify(sizes, null, 2)}\n`);
 

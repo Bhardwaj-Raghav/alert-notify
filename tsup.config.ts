@@ -3,7 +3,7 @@ import { defineConfig, type Options } from "tsup";
 const shared: Options = {
   format: ["esm", "cjs"],
   dts: true,
-  sourcemap: true,
+  sourcemap: false,
   minify: true,
   treeshake: true,
   target: "es2020",

@@ -151,8 +151,8 @@ Use a client script or island; same imperative API.
 | `type` | `ToastType` | from method | `success \| error \| warning \| info \| loading \| message` |
 | `description` | `string` | — | Secondary text |
 | `duration` | `number` | config / `Infinity` for loading | Auto-close ms; `Infinity` = sticky |
-| `icon` | `string \| HTMLElement \| false` | built-in SVG | Custom icon, or `false` to hide |
-| `html` | `string` | — | Opt-in unescaped title HTML |
+| `icon` | `string \| HTMLElement \| false` | built-in SVG | Custom icon, or `false` to hide. String values are raw HTML (trusted markup only) |
+| `html` | `string` | — | Opt-in unescaped title HTML (trusted markup only; never pass user input) |
 | `action` | `{ label, onClick }` | — | Primary action (e.g. Undo) |
 | `cancel` | `{ label, onClick }` | — | Secondary action |
 | `closeButton` | `boolean` | from config (`true`) | Show × button |

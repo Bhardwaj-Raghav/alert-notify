@@ -28,8 +28,12 @@ export type ToastOptions = {
   type?: ToastType;
   description?: string;
   duration?: number;
+  /**
+   * Custom icon. A string is inserted as raw HTML (trusted markup only).
+   * Prefer `HTMLElement` or `false` when the value is not developer-controlled.
+   */
   icon?: string | HTMLElement | false;
-  /** Opt-in unescaped HTML for title. Prefer plain text. */
+  /** Opt-in unescaped title HTML. Trusted markup only; never pass user input. */
   html?: string;
   action?: ToastAction;
   cancel?: ToastAction;
