@@ -16,7 +16,10 @@
     "isolatedModules": true,
     "noEmit": true,
     "rootDir": ".",
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "paths": {
+      "alert-notify": ["./src/index.ts"]
+    }
   },
   "include": ["src", "tests", "tsup.config.ts", "vitest.config.ts"],
   "exclude": ["website", "storybook-static", "dist"]
