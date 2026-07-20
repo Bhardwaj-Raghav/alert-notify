@@ -36,7 +36,24 @@ const frameworks = [
       <div class="cta">
         <a class="btn primary" href="#demo">Try it</a>
         <a class="btn" href="#guides">How to use</a>
-        <code class="install">npm i alert-notify</code>
+        <div class="install">
+          <code>npm i alert-notify</code>
+          <button
+            type="button"
+            class="copy-btn"
+            data-copy="npm i alert-notify"
+            aria-label="Copy install command"
+            title="Copy"
+          >
+            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2"></path>
+            </svg>
+            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </button>
+        </div>
       </div>
     </section>
 
@@ -512,6 +529,32 @@ import "alert-notify/style.css";`}</code></pre>
       });
     });
   });
+
+  document.querySelectorAll("[data-copy]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const text = btn.getAttribute("data-copy");
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+      }
+      btn.classList.add("copied");
+      btn.setAttribute("aria-label", "Copied");
+      window.setTimeout(() => {
+        btn.classList.remove("copied");
+        btn.setAttribute("aria-label", "Copy install command");
+      }, 1400);
+    });
+  });
 </script>
 
 <style>
@@ -621,11 +664,58 @@ import "alert-notify/style.css";`}</code></pre>
   }
 
   .install {
-    padding: 12px 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 8px 8px 14px;
     border-radius: 12px;
     background: rgba(16, 35, 31, 0.06);
     font-size: 0.92rem;
   }
+
+  .install code {
+    font: inherit;
+  }
+
+  .copy-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+  }
+
+  .copy-btn .check-icon {
+    display: none;
+  }
+
+  .copy-btn.copied .copy-icon {
+    display: none;
+  }
+
+  .copy-btn.copied .check-icon {
+    display: block;
+  }
+
+  .copy-btn:hover {
+    background: rgba(16, 35, 31, 0.08);
+    color: var(--ink);
+  }
+
+  .copy-btn.copied {
+    color: var(--accent);
+  }
+
+  html.demo-dark .copy-btn:hover {
+    background: rgba(226, 232, 240, 0.1);
+  }
+
 
   .section {
     padding: 28px 0 8px;
