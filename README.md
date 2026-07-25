@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/alert-notify.svg)](https://www.npmjs.com/package/alert-notify)
 
-**Tiny framework-agnostic toasts.** About **4.6KB gzip** JS, zero runtime dependencies. Works in React, Vue, Svelte, Angular, Astro, and plain HTML.
+**Tiny toast notifications for React, Vue, Svelte, Angular, Astro, and plain HTML.** About **4.6KB gzip** JS, zero runtime dependencies. A lightweight alternative to react-toastify, react-hot-toast, Sonner, react-alert, and other React toast / notification / snackbar libraries.
 
 No root provider required. The portal auto-mounts. Optional `<Toaster />` wrappers only sync config props for nicer DX.
 
@@ -22,7 +22,9 @@ toast.success("Saved");
 | Provider / container | **Optional** | Required | Required | Required |
 | Runtime deps | **0** | 0 | 0 | 0 |
 
-Built for apps that care about bundle size and do not want a React-only toast stack.
+Built for apps that care about bundle size and do not want a React-only toast stack. Also a fit if you searched for toastify, tostify, React notifications, or snackbars and want one small package that works everywhere.
+
+Website & live demo: [alert-notify.vercel.app](https://alert-notify.vercel.app)
 
 ## Install
 
@@ -306,14 +308,6 @@ Enable soft tinted backgrounds with:
 ```ts
 toast.config({ richColors: true });
 // or <Toaster richColors />
-```
-
-## Demo & Storybook
-
-```bash
-npm run build
-npm run website:dev      # Astro landing + live demo
-npm run storybook        # Component playground
 ```
 
 ## Migrating from 1.x

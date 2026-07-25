@@ -1,7 +1,7 @@
 {
-  "name": "alert-notify",
+  "name": "alert-notify — React toast & toast notifications",
   "short_name": "alert-notify",
-  "description": "Tiny framework-agnostic toast notifications.",
+  "description": "Tiny toast notification library for React, Vue, Svelte, and vanilla JS. Lightweight alternative to react-toastify, Sonner, and react-hot-toast.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#e8f2ef",

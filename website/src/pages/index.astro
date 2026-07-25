@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import size from "../data/size.json";
+import { faqs, alternatives } from "../data/seo";
 
 const frameworks = [
   { id: "vanilla", label: "Vanilla" },
@@ -20,18 +21,21 @@ const frameworks = [
       <a href="#demo">Demo</a>
       <a href="#api">API</a>
       <a href="#guides">Guides</a>
-      <a href="#theming">Theming</a>
+      <a href="#alternatives">Alternatives</a>
+      <a href="#faq">FAQ</a>
       <a href="https://github.com/Bhardwaj-Raghav/alert-notify" rel="noopener noreferrer">GitHub</a>
     </nav>
   </header>
 
   <main>
     <section class="hero">
-      <p class="eyebrow">Framework-agnostic · zero deps</p>
+      <p class="eyebrow">React toast · Vue · Svelte · vanilla · zero deps</p>
       <h1>alert-notify</h1>
       <p class="lede">
-        The tiny toast package. <strong>~{size.jsGzipKb}KB</strong> gzipped JS.
-        Works in React, Vue, Svelte, Angular, Astro, and plain HTML — no root provider required.
+        Tiny toast notifications for React and everything else.
+        <strong>~{size.jsGzipKb}KB</strong> gzipped JS — a lightweight alternative to
+        react-toastify, react-hot-toast, Sonner, and react-alert.
+        No root provider required.
       </p>
       <div class="cta">
         <a class="btn primary" href="#demo">Try it</a>
@@ -250,7 +254,8 @@ headless.subscribe((toasts) => {
     <section id="size" class="section">
       <h2>Built for the smallest useful toast</h2>
       <p class="section-copy">
-        Core JS is about <strong>{size.jsGzipKb}KB gzip</strong>
+        Looking for a React toast, snackbar, or notification library that does not
+        crush your bundle? Core JS is about <strong>{size.jsGzipKb}KB gzip</strong>
         ({size.jsRaw.toLocaleString()} bytes minified). CSS is optional and ~{size.cssGzipKb}KB gzip.
         No runtime dependencies. Tree-shake friendly ESM + CJS + CDN builds.
       </p>
@@ -269,14 +274,29 @@ headless.subscribe((toasts) => {
         </div>
       </div>
       <div class="compare">
-        <p>Compared with common React-only toast libs (approx. gzip JS):</p>
+        <p>Compared with common React toast / toastify libraries (approx. gzip JS):</p>
         <ul>
-          <li><strong>alert-notify</strong> ~{size.jsGzipKb}KB — any framework</li>
+          <li><strong>alert-notify</strong> ~{size.jsGzipKb}KB — React, Vue, Svelte, Angular, vanilla</li>
           <li>react-hot-toast ~4–5KB — React only</li>
           <li>Sonner ~10–12KB — React only</li>
-          <li>react-toastify ~40KB+ — React only</li>
+          <li>react-toastify (toastify) ~40KB+ — React only</li>
         </ul>
       </div>
+    </section>
+
+    <section id="use-cases" class="section panel">
+      <h2>React toast, notifications, alerts &amp; snackbars</h2>
+      <p class="section-copy">
+        One API for the jobs people usually split across react toast, react notification,
+        react-alert, and snackbar packages. Works the same in Vue, Svelte, Angular, Astro, and CDN HTML.
+      </p>
+      <ul class="notes">
+        <li><strong>React toast notifications</strong> — <code>toast.success</code>, <code>toast.error</code>, promise toasts, Undo actions.</li>
+        <li><strong>React alerts</strong> — drop-in feel for react-alert style success / error / info messages.</li>
+        <li><strong>Snackbars</strong> — positioned stacks, dismiss, pause on hover, progress bar.</li>
+        <li><strong>Toastify-style flows</strong> — typed helpers plus <code>toast.promise</code> without the toastify bundle weight.</li>
+        <li><strong>Cross-framework apps</strong> — same package in a React app, Vue island, or plain script tag.</li>
+      </ul>
     </section>
 
     <section id="guides" class="section panel">
@@ -435,10 +455,53 @@ import { Toaster } from "alert-notify/vue";   // optional
 import Toaster from "alert-notify/svelte";   // optional
 import "alert-notify/style.css";`}</code></pre>
     </section>
+
+    <section id="alternatives" class="section panel">
+      <h2>Alternative to toastify, Sonner, hot-toast &amp; react-alert</h2>
+      <p class="section-copy">
+        If you landed here searching for react toast, toastify, tostify, react-toastify,
+        react-hot-toast, Sonner, react-alert, notistack, or a React notification / snackbar
+        library — alert-notify is built for that search, with a smaller footprint and no React-only lock-in.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>You might know</th><th>Why people switch</th></tr>
+          </thead>
+          <tbody>
+            {alternatives.map((item) => (
+              <tr>
+                <td><strong>{item.name}</strong></td>
+                <td>{item.note}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="faq" class="section panel">
+      <h2>FAQ</h2>
+      <p class="section-copy">
+        Common questions about React toasts, toastify alternatives, and framework-agnostic notifications.
+      </p>
+      <div class="faq-list">
+        {faqs.map((faq) => (
+          <details class="faq-item">
+            <summary>{faq.question}</summary>
+            <p>{faq.answer}</p>
+          </details>
+        ))}
+      </div>
+    </section>
   </main>
 
   <footer class="footer">
-    <p>MIT · <a href="https://github.com/Bhardwaj-Raghav/alert-notify">GitHub</a> · <a href="https://www.npmjs.com/package/alert-notify">npm</a></p>
+    <p>
+      MIT ·
+      <a href="https://github.com/Bhardwaj-Raghav/alert-notify">GitHub</a> ·
+      <a href="https://www.npmjs.com/package/alert-notify">npm</a>
+    </p>
   </footer>
 </Base>
 
@@ -1009,6 +1072,40 @@ import "alert-notify/style.css";`}</code></pre>
     width: min(980px, calc(100% - 32px));
     margin: 0 auto 40px;
     color: var(--muted);
+  }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .faq-item {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.55);
+    padding: 4px 14px;
+  }
+
+  .faq-item summary {
+    cursor: pointer;
+    font-weight: 700;
+    padding: 12px 0;
+    list-style: none;
+  }
+
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-item p {
+    margin: 0 0 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  html.demo-dark .faq-item {
+    background: rgba(30, 41, 59, 0.9);
   }
 
   @media (max-width: 640px) {

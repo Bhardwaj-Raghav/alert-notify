@@ -1,0 +1,39 @@
+# alert-notify
+
+> Tiny framework-agnostic toast notification library (~4.7KB gzip JS). Works in React, Vue, Svelte, Angular, Astro, and plain HTML. Zero runtime dependencies. No root provider required.
+
+## Install
+
+```bash
+npm install alert-notify
+```
+
+```ts
+import { toast } from "alert-notify";
+import "alert-notify/style.css";
+
+toast.success("Saved");
+toast.error("Failed", { description: "Try again" });
+```
+
+## Who this is for
+
+Developers searching for:
+- React toast / React toast notification / React notification
+- react-toastify, toastify, tostify alternatives
+- react-hot-toast or Sonner alternatives
+- react-alert / snackbar / notistack alternatives
+- Vue toast, Svelte toast, Angular toast, vanilla JS toast
+
+## Links
+
+- Website: https://alert-notify.vercel.app
+- npm: https://www.npmjs.com/package/alert-notify
+- GitHub: https://github.com/Bhardwaj-Raghav/alert-notify
+- Docs: same as website (API, guides, theming, FAQ)
+
+## Optional framework wrappers
+
+- `alert-notify/react` — `<Toaster />`
+- `alert-notify/vue` — `<Toaster />`
+- `alert-notify/svelte` — `<Toaster />`

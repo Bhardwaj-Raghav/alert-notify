@@ -2,11 +2,14 @@
 import "alert-notify/style.css";
 import size from "../data/size.json";
 import pkg from "../../../package.json";
-
-const siteName = "alert-notify";
-const title = `${siteName} — tiny toast notifications for React, Vue, Svelte & more`;
-const description = `Tiny framework-agnostic toast notifications. ~${size.jsGzipKb}KB gzip JS. Works in React, Vue, Svelte, Angular, Astro, and plain HTML — no provider required.`;
-const ogTitle = `${siteName} — ~${size.jsGzipKb}KB gzip toasts`;
+import {
+  siteName,
+  title,
+  description,
+  ogTitle,
+  keywords,
+  faqs,
+} from "../data/seo";
 
 const baseURL = import.meta.env.BASE_URL.endsWith("/")
   ? import.meta.env.BASE_URL
@@ -14,6 +17,8 @@ const baseURL = import.meta.env.BASE_URL.endsWith("/")
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const ogImageURL = new URL(`${baseURL}og-image.png`, Astro.site);
 const sitemapURL = new URL(`${baseURL}sitemap-index.xml`, Astro.site);
+const npmUrl = "https://www.npmjs.com/package/alert-notify";
+const githubUrl = "https://github.com/Bhardwaj-Raghav/alert-notify";
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -23,20 +28,64 @@ const jsonLd = {
       "@id": `${canonicalURL.href}#website`,
       url: canonicalURL.href,
       name: siteName,
+      alternateName: [
+        "alert notify",
+        "React toast",
+        "toastify alternative",
+        "toast notification library",
+      ],
       description,
+      inLanguage: "en-US",
       publisher: { "@id": `${canonicalURL.href}#software` },
+    },
+    {
+      "@type": "WebPage",
+      "@id": `${canonicalURL.href}#webpage`,
+      url: canonicalURL.href,
+      name: title,
+      description,
+      isPartOf: { "@id": `${canonicalURL.href}#website` },
+      about: { "@id": `${canonicalURL.href}#software` },
+      primaryImageOfPage: {
+        "@type": "ImageObject",
+        url: ogImageURL.href,
+        width: 1200,
+        height: 630,
+      },
+      inLanguage: "en-US",
     },
     {
       "@type": "SoftwareApplication",
       "@id": `${canonicalURL.href}#software`,
       name: siteName,
+      alternateName: [
+        "alert notify",
+        "alert-notify toast",
+        "React toast library",
+        "toastify alternative",
+      ],
       applicationCategory: "DeveloperApplication",
+      applicationSubCategory: "Toast notification library",
       operatingSystem: "Any",
       description,
       url: canonicalURL.href,
-      downloadUrl: "https://www.npmjs.com/package/alert-notify",
-      codeRepository: "https://github.com/Bhardwaj-Raghav/alert-notify",
+      downloadUrl: npmUrl,
+      installUrl: npmUrl,
+      codeRepository: githubUrl,
       license: "https://opensource.org/licenses/MIT",
+      keywords,
+      featureList: [
+        "React toast notifications",
+        "Vue toast notifications",
+        "Svelte toast notifications",
+        "Angular toast messages",
+        "Vanilla JS / CDN toasts",
+        "Promise toast API",
+        "Dark mode and CSS variables",
+        "Zero runtime dependencies",
+        "No root provider required",
+        "Alternative to react-toastify, react-hot-toast, Sonner, react-alert",
+      ],
       author: {
         "@type": "Person",
         name: "Raghav Bhardwaj",
@@ -45,8 +94,48 @@ const jsonLd = {
         "@type": "Offer",
         price: "0",
         priceCurrency: "USD",
+        availability: "https://schema.org/InStock",
       },
       softwareVersion: pkg.version,
+      softwareRequirements: "Node.js >= 18 for install via npm",
+      fileSize: `${size.jsGzipKb}KB gzip JS`,
+      screenshot: ogImageURL.href,
+      sameAs: [githubUrl, npmUrl],
+    },
+    {
+      "@type": "SoftwareSourceCode",
+      "@id": `${canonicalURL.href}#source`,
+      name: siteName,
+      description,
+      codeRepository: githubUrl,
+      programmingLanguage: ["TypeScript", "JavaScript"],
+      runtimePlatform: ["Browser", "React", "Vue", "Svelte", "Angular", "Astro"],
+      license: "https://opensource.org/licenses/MIT",
+      url: canonicalURL.href,
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${canonicalURL.href}#faq`,
+      mainEntity: faqs.map((faq) => ({
+        "@type": "Question",
+        name: faq.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: faq.answer,
+        },
+      })),
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": `${canonicalURL.href}#breadcrumb`,
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: canonicalURL.href,
+        },
+      ],
     },
   ],
 };
@@ -59,17 +148,32 @@ const jsonLd = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta
-      name="keywords"
-      content="toast, toast notifications, alert-notify, react toast, vue toast, svelte toast, javascript toast, lightweight toast"
-    />
+    <meta name="keywords" content={keywords} />
     <meta name="author" content="Raghav Bhardwaj" />
-    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="creator" content="Raghav Bhardwaj" />
+    <meta name="publisher" content="alert-notify" />
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
+    <meta name="googlebot" content="index, follow" />
+    <meta name="bingbot" content="index, follow" />
     <meta name="theme-color" content="#0f766e" />
     <meta name="color-scheme" content="light" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="application-name" content={siteName} />
+    <meta name="apple-mobile-web-app-title" content={siteName} />
+    <meta name="category" content="developer tools, javascript, toast notifications" />
+    <meta
+      name="subject"
+      content="Toast notification library for React, Vue, Svelte, Angular, and vanilla JavaScript"
+    />
+    <meta name="rating" content="General" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
 
     <link rel="canonical" href={canonicalURL} />
     <link rel="sitemap" type="application/xml" href={sitemapURL} />
+    <link rel="alternate" type="text/plain" href={new URL(`${baseURL}llms.txt`, Astro.site)} title="llms.txt" />
 
     <link rel="icon" href={`${baseURL}favicon.svg`} type="image/svg+xml" />
     <link rel="icon" href={`${baseURL}favicon-32x32.png`} type="image/png" sizes="32x32" />
@@ -84,16 +188,28 @@ const jsonLd = {
     <meta property="og:title" content={ogTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImageURL} />
-    <meta property="og:image:alt" content={`${siteName} — tiny framework-agnostic toast notifications`} />
+    <meta
+      property="og:image:alt"
+      content={`${siteName} — React toast, toastify alternative, and framework-agnostic toast notifications`}
+    />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:see_also" content={githubUrl} />
+    <meta property="og:see_also" content={npmUrl} />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={ogTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageURL} />
-    <meta name="twitter:image:alt" content={`${siteName} — tiny framework-agnostic toast notifications`} />
+    <meta
+      name="twitter:image:alt"
+      content={`${siteName} — React toast and toast notification library`}
+    />
+    <meta name="twitter:label1" content="Install" />
+    <meta name="twitter:data1" content="npm i alert-notify" />
+    <meta name="twitter:label2" content="Size" />
+    <meta name="twitter:data2" content={`~${size.jsGzipKb}KB gzip JS`} />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

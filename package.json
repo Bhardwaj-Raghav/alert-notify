@@ -1,7 +1,7 @@
 {
   "name": "alert-notify",
-  "version": "2.0.0",
-  "description": "Tiny framework-agnostic toast notifications. ~5KB gzip. Works everywhere.",
+  "version": "2.0.1",
+  "description": "Tiny React toast & toast notification library (~5KB). Alternative to react-toastify, react-hot-toast, Sonner, and react-alert. Works in React, Vue, Svelte, Angular, and vanilla JS — no provider.",
   "license": "MIT",
   "author": "Raghav Bhardwaj",
   "type": "module",
@@ -78,19 +78,36 @@
   "bugs": {
     "url": "https://github.com/Bhardwaj-Raghav/alert-notify/issues"
   },
-  "homepage": "https://github.com/Bhardwaj-Raghav/alert-notify#readme",
+  "homepage": "https://alert-notify.vercel.app",
   "keywords": [
     "toast",
+    "toast-notification",
+    "toast-notifications",
     "notification",
+    "notifications",
     "alert",
+    "react-alert",
     "snackbar",
+    "react-toast",
+    "react-toastify",
+    "toastify",
+    "tostify",
+    "react-hot-toast",
+    "hot-toast",
+    "sonner",
+    "notistack",
+    "react-notification",
+    "react-notifications",
+    "vue-toast",
+    "svelte-toast",
+    "angular-toast",
+    "javascript-toast",
     "vanilla",
     "typescript",
     "framework-agnostic",
     "lightweight",
     "small",
-    "toastify",
-    "sonner"
+    "zero-dependency"
   ],
   "engines": {
     "node": ">=18"
