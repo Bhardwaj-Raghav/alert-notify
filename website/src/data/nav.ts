@@ -24,7 +24,10 @@ export type FrameworkEntry = {
   blurb: string;
 };
 
-export const siteOrigin = "https://alert-notify.vercel.app";
+import { siteOrigin as defaultSiteOrigin } from "./seo";
+
+/** Production origin shared with seo.ts / Astro site default. */
+export const siteOrigin = defaultSiteOrigin;
 
 export const githubUrl = "https://github.com/Bhardwaj-Raghav/alert-notify";
 export const npmUrl = "https://www.npmjs.com/package/alert-notify";

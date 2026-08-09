@@ -1,11 +1,13 @@
 ---
 import Base from "./Base.astro";
 import { docsNav } from "../data/nav";
+import type { OgType } from "../data/seo";
 
 interface Props {
   title: string;
   description: string;
   ogTitle?: string;
+  keywords?: string;
   pageTitle: string;
   includeFaqSchema?: boolean;
 }
@@ -14,16 +16,21 @@ const {
   title,
   description,
   ogTitle = title,
+  keywords,
   pageTitle,
   includeFaqSchema = false,
 } = Astro.props;
 const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
+const ogType: OgType = "article";
 ---
 
 <Base
   title={title}
   description={description}
   ogTitle={ogTitle}
+  keywords={keywords}
+  ogType={ogType}
+  articleHeadline={pageTitle}
   includeFaqSchema={includeFaqSchema}
   breadcrumbs={[
     { name: "Home", href: "/" },

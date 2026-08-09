@@ -13,15 +13,28 @@ export default defineConfig({
   base: "/",
   output: "static",
   trailingSlash: "never",
+  redirects: {
+    "/sitemap.xml": "/sitemap-index.xml",
+  },
   integrations: [
     sitemap({
       changefreq: "weekly",
-      priority: 1,
       lastmod: new Date(),
       filter: (page) => {
         const { pathname } = new URL(page);
         if (pathname === "/" || pathname === "") return true;
         return !page.endsWith("/");
+      },
+      serialize(item) {
+        const { pathname } = new URL(item.url);
+        if (pathname === "/" || pathname === "") {
+          item.priority = 1;
+        } else if (pathname === "/changelog") {
+          item.priority = 0.5;
+        } else {
+          item.priority = 0.8;
+        }
+        return item;
       },
     }),
   ],

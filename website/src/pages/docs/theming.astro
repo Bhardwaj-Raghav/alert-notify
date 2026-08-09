@@ -3,10 +3,14 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
 ---
 
 <DocsLayout
-  title="Theming · alert-notify"
-  description="Configure light, dark, and system themes and override alert-notify CSS variables."
+  title="alert-notify Documentation — Theming"
+  description="Configure light, dark, and system themes for alert-notify, enable richColors, and override CSS variables on .an-toaster."
   pageTitle="Theming"
 >
+  <p>
+    Control toast colors with theme mode, richColors, and CSS variables. Override tokens after the package stylesheet.
+  </p>
+
   <h2>Theme mode</h2>
   <pre class="api"><code>{`toast.config({ theme: "light" }); // default
 toast.config({ theme: "system" }); // OS + html.dark / data-theme

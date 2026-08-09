@@ -8,8 +8,9 @@ import {
   description as defaultDescription,
   ogTitle as defaultOgTitle,
   title as defaultTitle,
-  keywords,
+  keywords as defaultKeywords,
   faqs,
+  type OgType,
 } from "../data/seo";
 import { githubUrl, npmUrl } from "../data/nav";
 import SiteHeader from "../components/SiteHeader.astro";
@@ -21,18 +22,25 @@ interface Props {
   title?: string;
   description?: string;
   ogTitle?: string;
+  keywords?: string;
+  ogType?: OgType;
   breadcrumbs?: Breadcrumb[];
   includeFaqSchema?: boolean;
   includeChrome?: boolean;
+  /** TechArticle headline; defaults to title when ogType is article. */
+  articleHeadline?: string;
 }
 
 const {
   title = defaultTitle,
   description = defaultDescription,
   ogTitle = defaultOgTitle,
+  keywords,
+  ogType = "website" as OgType,
   breadcrumbs = [{ name: "Home", href: "/" }],
   includeFaqSchema = false,
   includeChrome = true,
+  articleHeadline,
 } = Astro.props;
 
 const baseURL = import.meta.env.BASE_URL.endsWith("/")
@@ -41,7 +49,12 @@ const baseURL = import.meta.env.BASE_URL.endsWith("/")
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const homeURL = new URL(baseURL, Astro.site);
 const ogImageURL = new URL(`${baseURL}og-image.png`, Astro.site);
-const sitemapURL = new URL(`${baseURL}sitemap-index.xml`, Astro.site);
+const sitemapURL = new URL(`${baseURL}sitemap.xml`, Astro.site);
+const isHome =
+  Astro.url.pathname === "/" ||
+  Astro.url.pathname === "" ||
+  Astro.url.pathname === baseURL.replace(/\/$/, "") ||
+  Astro.url.pathname === baseURL;
 
 const graph: Record<string, unknown>[] = [
   {
@@ -49,12 +62,7 @@ const graph: Record<string, unknown>[] = [
     "@id": `${homeURL.href}#website`,
     url: homeURL.href,
     name: siteName,
-    alternateName: [
-      "alert notify",
-      "React toast",
-      "toastify alternative",
-      "toast notification library",
-    ],
+    alternateName: ["alert notify", "toast notification library"],
     description: defaultDescription,
     inLanguage: "en-US",
     publisher: { "@id": `${homeURL.href}#software` },
@@ -75,66 +83,81 @@ const graph: Record<string, unknown>[] = [
     },
     inLanguage: "en-US",
   },
-  {
-    "@type": "SoftwareApplication",
-    "@id": `${homeURL.href}#software`,
-    name: siteName,
-    alternateName: [
-      "alert notify",
-      "alert-notify toast",
-      "React toast library",
-      "toastify alternative",
-    ],
-    applicationCategory: "DeveloperApplication",
-    applicationSubCategory: "Toast notification library",
-    operatingSystem: "Any",
-    description: defaultDescription,
-    url: homeURL.href,
-    downloadUrl: npmUrl,
-    installUrl: npmUrl,
-    codeRepository: githubUrl,
-    license: "https://opensource.org/licenses/MIT",
-    keywords,
-    featureList: [
-      "React toast notifications",
-      "Vue toast notifications",
-      "Svelte toast notifications",
-      "Angular toast messages",
-      "Vanilla JS / CDN toasts",
-      "Promise toast API",
-      "Dark mode and CSS variables",
-      "Zero runtime dependencies",
-      "No root provider required",
-      "Alternative to react-toastify, react-hot-toast, Sonner, react-alert",
-    ],
-    author: {
-      "@type": "Person",
-      name: "Raghav Bhardwaj",
+];
+
+if (isHome) {
+  graph.push(
+    {
+      "@type": "SoftwareApplication",
+      "@id": `${homeURL.href}#software`,
+      name: siteName,
+      alternateName: ["alert notify", "toast notification library"],
+      applicationCategory: "DeveloperApplication",
+      applicationSubCategory: "Toast notification library",
+      operatingSystem: "Any",
+      description: defaultDescription,
+      url: homeURL.href,
+      downloadUrl: npmUrl,
+      installUrl: npmUrl,
+      codeRepository: githubUrl,
+      license: "https://opensource.org/licenses/MIT",
+      keywords: defaultKeywords,
+      featureList: [
+        "React toast notifications",
+        "Vue toast notifications",
+        "Svelte toast notifications",
+        "Angular toast messages",
+        "Vanilla JS / CDN toasts",
+        "Promise toast API",
+        "Dark mode and CSS variables",
+        "Zero runtime dependencies",
+        "No root provider required",
+      ],
+      author: {
+        "@type": "Person",
+        name: "Raghav Bhardwaj",
+      },
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD",
+        availability: "https://schema.org/InStock",
+      },
+      softwareVersion: pkg.version,
+      softwareRequirements: "Node.js >= 18 for install via npm",
+      fileSize: `${size.jsGzipKb}KB gzip JS`,
+      screenshot: ogImageURL.href,
+      sameAs: [githubUrl, npmUrl],
     },
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-      availability: "https://schema.org/InStock",
+    {
+      "@type": "SoftwareSourceCode",
+      "@id": `${homeURL.href}#source`,
+      name: siteName,
+      description: defaultDescription,
+      codeRepository: githubUrl,
+      programmingLanguage: ["TypeScript", "JavaScript"],
+      runtimePlatform: ["Browser", "React", "Vue", "Svelte", "Angular", "Astro"],
+      license: "https://opensource.org/licenses/MIT",
+      url: homeURL.href,
     },
-    softwareVersion: pkg.version,
-    softwareRequirements: "Node.js >= 18 for install via npm",
-    fileSize: `${size.jsGzipKb}KB gzip JS`,
-    screenshot: ogImageURL.href,
-    sameAs: [githubUrl, npmUrl],
-  },
-  {
-    "@type": "SoftwareSourceCode",
-    "@id": `${homeURL.href}#source`,
-    name: siteName,
-    description: defaultDescription,
-    codeRepository: githubUrl,
-    programmingLanguage: ["TypeScript", "JavaScript"],
-    runtimePlatform: ["Browser", "React", "Vue", "Svelte", "Angular", "Astro"],
-    license: "https://opensource.org/licenses/MIT",
-    url: homeURL.href,
-  },
-  {
+  );
+}
+
+if (ogType === "article") {
+  graph.push({
+    "@type": "TechArticle",
+    "@id": `${canonicalURL.href}#article`,
+    headline: articleHeadline ?? title,
+    description,
+    url: canonicalURL.href,
+    isPartOf: { "@id": `${homeURL.href}#website` },
+    about: { "@id": `${homeURL.href}#software` },
+    inLanguage: "en-US",
+  });
+}
+
+if (breadcrumbs.length > 1) {
+  graph.push({
     "@type": "BreadcrumbList",
     "@id": `${canonicalURL.href}#breadcrumb`,
     itemListElement: breadcrumbs.map((crumb, index) => ({
@@ -143,8 +166,8 @@ const graph: Record<string, unknown>[] = [
       name: crumb.name,
       item: new URL(crumb.href, Astro.site).href,
     })),
-  },
-];
+  });
+}
 
 if (includeFaqSchema) {
   graph.push({
@@ -174,7 +197,7 @@ const jsonLd = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="keywords" content={keywords} />
+    {keywords && <meta name="keywords" content={keywords} />}
     <meta name="author" content="Raghav Bhardwaj" />
     <meta name="creator" content="Raghav Bhardwaj" />
     <meta name="publisher" content="alert-notify" />
@@ -189,12 +212,6 @@ const jsonLd = {
     <meta name="format-detection" content="telephone=no" />
     <meta name="application-name" content={siteName} />
     <meta name="apple-mobile-web-app-title" content={siteName} />
-    <meta name="category" content="developer tools, javascript, toast notifications" />
-    <meta
-      name="subject"
-      content="Toast notification library for React, Vue, Svelte, Angular, and vanilla JavaScript"
-    />
-    <meta name="rating" content="General" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
 
     <link rel="canonical" href={canonicalURL} />
@@ -207,7 +224,7 @@ const jsonLd = {
     <link rel="apple-touch-icon" href={`${baseURL}apple-touch-icon.png`} sizes="180x180" />
     <link rel="manifest" href={`${baseURL}site.webmanifest`} />
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content={siteName} />
     <meta property="og:locale" content="en_US" />
     <meta property="og:url" content={canonicalURL} />
@@ -216,7 +233,7 @@ const jsonLd = {
     <meta property="og:image" content={ogImageURL} />
     <meta
       property="og:image:alt"
-      content={`${siteName}: React toast, toastify alternative, and framework-agnostic toast notifications`}
+      content={`${siteName}: toast notifications for React, Vue, Svelte, and vanilla JS`}
     />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
@@ -230,7 +247,7 @@ const jsonLd = {
     <meta name="twitter:image" content={ogImageURL} />
     <meta
       name="twitter:image:alt"
-      content={`${siteName}: React toast and toast notification library`}
+      content={`${siteName}: toast notification library`}
     />
     <meta name="twitter:label1" content="Install" />
     <meta name="twitter:data1" content="npm i alert-notify" />

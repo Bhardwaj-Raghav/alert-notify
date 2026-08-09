@@ -1,54 +1,25 @@
 import size from "./size.json";
 
+/** Production origin. Keep in sync with astro.config `site` default. */
+export const siteOrigin = "https://alert-notify.vercel.app";
+
 export const siteName = "alert-notify";
 
-export const title =
-  "alert-notify: toast notifications for React, Vue, Svelte & vanilla";
+export const title = "alert-notify — toast notifications";
 
-export const description = `Tiny multi-framework toast library. Alternative to react-toastify, react-hot-toast, Sonner, and react-alert. No provider required. Built-in dark/system theme and richColors. ~${size.jsGzipKb}KB gzip JS + ~${size.cssGzipKb}KB CSS per path.`;
+export const description = `Tiny multi-framework toast library. No provider. Dark/system theme and richColors. ~${size.jsGzipKb}KB gzip JS + ~${size.cssGzipKb}KB CSS. Alternative to toastify, hot-toast, and Sonner.`;
 
-export const ogTitle = `${siteName}: toast notifications without the React lock-in`;
+export const ogTitle = title;
 
-/** Target queries woven into meta + on-page copy (not keyword stuffing alone). */
+/** Short home-only keyword list. Pass via Base props; do not dump sitewide. */
 export const keywords = [
   "alert-notify",
-  "toast",
-  "toast notification",
   "toast notifications",
-  "javascript toast",
-  "js toast",
   "react toast",
-  "react toast notification",
-  "react notification",
-  "react notifications",
-  "react alert",
-  "react-alert",
-  "react toastify",
-  "react-toastify",
-  "toastify",
-  "tostify",
-  "react-hot-toast",
-  "hot toast",
-  "sonner",
-  "sonner alternative",
-  "notistack",
-  "snackbar",
-  "react snackbar",
   "vue toast",
-  "vue notification",
   "svelte toast",
-  "angular toast",
-  "astro toast",
-  "toast library",
-  "notification library",
-  "alert library",
-  "lightweight toast",
-  "framework agnostic toast",
-  "vanilla js toast",
-  "npm toast",
-  "toast message",
-  "success toast",
-  "error toast",
+  "toastify alternative",
+  "sonner alternative",
 ].join(", ");
 
 export const faqs = [
@@ -111,14 +82,20 @@ export const alternatives = [
   },
 ] as const;
 
+export type OgType = "website" | "article";
+
 export function pageMeta(opts: {
   title: string;
   description: string;
   ogTitle?: string;
+  keywords?: string;
+  ogType?: OgType;
 }) {
   return {
     title: opts.title,
     description: opts.description,
     ogTitle: opts.ogTitle ?? opts.title,
+    keywords: opts.keywords,
+    ogType: opts.ogType ?? ("website" as OgType),
   };
 }
