@@ -42,24 +42,72 @@ function normalizeContent(
   return { message: fallbackMessage, options: { ...rest } };
 }
 
+/** Imperative toaster API returned by {@link createToaster} and the default {@link toast}. */
 export type ToasterInstance = {
+  /**
+   * Show a `"message"` toast.
+   * @returns Toast id (reuse via `options.id` to update in place).
+   *
+   * @example
+   * toast("Saved", { title: "Profile" })
+   * toast("Stay open", { autoClose: false })
+   */
   (message: string, options?: ToastOptions): ToastId;
+  /** Show a success toast. */
   success: (message: string, options?: ToastOptions) => ToastId;
+  /** Show an error toast. */
   error: (message: string, options?: ToastOptions) => ToastId;
+  /** Show a warning toast. */
   warning: (message: string, options?: ToastOptions) => ToastId;
+  /** Show an info toast. */
   info: (message: string, options?: ToastOptions) => ToastId;
+  /**
+   * Show a loading toast. Defaults to sticky (`autoClose: false`) until updated or dismissed.
+   */
   loading: (message: string, options?: ToastOptions) => ToastId;
+  /** Show a neutral message toast (same as calling the instance directly). */
   message: (message: string, options?: ToastOptions) => ToastId;
+  /**
+   * Show a custom toast. String HTML is not escaped (trusted markup only).
+   * Default icon is hidden unless you pass `icon`.
+   *
+   * @example
+   * toast.custom('<strong>Hello</strong>')
+   * toast.custom(document.createElement('div'))
+   */
   custom: (
     content: string | HTMLElement,
     options?: ToastOptions,
   ) => ToastId;
+  /**
+   * Show loading → success/error for a promise. Updates the same toast id.
+   * On failure, shows the error toast then rethrows.
+   *
+   * @example
+   * await toast.promise(save(), {
+   *   loading: 'Saving…',
+   *   success: 'Saved',
+   *   error: 'Failed',
+   * })
+   */
   promise: <T>(promise: Promise<T>, messages: PromiseMessages<T>) => Promise<T>;
+  /**
+   * Dismiss one toast by id, or all toasts when `id` is omitted.
+   * Public dismiss always uses close reason `"Manual"`.
+   */
   dismiss: (id?: ToastId) => void;
+  /** Shallow-merge global toaster config. */
   config: (partial: Partial<ToasterConfig>) => void;
+  /** Current merged toaster config. */
   getConfig: () => ToasterConfig;
+  /** Snapshot of active toasts (read-only {@link ToastRecord}s). */
   getToasts: () => readonly ToastRecord[];
+  /**
+   * Subscribe to toast list changes.
+   * Fires immediately with the current list; returns an unsubscribe function.
+   */
   subscribe: (listener: ToastListener) => () => void;
+  /** Dismiss all toasts and tear down the portal (no-op portal in headless mode). */
   destroy: () => void;
 };
 
@@ -70,6 +118,17 @@ function createTyped(
   return (message, options = {}) => store.add(message, { ...options, type });
 }
 
+/**
+ * Create an isolated toaster instance (separate store and optional portal).
+ *
+ * @param initialConfig - Merged over built-in defaults.
+ * @param options.headless - When true, no DOM portal; drive UI via `subscribe` / `getToasts`.
+ *
+ * @example
+ * const toaster = createToaster({ position: 'bottom-center' }, { headless: true })
+ * toaster.subscribe((list) => renderCustomUi(list))
+ * toaster.success('Done')
+ */
 export function createToaster(
   initialConfig: Partial<ToasterConfig> = {},
   options: { headless?: boolean } = {},

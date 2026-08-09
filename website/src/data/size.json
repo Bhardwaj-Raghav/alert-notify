@@ -17,17 +17,17 @@
       "gzipKb": 5.7
     },
     "svelte": {
-      "raw": 21227,
-      "gzip": 5886,
-      "gzipKb": 5.7
+      "raw": 21473,
+      "gzip": 6021,
+      "gzipKb": 5.9
     }
   },
-  "jsRaw": 21227,
-  "jsGzip": 5886,
+  "jsRaw": 21473,
+  "jsGzip": 6021,
   "cssRaw": 11993,
   "cssGzip": 2760,
-  "jsGzipKb": 5.7,
+  "jsGzipKb": 5.9,
   "cssGzipKb": 2.7,
-  "totalGzip": 8646,
-  "totalGzipKb": 8.4
+  "totalGzip": 8781,
+  "totalGzipKb": 8.6
 }

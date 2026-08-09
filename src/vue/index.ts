@@ -64,6 +64,10 @@ export const Toaster = defineComponent({
 
 /**
  * Show a toast with custom Vue VNode content.
+ * Pass a VNode or a factory `() => VNode`. Unmounts when the toast closes.
+ *
+ * @param content - VNode or factory that returns a VNode.
+ * @param options - Per-toast options (same as core `toast.custom`).
  */
 export function custom(
   content: VNode | (() => VNode),

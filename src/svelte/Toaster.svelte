@@ -1,3 +1,8 @@
+<!--
+  Optional Svelte helper. Core auto-mounts a portal — this only syncs
+  Partial<ToasterConfig> props into toast.config. Place once near your app root.
+  There is no Svelte custom() helper; use toast.custom(HTMLElement) from core.
+-->
 <script lang="ts">
   import { toast } from "alert-notify";
   import type { ToasterConfig } from "alert-notify";

@@ -1,6 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
-import { releases } from "../data/releases";
+import { releases, rewriteChangelogLinks } from "../data/releases";
 import { pageMeta } from "../data/seo";
 
 const meta = pageMeta({
@@ -8,6 +8,20 @@ const meta = pageMeta({
   description:
     "Release history for alert-notify, including the 3.0 message-first API changes and published 2.x / 1.x lines.",
 });
+
+/** Escape HTML, then light markdown: `code` and [label](href). */
+function formatInline(text: string): string {
+  const escaped = text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  return rewriteChangelogLinks(escaped)
+    .replace(
+      /\[([^\]]+)\]\(([^)]+)\)/g,
+      '<a href="$2">$1</a>',
+    )
+    .replace(/`([^`]+)`/g, "<code>$1</code>");
+}
 ---
 
 <Base
@@ -23,23 +37,40 @@ const meta = pageMeta({
     <section class="section">
       <h1 style="margin:0;font-size:clamp(2rem,4vw,2.8rem)">Changelog</h1>
       <p class="section-copy">
-        Site summary of npm releases. See <a href="/docs/migration">Migration</a> for upgrade tables.
+        From the package <code>CHANGELOG.md</code>. See <a href="/docs/migration">Migration</a> for upgrade tables.
       </p>
       {
         releases.map((release) => (
           <article class="release">
             <div class="release-head">
-              <h2>{release.version}</h2>
+              <h2>
+                {release.href ? (
+                  <a href={release.href}>{release.version}</a>
+                ) : (
+                  release.version
+                )}
+              </h2>
+              {release.date && <time class="release-date" datetime={release.date}>{release.date}</time>}
               {release.status && <span class="release-status">{release.status}</span>}
             </div>
-            <p class="section-copy" style="margin-bottom:8px">
-              {release.summary}
-            </p>
-            <ul class="notes">
-              {release.notes.map((note) => (
-                <li>{note}</li>
-              ))}
-            </ul>
+            {release.sections.map((section) => (
+              <div class="release-section">
+                {section.title && <h3>{section.title}</h3>}
+                {section.blocks.map((block) =>
+                  block.type === "list" ? (
+                    <ul class="notes">
+                      {block.items.map((item) => (
+                        <li set:html={formatInline(item)} />
+                      ))}
+                    </ul>
+                  ) : block.type === "paragraph" ? (
+                    <p class="section-copy" set:html={formatInline(block.text)} />
+                  ) : (
+                    <pre class="api"><code>{block.code}</code></pre>
+                  ),
+                )}
+              </div>
+            ))}
           </article>
         ))
       }
