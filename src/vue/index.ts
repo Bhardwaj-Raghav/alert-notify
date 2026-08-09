@@ -16,7 +16,7 @@ import type {
 } from "alert-notify";
 
 /**
- * Optional Vue helper. Core auto-mounts — this syncs config from props.
+ * Optional Vue helper. Core auto-mounts. This syncs config from props.
  * Place once in your root layout/App.
  *
  * @example

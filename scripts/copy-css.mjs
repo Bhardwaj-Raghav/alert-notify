@@ -70,7 +70,7 @@ function readDist(...parts) {
 
 /**
  * Size = code needed for one framework path (core + optional adapter).
- * Headline number is the max of those paths — not all frameworks summed.
+ * Headline number is the max of those paths, not all frameworks summed.
  */
 const entrySources = {
   vanilla: readDist("index.js"),
@@ -135,7 +135,7 @@ mkdirSync(websiteData, { recursive: true });
 writeFileSync(join(websiteData, "size.json"), `${JSON.stringify(sizes, null, 2)}\n`);
 
 console.log(
-  `bundle: JS ${sizes.jsGzipKbMin}–${sizes.jsGzipKbMax}KB gzip (${sizes.minEntry}–${sizes.maxEntry}) · css ${sizes.cssGzipKb}KB gzip · max total ~${sizes.totalGzipKb}KB`,
+  `bundle: JS ${sizes.jsGzipKbMin}-${sizes.jsGzipKbMax}KB gzip (${sizes.minEntry}-${sizes.maxEntry}) · css ${sizes.cssGzipKb}KB gzip · max total ~${sizes.totalGzipKb}KB`,
 );
 for (const [name, size] of Object.entries(entrySizes)) {
   console.log(`  ${name.padEnd(8)} ${size.gzipKb}KB gzip`);

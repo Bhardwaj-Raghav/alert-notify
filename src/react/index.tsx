@@ -10,7 +10,7 @@ import type { ToastId, ToastOptions, ToasterConfig } from "alert-notify";
 export type ToasterProps = Partial<ToasterConfig>;
 
 /**
- * Optional React helper. The core auto-mounts a portal — this only syncs
+ * Optional React helper. The core auto-mounts a portal. This only syncs
  * config from props (Sonner-style DX). Place once near your app root.
  *
  * The published `alert-notify/react` entry is a Client Component

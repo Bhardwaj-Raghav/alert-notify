@@ -1,5 +1,5 @@
 <!--
-  Optional Svelte helper. Core auto-mounts a portal — this only syncs
+  Optional Svelte helper. Core auto-mounts a portal. This only syncs
   Partial<ToasterConfig> props into toast.config. Place once near your app root.
   There is no Svelte custom() helper; use toast.custom(HTMLElement) from core.
 -->

@@ -43,12 +43,12 @@ npm run website:build
 
 ## Layout
 
-- `src/` — core toaster, store, renderer, CSS; thin wrappers under `react/`, `vue/`, `svelte/`
-- `playground/` — Vite sandbox for local package testing
-- `tests/` — unit tests
-- `stories/` — Storybook
-- `website/` — Astro landing page (private; not published to npm)
-- `dist/` — build output (gitignored; what npm ships)
+- `src/`: core toaster, store, renderer, CSS; thin wrappers under `react/`, `vue/`, `svelte/`
+- `playground/`: Vite sandbox for local package testing
+- `tests/`: unit tests
+- `stories/`: Storybook
+- `website/`: Astro landing page (private; not published to npm)
+- `dist/`: build output (gitignored; what npm ships)
 
 Keep the core framework-agnostic. Framework packages should stay thin sync wrappers around `toast` / `createToaster`.
 
@@ -58,7 +58,7 @@ Keep the core framework-agnostic. Framework packages should stay thin sync wrapp
 2. Prefer small, focused PRs.
 3. Match existing style; don’t reformat unrelated files.
 4. Add or update tests when you change behavior.
-5. Bundle size matters — avoid new runtime dependencies unless there’s a strong reason.
+5. Bundle size matters. Avoid new runtime dependencies unless there’s a strong reason.
 6. Don’t commit secrets. Use `website/.env.example` as the template for site env vars.
 
 ## Issues

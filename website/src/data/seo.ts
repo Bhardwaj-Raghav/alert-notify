@@ -5,7 +5,7 @@ export const siteOrigin = "https://alert-notify.vercel.app";
 
 export const siteName = "alert-notify";
 
-export const title = "alert-notify — toast notifications";
+export const title = "alert-notify: toast notifications";
 
 export const description = `Tiny multi-framework toast library. No provider. Dark/system theme and richColors. ${frameworkGzipWithCss()}. Alternative to toastify, hot-toast, and Sonner.`;
 

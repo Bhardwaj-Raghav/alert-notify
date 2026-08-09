@@ -27,8 +27,8 @@ export type ToastId = string;
 
 /**
  * Why a toast closed.
- * `"Manual"` — dismiss, close button, swipe, Escape, action/cancel.
- * `"Auto"` — timer completed.
+ * `"Manual"`: dismiss, close button, swipe, Escape, action/cancel.
+ * `"Auto"`: timer completed.
  */
 export type ToastCloseReason = "Manual" | "Auto";
 

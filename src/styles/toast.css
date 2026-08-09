@@ -30,7 +30,7 @@
   --an-warning-fg: #92400e;
   --an-info-fg: #1e40af;
 
-  /* Rich fills — soft pastels (override these to rebrand) */
+  /* Rich fills: soft pastels (override these to rebrand) */
   --an-success-bg: #ecfdf5;
   --an-success-border: #a7f3d0;
   --an-error-bg: #fff1f2;
@@ -88,7 +88,7 @@
   --an-info: #60a5fa;
   --an-loading: #94a3b8;
 
-  /* Near-white text on tinted fills — avoids same-hue mud */
+  /* Near-white text on tinted fills. Avoids same-hue mud. */
   --an-success-fg: #ecfdf5;
   --an-error-fg: #fff1f2;
   --an-warning-fg: #fffbeb;
@@ -381,7 +381,7 @@
   transform-origin: right center;
 }
 
-/* Rich colors — tinted surface; text uses high-contrast fg (not the accent hue) */
+/* Rich colors: tinted surface; text uses high-contrast fg (not the accent hue) */
 .an-toaster[data-rich-colors="true"] .an-toast[data-type="success"] {
   background: var(--an-success-bg);
   border-color: var(--an-success-border);

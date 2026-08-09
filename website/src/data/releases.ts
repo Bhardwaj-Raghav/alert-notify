@@ -176,7 +176,7 @@ export function parseChangelog(markdown: string): Release[] {
   return releases;
 }
 
-/** Site changelog — sourced from the package root CHANGELOG.md. */
+/** Site changelog, sourced from the package root CHANGELOG.md. */
 export const releases: Release[] = parseChangelog(
   fs.readFileSync(resolveChangelogPath(), "utf8"),
 );

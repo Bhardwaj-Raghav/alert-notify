@@ -9,7 +9,7 @@ describe("built package entry contracts", () => {
     try {
       code = readFileSync(path, "utf8");
     } catch {
-      expect.fail("dist/react.js missing — run npm run build first");
+      expect.fail("dist/react.js missing. Run npm run build first");
       return;
     }
     expect(code.startsWith('"use client";')).toBe(true);
@@ -22,7 +22,7 @@ describe("built package entry contracts", () => {
     try {
       code = readFileSync(path, "utf8");
     } catch {
-      expect.fail("dist/index.js missing — run npm run build first");
+      expect.fail("dist/index.js missing. Run npm run build first");
       return;
     }
     expect(code.startsWith('import "./style.css";')).toBe(true);
@@ -34,7 +34,7 @@ describe("built package entry contracts", () => {
     try {
       code = readFileSync(path, "utf8");
     } catch {
-      expect.fail("dist/alert-notify.global.js missing — run npm run build first");
+      expect.fail("dist/alert-notify.global.js missing. Run npm run build first");
       return;
     }
     expect(code).toContain("data-alert-notify-style");
