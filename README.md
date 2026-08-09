@@ -1,7 +1,11 @@
 # alert-notify
 
 [![npm](https://img.shields.io/npm/v/alert-notify.svg)](https://www.npmjs.com/package/alert-notify)
+[![downloads](https://img.shields.io/npm/dm/alert-notify.svg)](https://www.npmjs.com/package/alert-notify)
 [![license](https://img.shields.io/npm/l/alert-notify.svg)](https://github.com/Bhardwaj-Raghav/alert-notify/blob/main/LICENSE)
+[![CI](https://github.com/Bhardwaj-Raghav/alert-notify/actions/workflows/ci.yml/badge.svg)](https://github.com/Bhardwaj-Raghav/alert-notify/actions/workflows/ci.yml)
+[![types](https://img.shields.io/npm/types/alert-notify.svg)](https://www.npmjs.com/package/alert-notify)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/alert-notify)](https://bundlephobia.com/package/alert-notify)
 
 **Framework-agnostic toast notifications.** One imperative `toast.success()` API for vanilla JS, React, Vue, Svelte, Angular, Astro, and CDN. No root provider required. The portal auto-mounts; optional `<Toaster />` helpers only sync config.
 
