@@ -1,6 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
-import InstallCopy from "../components/InstallCopy.astro";
+import InstallCopy from "./InstallCopy.astro";
 import { frameworks } from "../data/nav";
 import { pageMeta } from "../data/seo";
 
@@ -48,15 +48,23 @@ const meta = pageMeta({
       <div class="hero-stage" data-fw-stage>
         <h2>Try it</h2>
         <p class="stage-copy">Same core toast API this stack uses.</p>
-        <div class="demo-grid">
-          <button type="button" data-toast="success">Success</button>
-          <button type="button" data-toast="error">Error</button>
-          <button type="button" data-toast="promise" class="wide">Promise</button>
+        <div class="tabs home-stage-tabs" role="tablist" aria-label="Toast modes">
+          <button type="button" class="tab active" role="tab" aria-selected="true" data-mode-tab="success">Success</button>
+          <button type="button" class="tab" role="tab" aria-selected="false" data-mode-tab="error">Error</button>
+          <button type="button" class="tab" role="tab" aria-selected="false" data-mode-tab="promise">Promise</button>
+          <button type="button" class="tab" role="tab" aria-selected="false" data-mode-tab="undo">Undo</button>
+          <button type="button" class="tab" role="tab" aria-selected="false" data-mode-tab="stack">Stack</button>
+          <button type="button" class="tab" role="tab" aria-selected="false" data-mode-tab="dark">Dark</button>
         </div>
+        <div class="home-stage-body">
+          <p class="home-stage-readout" data-fw-readout>Mode: success · position top-right · richColors on</p>
+          <button type="button" data-toast="dismiss" class="btn home-stage-dismiss">Dismiss all</button>
+        </div>
+        <pre class="home-stage-code"><code data-fw-code></code></pre>
       </div>
     </section>
 
-    <section class="section panel">
+    <section class="panel fw-install">
       <h2>Install snippet</h2>
       <pre class="api"><code>{code}</code></pre>
       {
@@ -73,16 +81,62 @@ const meta = pageMeta({
 </Base>
 
 <script>
-  import { applyDemoConfig, bindToastButtons, syncToastThemeWithSite } from "../scripts/toast-demo";
+  import {
+    applyDemoConfig,
+    bindToastButtons,
+    buildHomeSnippet,
+    fireToast,
+    syncToastThemeWithSite,
+    type HomeMode,
+  } from "../scripts/toast-demo";
 
-  applyDemoConfig({
-    richColors: true,
-    theme: syncToastThemeWithSite(),
-    progressBar: true,
+  const stage = document.querySelector("[data-fw-stage]");
+  const codeEl = document.querySelector("[data-fw-code]");
+  const readout = document.querySelector("[data-fw-readout]");
+
+  let mode: HomeMode = "success";
+
+  function siteTheme() {
+    return syncToastThemeWithSite();
+  }
+
+  function applyMode(next: HomeMode) {
+    mode = next;
+    const theme = next === "dark" ? "dark" : siteTheme();
+    applyDemoConfig({
+      position: "top-right",
+      richColors: true,
+      progressBar: true,
+      theme,
+      visibleToasts: next === "stack" ? 5 : 3,
+    });
+    if (codeEl) codeEl.textContent = buildHomeSnippet(mode);
+    if (readout) {
+      const stackNote = next === "stack" ? " · visibleToasts 5" : "";
+      readout.textContent = `Mode: ${mode} · position top-right · richColors on · theme ${theme}${stackNote}`;
+    }
+  }
+
+  applyMode("success");
+  const unbind = bindToastButtons(stage ?? document);
+
+  stage?.querySelectorAll("[data-mode-tab]").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const next = tab.getAttribute("data-mode-tab") as HomeMode | null;
+      if (!next) return;
+      stage.querySelectorAll("[data-mode-tab]").forEach((el) => {
+        const active = el === tab;
+        el.classList.toggle("active", active);
+        el.setAttribute("aria-selected", active ? "true" : "false");
+      });
+      applyMode(next);
+      fireToast(next === "dark" ? "success" : next);
+    });
   });
-  const unbind = bindToastButtons(document.querySelector("[data-fw-stage]") ?? document);
+
   window.addEventListener("alert-notify:theme", ((event: CustomEvent<{ theme: "light" | "dark" }>) => {
-    applyDemoConfig({ theme: event.detail.theme });
+    if (mode !== "dark") applyDemoConfig({ theme: event.detail.theme });
   }) as EventListener);
+
   document.addEventListener("astro:before-swap", () => unbind(), { once: true });
 </script>
