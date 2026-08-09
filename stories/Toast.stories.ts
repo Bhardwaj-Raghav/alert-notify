@@ -3,15 +3,18 @@ import { toast } from "../src/toast";
 import type { ToastPosition, ToastTheme } from "../src/types";
 
 type Args = {
+  message: string;
   title: string;
-  description: string;
   type: "success" | "error" | "warning" | "info" | "message" | "loading";
   position: ToastPosition;
   theme: ToastTheme;
   richColors: boolean;
   duration: number;
+  autoClose: boolean;
   closeButton: boolean;
   progressBar: boolean;
+  pauseOnHover: boolean;
+  resetTimerOnHover: boolean;
 };
 
 const meta: Meta<Args> = {
@@ -34,20 +37,23 @@ const meta: Meta<Args> = {
     },
     theme: {
       control: "select",
-      options: ["system", "light", "dark"],
+      options: ["light", "dark", "system"],
     },
     duration: { control: { type: "number", min: 1000, max: 10000, step: 500 } },
   },
   args: {
+    message: "Your changes are live.",
     title: "Saved successfully",
-    description: "Your changes are live.",
     type: "success",
     position: "top-right",
-    theme: "system",
+    theme: "light",
     richColors: true,
     duration: 4000,
+    autoClose: true,
     closeButton: true,
     progressBar: true,
+    pauseOnHover: true,
+    resetTimerOnHover: false,
   },
 };
 
@@ -62,6 +68,9 @@ function mount(args: Args): HTMLElement {
     progressBar: args.progressBar,
     closeButton: args.closeButton,
     duration: args.duration,
+    autoClose: args.autoClose,
+    pauseOnHover: args.pauseOnHover,
+    resetTimerOnHover: args.resetTimerOnHover,
   });
 
   const root = document.createElement("div");
@@ -73,9 +82,10 @@ function mount(args: Args): HTMLElement {
   button.style.cssText =
     "padding:12px 16px;border-radius:12px;border:1px solid #ccc;background:#0f766e;color:#fff;font-weight:700;cursor:pointer";
   button.addEventListener("click", () => {
-    toast[args.type](args.title, {
-      description: args.description,
+    toast[args.type](args.message, {
+      title: args.title || undefined,
       duration: args.duration,
+      autoClose: args.type === "loading" ? false : args.autoClose,
       closeButton: args.closeButton,
     });
   });
@@ -100,8 +110,8 @@ function mount(args: Args): HTMLElement {
   undoBtn.style.cssText =
     "padding:12px 16px;border-radius:12px;border:1px solid #ccc;background:#fff;cursor:pointer;font-weight:600";
   undoBtn.addEventListener("click", () => {
-    toast.success("Deleted", {
-      description: "You can restore this item.",
+    toast.success("You can restore this item.", {
+      title: "Deleted",
       action: {
         label: "Undo",
         onClick: () => toast.message("Restored"),
@@ -109,7 +119,15 @@ function mount(args: Args): HTMLElement {
     });
   });
 
-  root.append(button, promiseBtn, undoBtn);
+  const customBtn = document.createElement("button");
+  customBtn.textContent = "Custom toast";
+  customBtn.style.cssText =
+    "padding:12px 16px;border-radius:12px;border:1px solid #ccc;background:#fff;cursor:pointer;font-weight:600";
+  customBtn.addEventListener("click", () => {
+    toast.custom("<strong>Custom</strong> content", { autoClose: false });
+  });
+
+  root.append(button, promiseBtn, undoBtn, customBtn);
   return root;
 }
 

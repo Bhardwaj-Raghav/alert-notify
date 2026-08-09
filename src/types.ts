@@ -18,6 +18,8 @@ export type ToastTheme = "light" | "dark" | "system";
 
 export type ToastId = string;
 
+export type ToastCloseReason = "Manual" | "Auto";
+
 export type ToastAction = {
   label: string;
   onClick: (event: MouseEvent) => void;
@@ -26,15 +28,16 @@ export type ToastAction = {
 export type ToastOptions = {
   id?: ToastId;
   type?: ToastType;
-  description?: string;
+  /** Optional heading. Uses title styling. */
+  title?: string;
   duration?: number;
+  /** Whether the toast auto-dismisses. Default true; loading defaults to false. */
+  autoClose?: boolean;
   /**
    * Custom icon. A string is inserted as raw HTML (trusted markup only).
    * Prefer `HTMLElement` or `false` when the value is not developer-controlled.
    */
   icon?: string | HTMLElement | false;
-  /** Opt-in unescaped title HTML. Trusted markup only; never pass user input. */
-  html?: string;
   action?: ToastAction;
   cancel?: ToastAction;
   closeButton?: boolean;
@@ -42,17 +45,20 @@ export type ToastOptions = {
   important?: boolean;
   className?: string;
   style?: Partial<CSSStyleDeclaration> | Record<string, string>;
-  onDismiss?: (toast: ToastRecord) => void;
-  onAutoClose?: (toast: ToastRecord) => void;
+  onClose?: (toast: ToastRecord, reason: ToastCloseReason) => void;
 };
 
 export type ToastRecord = {
   id: ToastId;
   type: ToastType;
-  title: string;
-  description?: string;
-  html?: string;
+  /** Optional heading. Uses title styling. */
+  title?: string;
+  /** Main toast content. Uses message (former description) styling. */
+  message: string;
+  /** Custom body for `toast.custom()` only. Trusted markup / nodes. */
+  customContent?: string | HTMLElement;
   duration: number;
+  autoClose: boolean;
   icon?: string | HTMLElement | false;
   action?: ToastAction;
   cancel?: ToastAction;
@@ -64,15 +70,17 @@ export type ToastRecord = {
   createdAt: number;
   pausedAt?: number;
   remaining: number;
+  /** Bumps when the auto-close timer/progress should restart. */
+  progressKey: number;
   height: number;
-  onDismiss?: (toast: ToastRecord) => void;
-  onAutoClose?: (toast: ToastRecord) => void;
+  onClose?: (toast: ToastRecord, reason: ToastCloseReason) => void;
 };
 
 export type ToasterConfig = {
   position: ToastPosition;
   theme: ToastTheme;
   duration: number;
+  autoClose: boolean;
   closeButton: boolean;
   dismissible: boolean;
   richColors: boolean;
@@ -82,6 +90,8 @@ export type ToasterConfig = {
   offset: number | string;
   dir: "ltr" | "rtl" | "auto";
   pauseOnHover: boolean;
+  /** When true, hovering the toast group resets timers and progress together. */
+  resetTimerOnHover: boolean;
   pauseOnWindowBlur: boolean;
   progressBar: boolean;
   toasterClassName?: string;
@@ -101,7 +111,7 @@ export type PromiseMessages<T> = {
 };
 
 export type ExternalToast = ToastOptions & {
-  title?: string;
+  message?: string;
 };
 
 export type ToastListener = (toasts: readonly ToastRecord[]) => void;

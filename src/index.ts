@@ -6,6 +6,7 @@ export type {
   ToastPosition,
   ToastTheme,
   ToastId,
+  ToastCloseReason,
   ToastAction,
   ToastOptions,
   ToastRecord,

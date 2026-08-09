@@ -17,37 +17,43 @@ function normalizeContent(
     | ExternalToast
     | ((value: never) => string | ExternalToast),
   value?: unknown,
-  fallbackTitle = "Done",
-): { title: string; options: ToastOptions } {
+  fallbackMessage = "Done",
+): { message: string; options: ToastOptions } {
   if (typeof content === "function") {
-    const resolved = content(value as never);
-    if (typeof resolved === "string") {
-      return { title: resolved, options: {} };
-    }
-    const { title, ...options } = resolved;
-    return {
-      title: title ?? fallbackTitle,
-      options,
-    };
+    return normalizeContent(
+      content(value as never),
+      undefined,
+      fallbackMessage,
+    );
   }
   if (typeof content === "string") {
-    return { title: content, options: {} };
+    return { message: content, options: {} };
   }
-  const { title, ...options } = content;
-  return {
-    title: title ?? fallbackTitle,
-    options,
-  };
+  const { message, title, ...rest } = content;
+  if (message !== undefined) {
+    return {
+      message,
+      options: title !== undefined ? { ...rest, title } : { ...rest },
+    };
+  }
+  if (title !== undefined) {
+    return { message: title, options: { ...rest } };
+  }
+  return { message: fallbackMessage, options: { ...rest } };
 }
 
 export type ToasterInstance = {
-  (title: string, options?: ToastOptions): ToastId;
-  success: (title: string, options?: ToastOptions) => ToastId;
-  error: (title: string, options?: ToastOptions) => ToastId;
-  warning: (title: string, options?: ToastOptions) => ToastId;
-  info: (title: string, options?: ToastOptions) => ToastId;
-  loading: (title: string, options?: ToastOptions) => ToastId;
-  message: (title: string, options?: ToastOptions) => ToastId;
+  (message: string, options?: ToastOptions): ToastId;
+  success: (message: string, options?: ToastOptions) => ToastId;
+  error: (message: string, options?: ToastOptions) => ToastId;
+  warning: (message: string, options?: ToastOptions) => ToastId;
+  info: (message: string, options?: ToastOptions) => ToastId;
+  loading: (message: string, options?: ToastOptions) => ToastId;
+  message: (message: string, options?: ToastOptions) => ToastId;
+  custom: (
+    content: string | HTMLElement,
+    options?: ToastOptions,
+  ) => ToastId;
   promise: <T>(promise: Promise<T>, messages: PromiseMessages<T>) => Promise<T>;
   dismiss: (id?: ToastId) => void;
   config: (partial: Partial<ToasterConfig>) => void;
@@ -60,8 +66,8 @@ export type ToasterInstance = {
 function createTyped(
   store: ToastStore,
   type: ToastType,
-): (title: string, options?: ToastOptions) => ToastId {
-  return (title, options = {}) => store.add(title, { ...options, type });
+): (message: string, options?: ToastOptions) => ToastId {
+  return (message, options = {}) => store.add(message, { ...options, type });
 }
 
 export function createToaster(
@@ -73,8 +79,8 @@ export function createToaster(
     ? null
     : new ToastRenderer(store, { enabled: true });
 
-  const base = ((title: string, opts: ToastOptions = {}) =>
-    store.add(title, opts)) as ToasterInstance;
+  const base = ((message: string, opts: ToastOptions = {}) =>
+    store.add(message, opts)) as ToasterInstance;
 
   base.success = createTyped(store, "success");
   base.error = createTyped(store, "error");
@@ -82,16 +88,17 @@ export function createToaster(
   base.info = createTyped(store, "info");
   base.loading = createTyped(store, "loading");
   base.message = createTyped(store, "message");
+  base.custom = (content, opts = {}) => store.addCustom(content, opts);
 
   base.promise = async <T>(
     promise: Promise<T>,
     messages: PromiseMessages<T>,
   ): Promise<T> => {
     const loading = normalizeContent(messages.loading, undefined, "Loading…");
-    const id = store.add(loading.title, {
+    const id = store.add(loading.message, {
       ...loading.options,
       type: "loading",
-      duration: Number.POSITIVE_INFINITY,
+      autoClose: false,
     });
 
     try {
@@ -99,8 +106,9 @@ export function createToaster(
       const success = normalizeContent(messages.success, data, "Done");
       store.update(id, {
         ...success.options,
-        title: success.title,
+        message: success.message,
         type: "success",
+        autoClose: success.options.autoClose ?? true,
         duration: success.options.duration,
       });
       return data;
@@ -108,8 +116,9 @@ export function createToaster(
       const failure = normalizeContent(messages.error, error, "Error");
       store.update(id, {
         ...failure.options,
-        title: failure.title,
+        message: failure.message,
         type: "error",
+        autoClose: failure.options.autoClose ?? true,
         duration: failure.options.duration,
       });
       throw error;

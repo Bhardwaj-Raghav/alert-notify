@@ -11,39 +11,38 @@ npm ci
 npm run build
 ```
 
-The marketing site lives in `website/` and depends on the built package (`file:..`), so build the library first:
-
-```bash
-npm ci --prefix website
-```
+The marketing site lives in `website/` and is driven from the root (`astro --root website`).
 
 ## Scripts
 
 | Command | What it does |
 |---------|----------------|
 | `npm run build` | Build library + CSS into `dist/` |
-| `npm run dev` | Watch-mode library build |
+| `npm run dev` | Vite playground on port 5173 |
+| `npm run dev:lib` | Watch-mode library build |
+| `npm run website` | Astro site on port 5174 |
+| `npm run website:build` | Production site build |
 | `npm test` | Vitest (jsdom) |
 | `npm run test:watch` | Vitest watch |
 | `npm run typecheck` | `tsc --noEmit` |
+| `npm run lint` | ESLint |
 | `npm run storybook` | Storybook on port 6006 |
-| `npm run website:dev` | Astro site (needs `dist/` first) |
-| `npm run website:build` | Production site build |
 
 Before opening a PR, run what CI runs:
 
 ```bash
+npm run lint
 npm run typecheck
 npm test
 npm run build
 npm run build-storybook
-npm ci --prefix website
-npm run build --prefix website
+npm run website:build
 ```
 
 ## Layout
 
 - `src/` — core toaster, store, renderer, CSS; thin wrappers under `react/`, `vue/`, `svelte/`
+- `playground/` — Vite sandbox for local package testing
 - `tests/` — unit tests
 - `stories/` — Storybook
 - `website/` — Astro landing page (private; not published to npm)

@@ -8,6 +8,7 @@
     position,
     theme,
     duration,
+    autoClose,
     closeButton,
     dismissible,
     richColors,
@@ -17,6 +18,7 @@
     offset,
     dir,
     pauseOnHover,
+    resetTimerOnHover,
     pauseOnWindowBlur,
     progressBar,
     toasterClassName,
@@ -27,6 +29,7 @@
     if (position !== undefined) config.position = position;
     if (theme !== undefined) config.theme = theme;
     if (duration !== undefined) config.duration = duration;
+    if (autoClose !== undefined) config.autoClose = autoClose;
     if (closeButton !== undefined) config.closeButton = closeButton;
     if (dismissible !== undefined) config.dismissible = dismissible;
     if (richColors !== undefined) config.richColors = richColors;
@@ -36,6 +39,7 @@
     if (offset !== undefined) config.offset = offset;
     if (dir !== undefined) config.dir = dir;
     if (pauseOnHover !== undefined) config.pauseOnHover = pauseOnHover;
+    if (resetTimerOnHover !== undefined) config.resetTimerOnHover = resetTimerOnHover;
     if (pauseOnWindowBlur !== undefined) config.pauseOnWindowBlur = pauseOnWindowBlur;
     if (progressBar !== undefined) config.progressBar = progressBar;
     if (toasterClassName !== undefined) config.toasterClassName = toasterClassName;

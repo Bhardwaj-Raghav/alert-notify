@@ -104,15 +104,15 @@ const frameworks = [
     <section id="api" class="section panel">
       <h2>Complete API reference</h2>
       <p class="section-copy">
-        Nothing is required beyond importing the package and CSS.
-        The portal auto-mounts. Below is every method, option, and default.
+        Nothing is required beyond importing the package.
+        CSS is included from the package entry. The portal auto-mounts.
+        Below is every method, option, and default.
       </p>
 
       <h3 class="api-h">Required setup</h3>
       <pre class="api"><code>{`import { toast } from "alert-notify";
-import "alert-notify/style.css";
 
-// That's it. No provider. No root container.
+// That's it. No provider. No root container. CSS loads with the entry.
 toast.success("Hello");`}</code></pre>
 
       <h3 class="api-h">Methods</h3>
@@ -122,13 +122,14 @@ toast.success("Hello");`}</code></pre>
             <tr><th>Method</th><th>Returns</th><th>Description</th></tr>
           </thead>
           <tbody>
-            <tr><td><code>toast(title, options?)</code></td><td><code>ToastId</code></td><td>Generic toast (<code>message</code> type)</td></tr>
-            <tr><td><code>toast.success(title, options?)</code></td><td><code>ToastId</code></td><td>Success toast</td></tr>
-            <tr><td><code>toast.error(title, options?)</code></td><td><code>ToastId</code></td><td>Error toast</td></tr>
-            <tr><td><code>toast.warning(title, options?)</code></td><td><code>ToastId</code></td><td>Warning toast</td></tr>
-            <tr><td><code>toast.info(title, options?)</code></td><td><code>ToastId</code></td><td>Info toast</td></tr>
-            <tr><td><code>toast.loading(title, options?)</code></td><td><code>ToastId</code></td><td>Loading toast (sticky by default)</td></tr>
-            <tr><td><code>toast.message(title, options?)</code></td><td><code>ToastId</code></td><td>Neutral message toast</td></tr>
+            <tr><td><code>toast(message, options?)</code></td><td><code>ToastId</code></td><td>Generic toast (<code>message</code> type)</td></tr>
+            <tr><td><code>toast.success(message, options?)</code></td><td><code>ToastId</code></td><td>Success toast</td></tr>
+            <tr><td><code>toast.error(message, options?)</code></td><td><code>ToastId</code></td><td>Error toast</td></tr>
+            <tr><td><code>toast.warning(message, options?)</code></td><td><code>ToastId</code></td><td>Warning toast</td></tr>
+            <tr><td><code>toast.info(message, options?)</code></td><td><code>ToastId</code></td><td>Info toast</td></tr>
+            <tr><td><code>toast.loading(message, options?)</code></td><td><code>ToastId</code></td><td>Loading toast (<code>autoClose: false</code> by default)</td></tr>
+            <tr><td><code>toast.message(message, options?)</code></td><td><code>ToastId</code></td><td>Neutral message toast</td></tr>
+            <tr><td><code>toast.custom(content, options?)</code></td><td><code>ToastId</code></td><td>Custom HTML string or <code>HTMLElement</code></td></tr>
             <tr><td><code>toast.promise(promise, messages)</code></td><td><code>Promise&lt;T&gt;</code></td><td>Loading → success/error on same id</td></tr>
             <tr><td><code>toast.dismiss(id?)</code></td><td><code>void</code></td><td>Dismiss one toast, or all if omitted</td></tr>
             <tr><td><code>toast.config(partial)</code></td><td><code>void</code></td><td>Update global toaster defaults</td></tr>
@@ -151,10 +152,10 @@ toast.success("Hello");`}</code></pre>
           <tbody>
             <tr><td><code>id</code></td><td><code>string</code></td><td>auto UUID</td><td>Stable id. Same id updates in place (coalesce)</td></tr>
             <tr><td><code>type</code></td><td><code>ToastType</code></td><td>from method</td><td><code>success | error | warning | info | loading | message</code></td></tr>
-            <tr><td><code>description</code></td><td><code>string</code></td><td>—</td><td>Secondary text under the title</td></tr>
-            <tr><td><code>duration</code></td><td><code>number</code></td><td>config / <code>Infinity</code> for loading</td><td>Ms until auto-close. Use <code>Infinity</code> for sticky</td></tr>
+            <tr><td><code>title</code></td><td><code>string</code></td><td>—</td><td>Optional heading (title styling)</td></tr>
+            <tr><td><code>duration</code></td><td><code>number</code></td><td>from config</td><td>Ms until auto-close when <code>autoClose</code> is true</td></tr>
+            <tr><td><code>autoClose</code></td><td><code>boolean</code></td><td><code>true</code> (<code>false</code> for loading)</td><td>Whether the toast auto-dismisses</td></tr>
             <tr><td><code>icon</code></td><td><code>string | HTMLElement | false</code></td><td>built-in SVG</td><td>Custom icon HTML/node, or <code>false</code> to hide</td></tr>
-            <tr><td><code>html</code></td><td><code>string</code></td><td>—</td><td>Opt-in unescaped title HTML (prefer plain text)</td></tr>
             <tr><td><code>action</code></td><td><code>{"{ label, onClick }"}</code></td><td>—</td><td>Primary action button (e.g. Undo)</td></tr>
             <tr><td><code>cancel</code></td><td><code>{"{ label, onClick }"}</code></td><td>—</td><td>Secondary cancel button</td></tr>
             <tr><td><code>closeButton</code></td><td><code>boolean</code></td><td>from config (<code>true</code>)</td><td>Show × button</td></tr>
@@ -162,8 +163,7 @@ toast.success("Hello");`}</code></pre>
             <tr><td><code>important</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Jump to front of the queue</td></tr>
             <tr><td><code>className</code></td><td><code>string</code></td><td>—</td><td>Extra class on the toast element</td></tr>
             <tr><td><code>style</code></td><td><code>object</code></td><td>—</td><td>Inline styles on the toast</td></tr>
-            <tr><td><code>onDismiss</code></td><td><code>(toast) =&gt; void</code></td><td>—</td><td>Manual dismiss (close / swipe / dismiss)</td></tr>
-            <tr><td><code>onAutoClose</code></td><td><code>(toast) =&gt; void</code></td><td>—</td><td>Fired when duration timer ends</td></tr>
+            <tr><td><code>onClose</code></td><td><code>(toast, reason) =&gt; void</code></td><td>—</td><td>Fired once; <code>reason</code> is <code>"Manual"</code> or <code>"Auto"</code></td></tr>
           </tbody>
         </table>
       </div>
@@ -177,8 +177,9 @@ toast.success("Hello");`}</code></pre>
           </thead>
           <tbody>
             <tr><td><code>position</code></td><td><code>ToastPosition</code></td><td><code>"top-right"</code></td><td>6 corners + top/bottom center</td></tr>
-            <tr><td><code>theme</code></td><td><code>"light" | "dark" | "system"</code></td><td><code>"system"</code></td><td>Color scheme. System also tracks <code>html.dark</code> / <code>data-theme</code></td></tr>
-            <tr><td><code>duration</code></td><td><code>number</code></td><td><code>4000</code></td><td>Default auto-close ms</td></tr>
+            <tr><td><code>theme</code></td><td><code>"light" | "dark" | "system"</code></td><td><code>"light"</code></td><td>Color scheme. <code>system</code> also tracks <code>html.dark</code> / <code>data-theme</code></td></tr>
+            <tr><td><code>duration</code></td><td><code>number</code></td><td><code>4000</code></td><td>Default auto-close ms when <code>autoClose</code> is true</td></tr>
+            <tr><td><code>autoClose</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Default automatic dismissal</td></tr>
             <tr><td><code>closeButton</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Show close button by default</td></tr>
             <tr><td><code>dismissible</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Allow dismiss by default</td></tr>
             <tr><td><code>richColors</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Tinted success/error/warning/info surfaces</td></tr>
@@ -188,8 +189,9 @@ toast.success("Hello");`}</code></pre>
             <tr><td><code>offset</code></td><td><code>number | string</code></td><td><code>16</code></td><td>Distance from viewport edge</td></tr>
             <tr><td><code>dir</code></td><td><code>"ltr" | "rtl" | "auto"</code></td><td><code>"auto"</code></td><td>Text direction</td></tr>
             <tr><td><code>pauseOnHover</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Pause timers while hovering the stack</td></tr>
+            <tr><td><code>resetTimerOnHover</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Reset timer and progress together on hover</td></tr>
             <tr><td><code>pauseOnWindowBlur</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Pause timers when the window loses focus</td></tr>
-            <tr><td><code>progressBar</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Show duration progress bar</td></tr>
+            <tr><td><code>progressBar</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Show duration progress bar when auto-closing</td></tr>
             <tr><td><code>toasterClassName</code></td><td><code>string</code></td><td>—</td><td>Class on the toaster container</td></tr>
             <tr><td><code>style</code></td><td><code>object</code></td><td>—</td><td>Inline styles on the toaster container</td></tr>
           </tbody>
@@ -205,9 +207,9 @@ toast.success("Hello");`}</code></pre>
 
 // Or pass full option objects:
 toast.promise(save(), {
-  loading: { title: "Saving…", description: "Please wait" },
-  success: { title: "Saved", duration: 3000 },
-  error: { title: "Failed", important: true },
+  loading: { message: "Saving…", title: "Please wait", autoClose: false },
+  success: { message: "Saved", duration: 3000 },
+  error: { message: "Failed", important: true },
 });`}</code></pre>
 
       <h3 class="api-h">Multiple toasters &amp; headless</h3>
@@ -242,7 +244,7 @@ headless.subscribe((toasts) => {
 
       <h3 class="api-h">Behavior notes</h3>
       <ul class="notes">
-        <li>Title/description are HTML-escaped by default. Use <code>html</code> only when you intend markup.</li>
+        <li>Title and message are HTML-escaped by default. Use <code>toast.custom()</code> for trusted markup.</li>
         <li><code>loading</code> toasts default to <code>duration: Infinity</code> until updated (e.g. via promise).</li>
         <li>Same <code>id</code> coalesces — updates the existing toast instead of stacking a duplicate.</li>
         <li>Escape dismisses the focused toast. Swipe/drag dismisses when <code>dismissible</code> is true.</li>
@@ -322,16 +324,14 @@ headless.subscribe((toasts) => {
 
       <div class="tab-panels">
         <pre class="tab-panel active" data-panel="vanilla"><code>{`import { toast } from "alert-notify";
-import "alert-notify/style.css";
 
 toast.success("Saved");
-toast.error("Failed", { description: "Try again" });
+toast.error("Try again", { title: "Failed" });
 // No container. Portal mounts itself.`}</code></pre>
 
         <pre class="tab-panel" data-panel="react"><code>{`// App.tsx
 import { toast } from "alert-notify";
 import { Toaster } from "alert-notify/react";
-import "alert-notify/style.css";
 
 export function App() {
   return (
@@ -346,7 +346,6 @@ export function App() {
 <script setup>
 import { toast } from "alert-notify";
 import { Toaster } from "alert-notify/vue";
-import "alert-notify/style.css";
 </script>
 
 <template>
@@ -358,7 +357,6 @@ import "alert-notify/style.css";
 <script>
   import { toast } from "alert-notify";
   import Toaster from "alert-notify/svelte";
-  import "alert-notify/style.css";
 </script>
 
 <Toaster position="top-right" richColors />
@@ -366,7 +364,6 @@ import "alert-notify/style.css";
 
         <pre class="tab-panel" data-panel="angular"><code>{`// any.component.ts
 import { toast } from "alert-notify";
-import "alert-notify/style.css";
 
 show() {
   toast.success("Saved");
@@ -380,14 +377,12 @@ show() {
 ---
 <script>
   import { toast } from "alert-notify";
-  import "alert-notify/style.css";
   document.querySelector("button")?.addEventListener("click", () => {
     toast.success("Saved");
   });
 </script>`}</code></pre>
 
-        <pre class="tab-panel" data-panel="cdn"><code>{`<link rel="stylesheet" href="https://unpkg.com/alert-notify@2/dist/style.css" />
-<script src="https://unpkg.com/alert-notify@2/dist/alert-notify.global.js"></script>
+        <pre class="tab-panel" data-panel="cdn"><code>{`<script src="https://unpkg.com/alert-notify@3/dist/alert-notify.global.js"></script>
 <script>
   AlertNotify.toast.success("Hello from CDN");
 </script>`}</code></pre>
@@ -402,21 +397,26 @@ show() {
         Rebrand colors by overriding CSS variables in your own stylesheet.
       </p>
       <pre class="api"><code>{`// Dark mode
+toast.config({ theme: "light" }); // default
 toast.config({ theme: "system" }); // OS + html.dark / data-theme
 toast.config({ theme: "dark" });
-toast.config({ theme: "light" });
 toast.config({ richColors: true }); // soft tinted fills`}</code></pre>
       <pre class="api" style="margin-top: 12px"><code>{`/* your-app.css — after alert-notify/style.css */
 .an-toaster {
   --an-bg: #ffffff;
   --an-fg: #0f172a;
-  --an-muted: #64748b;
+  --an-muted: #475569;
   --an-border: rgba(15, 23, 42, 0.1);
 
-  --an-success: #16a34a;
+  --an-success: #15803d;
   --an-error: #e11d48;
-  --an-warning: #ca8a04;
-  --an-info: #2563eb;
+  --an-warning: #b45309;
+  --an-info: #1d4ed8;
+
+  --an-success-fg: #14532d;
+  --an-error-fg: #9f1239;
+  --an-warning-fg: #92400e;
+  --an-info-fg: #1e40af;
 
   /* Soft rich fills */
   --an-success-bg: #ecfdf5;
@@ -432,14 +432,19 @@ toast.config({ richColors: true }); // soft tinted fills`}</code></pre>
 .an-toaster[data-theme="dark"] {
   --an-bg: #1e293b;
   --an-fg: #f8fafc;
+  --an-muted: #cbd5e1;
   --an-success: #4ade80;
   --an-error: #fb7185;
   --an-warning: #facc15;
   --an-info: #60a5fa;
-  --an-success-bg: #14532d;
+  --an-success-fg: #ecfdf5;
+  --an-error-fg: #fff1f2;
+  --an-warning-fg: #fffbeb;
+  --an-info-fg: #eff6ff;
+  --an-success-bg: #052e16;
   --an-error-bg: #4c0519;
   --an-warning-bg: #422006;
-  --an-info-bg: #1e3a8a;
+  --an-info-bg: #172554;
 }`}</code></pre>
     </section>
 
@@ -549,8 +554,8 @@ import "alert-notify/style.css";`}</code></pre>
         return;
       }
       if (kind === "undo") {
-        toast.success("Item deleted", {
-          description: "You can restore it.",
+        toast.success("You can restore it.", {
+          title: "Item deleted",
           action: { label: "Undo", onClick: () => toast.message("Restored") },
         });
         return;
@@ -564,9 +569,7 @@ import "alert-notify/style.css";`}</code></pre>
         return;
       }
       if (kind) {
-        toast[kind](`${kind[0].toUpperCase()}${kind.slice(1)} toast`, {
-          description: "~4.6KB gzip · any framework",
-        });
+        toast[kind](`${kind[0].toUpperCase()}${kind.slice(1)} toast`);
       }
     });
   });

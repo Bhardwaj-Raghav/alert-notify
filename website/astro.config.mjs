@@ -1,8 +1,11 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 import { loadEnv } from "vite";
 
-const env = loadEnv(process.env.NODE_ENV ?? "development", process.cwd(), "");
+const root = path.dirname(fileURLToPath(import.meta.url));
+const env = loadEnv(process.env.NODE_ENV ?? "development", root, "");
 const site = env.SITE_URL || process.env.SITE_URL || "https://alert-notify.vercel.app";
 
 export default defineConfig({
@@ -22,4 +25,12 @@ export default defineConfig({
       },
     }),
   ],
+  vite: {
+    resolve: {
+      alias: {
+        "alert-notify/style.css": path.resolve(root, "../src/styles/toast.css"),
+        "alert-notify": path.resolve(root, "../src/index.ts"),
+      },
+    },
+  },
 });

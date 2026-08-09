@@ -16,7 +16,8 @@
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "paths": {
-      "react-calendar-time": ["../src/index.ts"]
+      "alert-notify": ["../src/index.ts"],
+      "alert-notify/*": ["../src/*"]
     }
   },
   "include": [".astro/types.d.ts", "**/*"],

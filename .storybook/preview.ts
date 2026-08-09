@@ -3,7 +3,7 @@ import { toast } from "../src/toast";
 
 toast.config({
   position: "top-right",
-  theme: "system",
+  theme: "light",
   richColors: false,
   progressBar: true,
 });
