@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Styles load with the package entry. Explicit `import "alert-notify/style.css"` still works.
 - Docs and site cover migration from 1.x / 2.x, framework guides, and the message-first API.
 - Consumer-facing JSDoc on the public typed API for editor IntelliSense.
+- README trimmed for npm: framework-agnostic positioning, short quick starts, entry points table, deep API/framework detail linked to the docs site.
+- `package.json` description leads with framework-agnostic positioning (not React-first).
 
 ### Migration
 
