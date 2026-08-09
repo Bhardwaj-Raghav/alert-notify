@@ -24,7 +24,7 @@ function ensureStyleImport(filePath, styleLine, { useClient = false } = {}) {
   let code = readFileSync(filePath, "utf8");
   code = code.replace(/^["']use client["'];\r?\n/gm, "");
   code = code.replace(/^import\s+["']\.\/style\.css["'];\r?\n/gm, "");
-  code = code.replace(/^require\(["']\.\/style\.css["']\);\r?\n/gm, "");
+  code = code.replace(/^require\(["']\.\/style\.css["'];\r?\n/gm, "");
 
   const parts = [];
   if (useClient) {
@@ -56,27 +56,78 @@ if (existsSync(globalPath)) {
   }
 }
 
-// Measure JS without counting the CSS side-effect import line as "bundle bloat"
-const jsSource = readFileSync(join(dist, "index.js"), "utf8").replace(
-  /^import\s+["']\.\/style\.css["'];\r?\n/,
-  "",
+/** Strip CSS side-effect imports / use client so size reflects runtime code only. */
+function stripMeta(code) {
+  return code
+    .replace(/^["']use client["'];\r?\n/gm, "")
+    .replace(/^import\s+["']\.\/style\.css["'];\r?\n/gm, "")
+    .replace(/^require\(["']\.\/style\.css["'];\r?\n/gm, "");
+}
+
+function readDist(...parts) {
+  return stripMeta(readFileSync(join(dist, ...parts), "utf8"));
+}
+
+/**
+ * Size = code needed for one framework path (core + optional adapter).
+ * Headline number is the max of those paths — not all frameworks summed.
+ */
+const entrySources = {
+  vanilla: readDist("index.js"),
+  react: `${readDist("index.js")}\n${readDist("react.js")}`,
+  vue: `${readDist("index.js")}\n${readDist("vue.js")}`,
+  svelte: `${readDist("index.js")}\n${readDist("svelte", "Toaster.svelte")}`,
+};
+
+const entrySizes = Object.fromEntries(
+  Object.entries(entrySources).map(([name, source]) => {
+    const raw = Buffer.byteLength(source);
+    const gzip = gzipSync(source).length;
+    return [
+      name,
+      {
+        raw,
+        gzip,
+        gzipKb: Number((gzip / 1024).toFixed(1)),
+      },
+    ];
+  }),
 );
-const js = Buffer.from(jsSource);
+
+const heaviest = Object.entries(entrySizes).reduce(
+  (best, [name, size]) =>
+    size.gzip > best.size.gzip ? { name, size } : best,
+  { name: "vanilla", size: { raw: 0, gzip: -1, gzipKb: 0 } },
+);
+
 const cssBuf = readFileSync(join(dist, "style.css"));
-const gzJs = gzipSync(js);
 const gzCss = gzipSync(cssBuf);
+const cssGzip = gzCss.length;
+const cssGzipKb = Number((cssGzip / 1024).toFixed(1));
+
+// Separate JS + CSS requests ≈ sum of gzip sizes (what users pay on the wire).
+const totalGzip = heaviest.size.gzip + cssGzip;
+const totalGzipKb = Number((totalGzip / 1024).toFixed(1));
+
 const sizes = {
-  jsRaw: js.length,
-  jsGzip: gzJs.length,
+  measuredEntry: heaviest.name,
+  entries: entrySizes,
+  jsRaw: heaviest.size.raw,
+  jsGzip: heaviest.size.gzip,
   cssRaw: cssBuf.length,
-  cssGzip: gzCss.length,
-  jsGzipKb: Number((gzJs.length / 1024).toFixed(1)),
-  cssGzipKb: Number((gzCss.length / 1024).toFixed(1)),
+  cssGzip,
+  jsGzipKb: heaviest.size.gzipKb,
+  cssGzipKb,
+  totalGzip,
+  totalGzipKb,
 };
 
 mkdirSync(websiteData, { recursive: true });
 writeFileSync(join(websiteData, "size.json"), `${JSON.stringify(sizes, null, 2)}\n`);
 
 console.log(
-  `bundle: js ${sizes.jsGzipKb}KB gzip · css ${sizes.cssGzipKb}KB gzip`,
+  `bundle: max single-impl JS (${heaviest.name}) ${sizes.jsGzipKb}KB gzip · css ${sizes.cssGzipKb}KB gzip · total ~${sizes.totalGzipKb}KB`,
 );
+for (const [name, size] of Object.entries(entrySizes)) {
+  console.log(`  ${name.padEnd(8)} ${size.gzipKb}KB gzip`);
+}

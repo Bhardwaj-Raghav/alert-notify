@@ -1,7 +1,7 @@
 {
   "name": "alert-notify",
   "version": "3.0.0",
-  "description": "Tiny toast notification library (~5KB). Alternative to react-toastify, react-hot-toast, Sonner, and react-alert. Works in React, Vue, Svelte, Angular, and vanilla JS — no provider.",
+  "description": "Multi-framework toast notifications for React, Vue, Svelte, Angular, and vanilla JS. Alternative to react-toastify, react-hot-toast, and Sonner. No provider required. ~6KB gzip JS per path.",
   "license": "MIT",
   "author": "Raghav Bhardwaj",
   "type": "module",
@@ -35,7 +35,8 @@
   "files": [
     "dist",
     "LICENSE",
-    "README.md"
+    "README.md",
+    "CHANGELOG.md"
   ],
   "unpkg": "./dist/alert-notify.global.js",
   "jsdelivr": "./dist/alert-notify.global.js",

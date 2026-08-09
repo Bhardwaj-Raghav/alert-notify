@@ -2,9 +2,9 @@
 
 [![npm](https://img.shields.io/npm/v/alert-notify.svg)](https://www.npmjs.com/package/alert-notify)
 
-**Tiny toast notifications for React, Vue, Svelte, Angular, Astro, and plain HTML.** About **5.3KB gzip** JS, zero runtime dependencies. A lightweight alternative to react-toastify, react-hot-toast, Sonner, react-alert, and other React toast / notification / snackbar libraries.
+**Toast notifications for React, Vue, Svelte, Angular, Astro, and plain HTML.** Same imperative `toast.success()` API everywhere. About **5.7KB gzip** JS per path plus **~2.7KB gzip** CSS, zero runtime deps. An alternative to react-toastify, react-hot-toast, Sonner, react-alert, and other toast / snackbar libraries when you do not want a React-only stack.
 
-No root provider required. The portal auto-mounts. Optional `<Toaster />` wrappers only sync config props for nicer DX. Styles load automatically with the package entry (you can still import `alert-notify/style.css` explicitly if you want).
+No root provider required. The portal auto-mounts. Optional `<Toaster />` wrappers only sync config props. Styles load with the package entry (or import `alert-notify/style.css` yourself).
 
 ```ts
 import { toast } from "alert-notify";
@@ -16,14 +16,24 @@ toast.success("Saved");
 
 | | alert-notify | react-hot-toast | Sonner | react-toastify |
 |--|--|--|--|--|
-| Approx. JS gzip | **~5.3KB** | ~4–5KB | ~10–12KB | ~40KB+ |
-| Framework lock-in | **None** | React | React | React |
-| Provider / container | **Optional** | Required | Required | Required |
+| Frameworks | **React, Vue, Svelte, Angular, vanilla, CDN** | React | React | React |
+| Provider / `<Toaster />` | **Optional** (auto-mounts) | Required | Required | Required |
+| Dark / system theme | **Built-in** | DIY | Built-in | DIY / limited |
+| Rich colors | **Built-in** | DIY | Built-in | Limited |
+| Approx. gzip | ~5.7KB JS + ~2.7KB CSS | ~4–5KB (CSS inlined) | ~9–12KB | ~40KB+ |
 | Runtime deps | **0** | 0 | 0 | 0 |
 
-Built for apps that care about bundle size and do not want a React-only toast stack. Also a fit if you searched for toastify, tostify, React notifications, or snackbars and want one small package that works everywhere.
+**vs react-hot-toast** — similar size band, but you are not stuck in React, and dark/system theme, richColors, progress bar, and swipe dismiss ship built-in instead of DIY styles.
 
-Website & live demo: [alert-notify.vercel.app](https://alert-notify.vercel.app)
+**vs Sonner** — same polished stacking / rich-color feel in a smaller package, still no React lock-in, and the portal works without a required root toaster.
+
+**vs react-toastify** — same success / error / promise / action flows at a fraction of the weight, with a simpler API and multi-framework support.
+
+**vs react-alert / notistack / snackbars** — one small package for alerts, notifications, and snackbar-style toasts across frameworks.
+
+Sizes are minified + gzip (typical CDN transfer). We measure the heaviest *single* path (core + one adapter), not every framework summed. Some libs inline CSS into one number; ours ships CSS as a separate file.
+
+Website: [alert-notify.vercel.app](https://alert-notify.vercel.app) · [Docs](https://alert-notify.vercel.app/docs) · [Examples](https://alert-notify.vercel.app/examples) · [Changelog](https://alert-notify.vercel.app/changelog)
 
 ## Install
 

@@ -1,0 +1,40 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+---
+
+<DocsLayout
+  title="React · alert-notify docs"
+  description="Use alert-notify in React with optional Toaster and custom() helpers."
+  pageTitle="React"
+>
+  <p>
+    <span class="tier helper">Helper</span>
+    Optional <code>&lt;Toaster /&gt;</code> near the root syncs config as props.
+    The React entry is a Client Component (<code>"use client"</code>).
+  </p>
+
+  <pre class="api"><code>{`import { toast } from "alert-notify";
+import { Toaster, custom } from "alert-notify/react";
+
+export function App() {
+  return (
+    <>
+      <Toaster position="top-right" richColors />
+      <button onClick={() => toast.success("Saved")}>Save</button>
+      <button
+        onClick={() =>
+          custom(<div>Custom React content</div>, { autoClose: false })
+        }
+      >
+        Custom
+      </button>
+    </>
+  );
+}`}</code></pre>
+
+  <ul class="notes">
+    <li>Peer dependencies: react and react-dom &gt;= 17.</li>
+    <li>Toaster is optional. The portal still auto-mounts without it.</li>
+    <li>Landing page: <a href="/react">/react</a></li>
+  </ul>
+</DocsLayout>

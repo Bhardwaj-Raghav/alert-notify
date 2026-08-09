@@ -1,0 +1,50 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+---
+
+<DocsLayout
+  title="Troubleshooting · alert-notify"
+  description="Fix common alert-notify issues: missing styles, theme mismatch, sticky toasts, and framework imports."
+  pageTitle="Troubleshooting"
+>
+  <h2>Toasts have no styles</h2>
+  <p>
+    The package entry injects CSS automatically for normal installs.
+    If you tree-shake oddly or use a custom bundler setup, import
+    <code>alert-notify/style.css</code> once near your app entry.
+  </p>
+
+  <h2>Theme does not follow my app</h2>
+  <p>
+    Set <code>theme: "system"</code> and ensure your document uses
+    <code>html.dark</code>, <code>html.light</code>, or <code>data-theme</code>.
+    Or force <code>theme: "dark"</code> / <code>"light"</code>.
+  </p>
+
+  <h2>Toast never dismisses</h2>
+  <p>
+    Loading toasts default to <code>autoClose: false</code>.
+    For sticky toasts prefer <code>autoClose: false</code> instead of <code>duration: Infinity</code>.
+    Call <code>toast.dismiss(id)</code> or update the same id via promise/success.
+  </p>
+
+  <h2>Wrong import for framework helpers</h2>
+  <ul>
+    <li>React: <code>alert-notify/react</code></li>
+    <li>Vue: <code>alert-notify/vue</code></li>
+    <li>Svelte: <code>alert-notify/svelte</code> (default Toaster import)</li>
+    <li>Angular / Astro: core <code>alert-notify</code> only</li>
+  </ul>
+
+  <h2>Svelte custom content</h2>
+  <p>
+    There is no Svelte <code>custom()</code> helper. Build a DOM node and pass it to
+    <code>toast.custom(el)</code>.
+  </p>
+
+  <h2>Still stuck?</h2>
+  <p>
+    Open the <a href="/examples">playground</a>, compare against
+    <a href="/docs/api">API</a>, or file an issue on GitHub.
+  </p>
+</DocsLayout>

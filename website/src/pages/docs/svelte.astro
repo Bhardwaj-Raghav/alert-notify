@@ -1,0 +1,33 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+---
+
+<DocsLayout
+  title="Svelte · alert-notify docs"
+  description="Use alert-notify in Svelte 5 with the optional Toaster component."
+  pageTitle="Svelte"
+>
+  <p>
+    <span class="tier helper">Helper</span>
+    Svelte ships <code>Toaster.svelte</code> only. There is no Svelte <code>custom()</code> helper.
+  </p>
+
+  <pre class="api"><code>{`<script>
+  import { toast } from "alert-notify";
+  import Toaster from "alert-notify/svelte";
+</script>
+
+<Toaster position="top-right" richColors />
+<button onclick={() => toast.success("Saved")}>Save</button>`}</code></pre>
+
+  <h2>Custom DOM content</h2>
+  <pre class="api"><code>{`import { toast } from "alert-notify";
+const el = document.createElement("div");
+el.textContent = "Custom";
+toast.custom(el);`}</code></pre>
+
+  <ul class="notes">
+    <li>Peer dependency: svelte &gt;= 5.</li>
+    <li>Landing page: <a href="/svelte">/svelte</a></li>
+  </ul>
+</DocsLayout>

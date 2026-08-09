@@ -1,0 +1,35 @@
+---
+import FrameworksMenu from "./FrameworksMenu.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+import { githubUrl, topNav } from "../data/nav";
+
+const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
+
+function isCurrent(href: string) {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+---
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href="/">
+      <img class="brand-mark" src="/favicon.svg" width="28" height="28" alt="" />
+      alert-notify
+    </a>
+    <nav class="site-nav" aria-label="Primary">
+      {
+        topNav.map((link) => (
+          <a href={link.href} aria-current={isCurrent(link.href) ? "page" : undefined}>
+            {link.label}
+          </a>
+        ))
+      }
+      <FrameworksMenu />
+      <div class="nav-actions">
+        <ThemeToggle />
+        <a class="nav-link" href={githubUrl} rel="noopener noreferrer">GitHub</a>
+      </div>
+    </nav>
+  </div>
+</header>

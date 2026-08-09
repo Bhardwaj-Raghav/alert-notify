@@ -1,0 +1,88 @@
+---
+import Base from "../layouts/Base.astro";
+import InstallCopy from "../components/InstallCopy.astro";
+import { frameworks } from "../data/nav";
+import { pageMeta } from "../data/seo";
+
+interface Props {
+  frameworkId: string;
+  installHint?: string;
+  code: string;
+  extraNotes?: string[];
+}
+
+const { frameworkId, installHint, code, extraNotes = [] } = Astro.props;
+const fw = frameworks.find((item) => item.id === frameworkId);
+if (!fw) throw new Error(`Unknown framework: ${frameworkId}`);
+
+const meta = pageMeta({
+  title: `${fw.label} toast notifications · alert-notify`,
+  description: `Use alert-notify with ${fw.label}. ${fw.blurb} Support tier: ${fw.tierLabel}.`,
+});
+---
+
+<Base
+  title={meta.title}
+  description={meta.description}
+  ogTitle={meta.ogTitle}
+  breadcrumbs={[
+    { name: "Home", href: "/" },
+    { name: fw.label, href: fw.href },
+  ]}
+>
+  <main class="page-shell">
+    <section class="hero-grid" style="min-height:auto;padding-top:32px">
+      <div class="hero-copy">
+        <p class="section-copy" style="margin:0 0 8px">
+          <span class={`tier ${fw.tier}`}>{fw.tierLabel}</span>
+        </p>
+        <h1 style="font-size:clamp(2.4rem,6vw,3.6rem)">{fw.label}</h1>
+        <p class="lede">{fw.blurb}</p>
+        <div class="cta">
+          <a class="btn primary" href={fw.docsHref}>Full docs</a>
+          <a class="btn" href="/examples">Playground</a>
+          <InstallCopy />
+        </div>
+        {installHint && <p class="section-copy">{installHint}</p>}
+      </div>
+      <div class="hero-stage" data-fw-stage>
+        <h2>Try it</h2>
+        <p class="stage-copy">Same core toast API this stack uses.</p>
+        <div class="demo-grid">
+          <button type="button" data-toast="success">Success</button>
+          <button type="button" data-toast="error">Error</button>
+          <button type="button" data-toast="promise" class="wide">Promise</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section panel">
+      <h2>Install snippet</h2>
+      <pre class="api"><code>{code}</code></pre>
+      {
+        extraNotes.length > 0 && (
+          <ul class="notes">
+            {extraNotes.map((note) => (
+              <li>{note}</li>
+            ))}
+          </ul>
+        )
+      }
+    </section>
+  </main>
+</Base>
+
+<script>
+  import { applyDemoConfig, bindToastButtons, syncToastThemeWithSite } from "../scripts/toast-demo";
+
+  applyDemoConfig({
+    richColors: true,
+    theme: syncToastThemeWithSite(),
+    progressBar: true,
+  });
+  const unbind = bindToastButtons(document.querySelector("[data-fw-stage]") ?? document);
+  window.addEventListener("alert-notify:theme", ((event: CustomEvent<{ theme: "light" | "dark" }>) => {
+    applyDemoConfig({ theme: event.detail.theme });
+  }) as EventListener);
+  document.addEventListener("astro:before-swap", () => unbind(), { once: true });
+</script>

@@ -1,0 +1,18 @@
+---
+import FrameworkLanding from "../components/FrameworkLanding.astro";
+
+const code = `import { toast } from "alert-notify";
+
+toast.config({ position: "top-right", richColors: true });
+toast.success("Saved");`;
+---
+
+<FrameworkLanding
+  frameworkId="angular"
+  installHint="Recipe only. Import the core package. No Angular module or directive ships in alert-notify."
+  code={code}
+  extraNotes={[
+    "Call toast.config() once during app init if you want shared defaults.",
+    "Use the same methods as vanilla JS.",
+  ]}
+/>

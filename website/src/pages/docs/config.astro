@@ -1,0 +1,60 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+---
+
+<DocsLayout
+  title="Config · alert-notify"
+  description="Global toast.config defaults for position, theme, stacking, timers, and richColors."
+  pageTitle="Config"
+>
+  <p>
+    <code>toast.config(partial)</code> sets defaults for all toasts.
+    Optional framework <code>&lt;Toaster /&gt;</code> wrappers accept the same keys as props.
+  </p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Key</th><th>Type</th><th>Default</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>position</code></td><td><code>ToastPosition</code></td><td><code>"top-right"</code></td><td>6 corners + top/bottom center</td></tr>
+        <tr><td><code>theme</code></td><td><code>"light" | "dark" | "system"</code></td><td><code>"light"</code></td><td>Color scheme</td></tr>
+        <tr><td><code>duration</code></td><td><code>number</code></td><td><code>4000</code></td><td>Default auto-close ms when <code>autoClose</code> is true</td></tr>
+        <tr><td><code>autoClose</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Default automatic dismissal</td></tr>
+        <tr><td><code>closeButton</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Show close button by default</td></tr>
+        <tr><td><code>dismissible</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Allow dismiss by default</td></tr>
+        <tr><td><code>richColors</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Tinted success/error/warning/info surfaces</td></tr>
+        <tr><td><code>visibleToasts</code></td><td><code>number</code></td><td><code>3</code></td><td>Max visible in the stack</td></tr>
+        <tr><td><code>expand</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Always expand stack (else expand on hover)</td></tr>
+        <tr><td><code>gap</code></td><td><code>number</code></td><td><code>12</code></td><td>Gap between expanded toasts (px)</td></tr>
+        <tr><td><code>offset</code></td><td><code>number | string</code></td><td><code>16</code></td><td>Distance from viewport edge</td></tr>
+        <tr><td><code>dir</code></td><td><code>"ltr" | "rtl" | "auto"</code></td><td><code>"auto"</code></td><td>Text direction</td></tr>
+        <tr><td><code>pauseOnHover</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Pause timers while hovering the stack</td></tr>
+        <tr><td><code>resetTimerOnHover</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Reset timer and progress together on hover</td></tr>
+        <tr><td><code>pauseOnWindowBlur</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Pause timers when the window loses focus</td></tr>
+        <tr><td><code>progressBar</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Show duration progress bar when auto-closing</td></tr>
+        <tr><td><code>toasterClassName</code></td><td><code>string</code></td><td>-</td><td>Class on the toaster container</td></tr>
+        <tr><td><code>style</code></td><td><code>object</code></td><td>-</td><td>Inline styles on the toaster container</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <pre class="api"><code>{`toast.config({
+  position: "top-right",
+  theme: "light",
+  duration: 4000,
+  autoClose: true,
+  richColors: true,
+  visibleToasts: 3,
+  expand: false,
+  progressBar: true,
+  pauseOnHover: true,
+  resetTimerOnHover: false,
+});`}</code></pre>
+
+  <p>
+    <code>autoClose</code> decides whether a toast auto-dismisses.
+    Prefer <code>autoClose: false</code> for sticky toasts instead of <code>duration: Infinity</code>.
+  </p>
+</DocsLayout>

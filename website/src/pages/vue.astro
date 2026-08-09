@@ -1,0 +1,25 @@
+---
+import FrameworkLanding from "../components/FrameworkLanding.astro";
+
+const code = `<script setup>
+import { toast } from "alert-notify";
+import { Toaster, custom } from "alert-notify/vue";
+import { h } from "vue";
+</script>
+
+<template>
+  <Toaster position="top-right" :rich-colors="true" />
+  <button @click="toast.success('Saved')">Save</button>
+  <button @click="custom(h('div', 'Custom Vue content'))">Custom</button>
+</template>`;
+---
+
+<FrameworkLanding
+  frameworkId="vue"
+  code={code}
+  extraNotes={[
+    "Toaster is optional. It only syncs config props.",
+    "custom() accepts Vue VNodes.",
+    "Peer: vue >= 3.",
+  ]}
+/>

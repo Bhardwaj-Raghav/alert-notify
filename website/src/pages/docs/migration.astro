@@ -1,0 +1,51 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+---
+
+<DocsLayout
+  title="Migration · alert-notify"
+  description="Migrate alert-notify from 1.x or 2.x to 3.0. Message-first API, onClose, and theme defaults."
+  pageTitle="Migration"
+>
+  <h2>Migrating from 2.x to 3.0</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>2.x</th><th>3.0</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>First arg = title</td><td>First arg = <code>message</code></td></tr>
+        <tr><td><code>description</code></td><td>Use optional <code>title</code> for the heading; first arg is the body</td></tr>
+        <tr><td><code>onDismiss</code> / <code>onAutoClose</code></td><td><code>onClose(toast, reason)</code> with <code>"Manual"</code> | <code>"Auto"</code></td></tr>
+        <tr><td><code>html</code> on standard toasts</td><td><code>toast.custom(...)</code> only</td></tr>
+        <tr><td><code>duration: Infinity</code> for sticky</td><td>Prefer <code>autoClose: false</code></td></tr>
+        <tr><td>Default <code>theme: "system"</code></td><td>Default <code>theme: "light"</code></td></tr>
+        <tr><td>Manual <code>import "alert-notify/style.css"</code> required</td><td>Auto-included from package entry (explicit import still OK)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <pre class="api"><code>{`// 2.x
+toast.success("Profile updated", { description: "Your profile was saved." });
+
+// 3.0
+toast.success("Your profile was saved.", { title: "Profile updated" });`}</code></pre>
+
+  <h2>Migrating from 1.x</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>1.x</th><th>3.x</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>showAlert(SUCCESS, msg)</code></td><td><code>toast.success(msg)</code></td></tr>
+        <tr><td><code>AlertNotifyContainer</code></td><td>Optional <code>Toaster</code> from <code>/react</code>, <code>/vue</code>, <code>/svelte</code></td></tr>
+        <tr><td><code>Style.scss</code> / <code>style.min.css</code></td><td>Auto CSS, or <code>alert-notify/style.css</code></td></tr>
+        <tr><td><code>timeout</code></td><td><code>duration</code> (+ <code>autoClose</code>)</td></tr>
+        <tr><td><code>isDismissible</code></td><td><code>closeButton</code> / <code>dismissible</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Also see the <a href="/changelog">changelog</a>.</p>
+</DocsLayout>

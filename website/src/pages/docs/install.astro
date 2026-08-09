@@ -1,0 +1,32 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+---
+
+<DocsLayout
+  title="Install · alert-notify"
+  description="Install alert-notify with npm or load the CDN IIFE build."
+  pageTitle="Install"
+>
+  <h2>npm</h2>
+  <pre class="api"><code>{`npm install alert-notify`}</code></pre>
+  <p>
+    CSS loads with the package entry. You can still import <code>alert-notify/style.css</code> explicitly.
+  </p>
+
+  <h2>CDN</h2>
+  <pre class="api"><code>{`<script src="https://unpkg.com/alert-notify@3/dist/alert-notify.global.js"></script>`}</code></pre>
+  <p>
+    The IIFE build injects CSS and exposes <code>AlertNotify</code> on <code>window</code>.
+    See the <a href="/docs/cdn">CDN guide</a>.
+  </p>
+
+  <h2>Optional peers</h2>
+  <ul>
+    <li>React path: <code>react</code> and <code>react-dom</code> &gt;= 17</li>
+    <li>Vue path: <code>vue</code> &gt;= 3</li>
+    <li>Svelte path: <code>svelte</code> &gt;= 5</li>
+  </ul>
+  <p>Peers are optional. The core vanilla path needs none of them.</p>
+
+  <p><a href="/docs/quick-start">Next: Quick start</a></p>
+</DocsLayout>

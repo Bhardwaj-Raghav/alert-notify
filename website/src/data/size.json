@@ -1,8 +1,33 @@
 {
-  "jsRaw": 19508,
-  "jsGzip": 5475,
+  "measuredEntry": "svelte",
+  "entries": {
+    "vanilla": {
+      "raw": 19508,
+      "gzip": 5475,
+      "gzipKb": 5.3
+    },
+    "react": {
+      "raw": 20228,
+      "gzip": 5724,
+      "gzipKb": 5.6
+    },
+    "vue": {
+      "raw": 20429,
+      "gzip": 5790,
+      "gzipKb": 5.7
+    },
+    "svelte": {
+      "raw": 21227,
+      "gzip": 5886,
+      "gzipKb": 5.7
+    }
+  },
+  "jsRaw": 21227,
+  "jsGzip": 5886,
   "cssRaw": 11993,
   "cssGzip": 2760,
-  "jsGzipKb": 5.3,
-  "cssGzipKb": 2.7
+  "jsGzipKb": 5.7,
+  "cssGzipKb": 2.7,
+  "totalGzip": 8646,
+  "totalGzipKb": 8.4
 }

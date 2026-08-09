@@ -29,6 +29,8 @@ export default defineConfig({
     resolve: {
       alias: {
         "alert-notify/style.css": path.resolve(root, "../src/styles/toast.css"),
+        "alert-notify/react": path.resolve(root, "../src/react/index.tsx"),
+        "alert-notify/vue": path.resolve(root, "../src/vue/index.ts"),
         "alert-notify": path.resolve(root, "../src/index.ts"),
       },
     },

@@ -13,6 +13,8 @@ npm run build
 
 The marketing site lives in `website/` and is driven from the root (`astro --root website`).
 
+Key public routes: `/`, `/examples`, `/docs/*`, `/changelog`, and framework landings (`/react`, `/vue`, `/svelte`, `/angular`, `/cdn`). Docs sidebar and `llms.txt` share `website/src/data/nav.ts`.
+
 ## Scripts
 
 | Command | What it does |

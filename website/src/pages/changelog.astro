@@ -1,0 +1,48 @@
+---
+import Base from "../layouts/Base.astro";
+import { releases } from "../data/releases";
+import { pageMeta } from "../data/seo";
+
+const meta = pageMeta({
+  title: "Changelog · alert-notify",
+  description:
+    "Release history for alert-notify, including the 3.0 message-first API changes and published 2.x / 1.x lines.",
+});
+---
+
+<Base
+  title={meta.title}
+  description={meta.description}
+  ogTitle={meta.ogTitle}
+  breadcrumbs={[
+    { name: "Home", href: "/" },
+    { name: "Changelog", href: "/changelog" },
+  ]}
+>
+  <main class="page-shell">
+    <section class="section">
+      <h1 style="margin:0;font-size:clamp(2rem,4vw,2.8rem)">Changelog</h1>
+      <p class="section-copy">
+        Site summary of npm releases. See <a href="/docs/migration">Migration</a> for upgrade tables.
+      </p>
+      {
+        releases.map((release) => (
+          <article class="release">
+            <div class="release-head">
+              <h2>{release.version}</h2>
+              {release.status && <span class="release-status">{release.status}</span>}
+            </div>
+            <p class="section-copy" style="margin-bottom:8px">
+              {release.summary}
+            </p>
+            <ul class="notes">
+              {release.notes.map((note) => (
+                <li>{note}</li>
+              ))}
+            </ul>
+          </article>
+        ))
+      }
+    </section>
+  </main>
+</Base>
