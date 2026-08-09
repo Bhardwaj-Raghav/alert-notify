@@ -1,6 +1,11 @@
 ---
 import DocsLayout from "../../layouts/DocsLayout.astro";
-import size from "../../data/size.json";
+import {
+  frameworkGzipKb,
+  frameworkGzipList,
+  frameworkSizeRows,
+  size,
+} from "../../data/size";
 import { frameworks } from "../../data/nav";
 ---
 
@@ -12,8 +17,37 @@ import { frameworks } from "../../data/nav";
   <p>
     alert-notify is a multi-framework toast library. Call <code>toast.success()</code> from anywhere.
     The portal auto-mounts. Optional helpers sync config for React, Vue, and Svelte.
-    Measured size is about <strong>~{size.jsGzipKb}KB</strong> gzip JS + ~{size.cssGzipKb}KB CSS per path.
+    Measured JS gzip: <strong>{frameworkGzipList()}</strong>, plus shared ~{size.cssGzipKb}KB CSS.
   </p>
+
+  <h2>Bundle size by path</h2>
+  <p>
+    Each number is core plus that path's adapter (minified + gzip). CSS is separate.
+    Angular is a recipe on the vanilla core, so it matches Vanilla.
+  </p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Path</th><th>What you import</th><th>JS gzip</th></tr>
+      </thead>
+      <tbody>
+        {
+          frameworkSizeRows.map((row) => (
+            <tr>
+              <td>{row.label}</td>
+              <td>{row.importHint}</td>
+              <td>~{frameworkGzipKb(row)}KB</td>
+            </tr>
+          ))
+        }
+        <tr>
+          <td><code>style.css</code></td>
+          <td>Shared styles (all paths)</td>
+          <td>~{size.cssGzipKb}KB</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <h2>Support tiers</h2>
   <div class="table-wrap">

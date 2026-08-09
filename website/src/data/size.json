@@ -1,5 +1,7 @@
 {
   "measuredEntry": "svelte",
+  "minEntry": "vanilla",
+  "maxEntry": "svelte",
   "entries": {
     "vanilla": {
       "raw": 19508,
@@ -27,6 +29,8 @@
   "cssRaw": 11993,
   "cssGzip": 2760,
   "jsGzipKb": 5.9,
+  "jsGzipKbMin": 5.3,
+  "jsGzipKbMax": 5.9,
   "cssGzipKb": 2.7,
   "totalGzip": 8781,
   "totalGzipKb": 8.6

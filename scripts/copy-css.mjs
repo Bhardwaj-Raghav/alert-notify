@@ -99,6 +99,11 @@ const heaviest = Object.entries(entrySizes).reduce(
     size.gzip > best.size.gzip ? { name, size } : best,
   { name: "vanilla", size: { raw: 0, gzip: -1, gzipKb: 0 } },
 );
+const lightest = Object.entries(entrySizes).reduce(
+  (best, [name, size]) =>
+    size.gzip < best.size.gzip ? { name, size } : best,
+  { name: "vanilla", size: { raw: Number.MAX_SAFE_INTEGER, gzip: Number.MAX_SAFE_INTEGER, gzipKb: 0 } },
+);
 
 const cssBuf = readFileSync(join(dist, "style.css"));
 const gzCss = gzipSync(cssBuf);
@@ -111,12 +116,16 @@ const totalGzipKb = Number((totalGzip / 1024).toFixed(1));
 
 const sizes = {
   measuredEntry: heaviest.name,
+  minEntry: lightest.name,
+  maxEntry: heaviest.name,
   entries: entrySizes,
   jsRaw: heaviest.size.raw,
   jsGzip: heaviest.size.gzip,
   cssRaw: cssBuf.length,
   cssGzip,
   jsGzipKb: heaviest.size.gzipKb,
+  jsGzipKbMin: lightest.size.gzipKb,
+  jsGzipKbMax: heaviest.size.gzipKb,
   cssGzipKb,
   totalGzip,
   totalGzipKb,
@@ -126,7 +135,7 @@ mkdirSync(websiteData, { recursive: true });
 writeFileSync(join(websiteData, "size.json"), `${JSON.stringify(sizes, null, 2)}\n`);
 
 console.log(
-  `bundle: max single-impl JS (${heaviest.name}) ${sizes.jsGzipKb}KB gzip · css ${sizes.cssGzipKb}KB gzip · total ~${sizes.totalGzipKb}KB`,
+  `bundle: JS ${sizes.jsGzipKbMin}–${sizes.jsGzipKbMax}KB gzip (${sizes.minEntry}–${sizes.maxEntry}) · css ${sizes.cssGzipKb}KB gzip · max total ~${sizes.totalGzipKb}KB`,
 );
 for (const [name, size] of Object.entries(entrySizes)) {
   console.log(`  ${name.padEnd(8)} ${size.gzipKb}KB gzip`);

@@ -1,4 +1,4 @@
-import size from "./size.json";
+import { frameworkGzipList, frameworkGzipWithCss, size } from "./size";
 
 /** Production origin. Keep in sync with astro.config `site` default. */
 export const siteOrigin = "https://alert-notify.vercel.app";
@@ -7,7 +7,7 @@ export const siteName = "alert-notify";
 
 export const title = "alert-notify — toast notifications";
 
-export const description = `Tiny multi-framework toast library. No provider. Dark/system theme and richColors. ~${size.jsGzipKb}KB gzip JS + ~${size.cssGzipKb}KB CSS. Alternative to toastify, hot-toast, and Sonner.`;
+export const description = `Tiny multi-framework toast library. No provider. Dark/system theme and richColors. ${frameworkGzipWithCss()}. Alternative to toastify, hot-toast, and Sonner.`;
 
 export const ogTitle = title;
 
@@ -25,7 +25,7 @@ export const keywords = [
 export const faqs = [
   {
     question: "What is a good React toast notification library?",
-    answer: `alert-notify is a toast library for React and every other framework (~${size.jsGzipKb}KB gzip JS per path, plus optional ~${size.cssGzipKb}KB CSS). Call toast.success / toast.error from anywhere with no root provider. Built as an alternative to react-hot-toast, Sonner, react-toastify, react-alert, and notistack.`,
+    answer: `alert-notify is a toast library for React and every other framework (${frameworkGzipList()}, plus optional ~${size.cssGzipKb}KB CSS). Call toast.success / toast.error from anywhere with no root provider. Built as an alternative to react-hot-toast, Sonner, react-toastify, react-alert, and notistack.`,
   },
   {
     question: "Is alert-notify an alternative to react-toastify or toastify?",
@@ -62,7 +62,7 @@ export const faqs = [
 export const alternatives = [
   {
     name: "react-toastify / toastify",
-    note: `Popular React toastify stack; much larger bundle. alert-notify covers the same flows in ~${size.jsGzipKb}KB JS (+ optional CSS) with no framework lock-in.`,
+    note: `Popular React toastify stack; much larger bundle. alert-notify covers the same flows (${frameworkGzipList()}, plus optional CSS) with no framework lock-in.`,
   },
   {
     name: "react-hot-toast",

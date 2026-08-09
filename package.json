@@ -1,7 +1,7 @@
 {
   "name": "alert-notify",
   "version": "3.0.0",
-  "description": "Multi-framework toast notifications for React, Vue, Svelte, Angular, and vanilla JS. Alternative to react-toastify, react-hot-toast, and Sonner. No provider required. ~6KB gzip JS per path.",
+  "description": "Multi-framework toast notifications for React, Vue, Svelte, Angular, and vanilla JS. Alternative to react-toastify, react-hot-toast, and Sonner. No provider required. Vanilla/Angular ~5.3KB · React ~5.6KB · Vue ~5.7KB · Svelte ~5.9KB gzip JS per path.",
   "license": "MIT",
   "author": "Raghav Bhardwaj",
   "type": "module",

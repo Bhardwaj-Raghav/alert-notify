@@ -1,7 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import InstallCopy from "../components/InstallCopy.astro";
-import size from "../data/size.json";
+import { frameworkGzipList, frameworkGzipWithCss } from "../data/size";
 import pkg from "../../../package.json";
 import { description, keywords, ogTitle, title } from "../data/seo";
 
@@ -88,7 +88,7 @@ toast.success("Saved");`,
       <p class="home-tagline">Toast notifications for any framework.</p>
       <p class="home-lede">
         Same imperative API in React, Vue, Svelte, Angular, Astro, or a CDN script.
-        No root provider. About ~{size.jsGzipKb}KB gzip JS + ~{size.cssGzipKb}KB CSS per path.
+        No root provider. About {frameworkGzipWithCss()} per path.
       </p>
       <div class="home-cta">
         <a class="btn primary" href="/examples">Open examples</a>
@@ -180,7 +180,7 @@ toast.success("Saved");`,
           <h3>Theme and size</h3>
           <p>
             light, dark, and system themes plus richColors and CSS variables.
-            About ~{size.jsGzipKb}KB gzip JS per path, zero runtime deps.
+            About {frameworkGzipList()} per path, zero runtime deps.
           </p>
         </article>
       </div>

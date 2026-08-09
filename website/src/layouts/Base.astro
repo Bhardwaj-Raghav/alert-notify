@@ -1,7 +1,6 @@
 ---
 import "alert-notify/style.css";
 import "../styles/site.css";
-import size from "../data/size.json";
 import pkg from "../../../package.json";
 import {
   siteName,
@@ -13,6 +12,7 @@ import {
   type OgType,
 } from "../data/seo";
 import { githubUrl, npmUrl } from "../data/nav";
+import { frameworkGzipList } from "../data/size";
 import SiteHeader from "../components/SiteHeader.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 
@@ -125,7 +125,7 @@ if (isHome) {
       },
       softwareVersion: pkg.version,
       softwareRequirements: "Node.js >= 18 for install via npm",
-      fileSize: `${size.jsGzipKb}KB gzip JS`,
+      fileSize: frameworkGzipList(),
       screenshot: ogImageURL.href,
       sameAs: [githubUrl, npmUrl],
     },
@@ -252,7 +252,7 @@ const jsonLd = {
     <meta name="twitter:label1" content="Install" />
     <meta name="twitter:data1" content="npm i alert-notify" />
     <meta name="twitter:label2" content="Size" />
-    <meta name="twitter:data2" content={`~${size.jsGzipKb}KB gzip JS`} />
+    <meta name="twitter:data2" content={frameworkGzipList()} />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

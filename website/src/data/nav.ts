@@ -144,7 +144,7 @@ export function flattenDocsNav(): DocsNavItem[] {
   return docsNav.flatMap((group) => group.items);
 }
 
-export function buildLlmsTxt(sizeKb: number, cssKb: number): string {
+export function buildLlmsTxt(frameworkSizes: string, cssKb: number): string {
   const docsLines = flattenDocsNav()
     .map((item) => `- ${item.label}: ${siteOrigin}${item.href}`)
     .join("\n");
@@ -154,7 +154,7 @@ export function buildLlmsTxt(sizeKb: number, cssKb: number): string {
 
   return `# alert-notify
 
-> Tiny multi-framework toast library (~${sizeKb}KB gzip JS + ~${cssKb}KB CSS per path). Native core for any JS. Helper exports for React, Vue, and Svelte. Angular and Astro use the same core as recipes. Zero runtime dependencies. No root provider required.
+> Tiny multi-framework toast library (${frameworkSizes} + ~${cssKb}KB CSS). Native core for any JS. Helper exports for React, Vue, and Svelte. Angular and Astro use the same core as recipes. Zero runtime dependencies. No root provider required.
 
 ## Install
 

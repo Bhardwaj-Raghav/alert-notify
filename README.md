@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/alert-notify.svg)](https://www.npmjs.com/package/alert-notify)
 
-**Toast notifications for React, Vue, Svelte, Angular, Astro, and plain HTML.** Same imperative `toast.success()` API everywhere. About **5.7KB gzip** JS per path plus **~2.7KB gzip** CSS, zero runtime deps. An alternative to react-toastify, react-hot-toast, Sonner, react-alert, and other toast / snackbar libraries when you do not want a React-only stack.
+**Toast notifications for React, Vue, Svelte, Angular, Astro, and plain HTML.** Same imperative `toast.success()` API everywhere. JS gzip by path: **Vanilla ~5.3KB · React ~5.6KB · Angular ~5.3KB · Vue ~5.7KB · Svelte ~5.9KB**, plus **~2.7KB gzip** CSS, zero runtime deps. An alternative to react-toastify, react-hot-toast, Sonner, react-alert, and other toast / snackbar libraries when you do not want a React-only stack.
 
 No root provider required. The portal auto-mounts. Optional `<Toaster />` wrappers only sync config props. Styles load with the package entry (or import `alert-notify/style.css` yourself).
 
@@ -20,7 +20,7 @@ toast.success("Saved");
 | Provider / `<Toaster />` | **Optional** (auto-mounts) | Required | Required | Required |
 | Dark / system theme | **Built-in** | DIY | Built-in | DIY / limited |
 | Rich colors | **Built-in** | DIY | Built-in | Limited |
-| Approx. gzip | ~5.7KB JS + ~2.7KB CSS | ~4–5KB (CSS inlined) | ~9–12KB | ~40KB+ |
+| Approx. gzip | Vanilla/Angular ~5.3KB · React ~5.6KB · Vue ~5.7KB · Svelte ~5.9KB + ~2.7KB CSS | ~4–5KB (CSS inlined) | ~9–12KB | ~40KB+ |
 | Runtime deps | **0** | 0 | 0 | 0 |
 
 **vs react-hot-toast** — similar size band, but you are not stuck in React, and dark/system theme, richColors, progress bar, and swipe dismiss ship built-in instead of DIY styles.
@@ -31,7 +31,7 @@ toast.success("Saved");
 
 **vs react-alert / notistack / snackbars** — one small package for alerts, notifications, and snackbar-style toasts across frameworks.
 
-Sizes are minified + gzip (typical CDN transfer). We measure the heaviest *single* path (core + one adapter), not every framework summed. Some libs inline CSS into one number; ours ships CSS as a separate file.
+Sizes are minified + gzip (typical CDN transfer). We measure each *single* path (core + one adapter): Vanilla ~5.3KB, React ~5.6KB, Angular ~5.3KB (recipe = core), Vue ~5.7KB, Svelte ~5.9KB. Not every framework summed. Some libs inline CSS into one number; ours ships CSS as a separate file (~2.7KB gzip).
 
 Website: [alert-notify.vercel.app](https://alert-notify.vercel.app) · [Docs](https://alert-notify.vercel.app/docs) · [Examples](https://alert-notify.vercel.app/examples) · [Changelog](https://alert-notify.vercel.app/changelog)
 
