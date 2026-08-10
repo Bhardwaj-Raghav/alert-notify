@@ -1,0 +1,57 @@
+---
+const { command = "npm i alert-notify" } = Astro.props;
+---
+
+<div class="install">
+  <code>{command}</code>
+  <button
+    type="button"
+    class="copy-btn"
+    data-copy={command}
+    aria-label="Copy install command"
+    title="Copy"
+  >
+    <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2"></rect>
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2"></path>
+    </svg>
+    <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>
+  </button>
+</div>
+
+<script>
+  function bindCopyButtons() {
+    document.querySelectorAll("[data-copy]").forEach((btn) => {
+      if (!(btn instanceof HTMLButtonElement)) return;
+      if (btn.dataset.copyBound === "1") return;
+      btn.dataset.copyBound = "1";
+      btn.addEventListener("click", async () => {
+        const text = btn.getAttribute("data-copy");
+        if (!text) return;
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.setAttribute("readonly", "");
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          ta.remove();
+        }
+        btn.classList.add("copied");
+        btn.setAttribute("aria-label", "Copied");
+        window.setTimeout(() => {
+          btn.classList.remove("copied");
+          btn.setAttribute("aria-label", "Copy install command");
+        }, 1400);
+      });
+    });
+  }
+
+  bindCopyButtons();
+</script>

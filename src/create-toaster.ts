@@ -17,53 +17,118 @@ function normalizeContent(
     | ExternalToast
     | ((value: never) => string | ExternalToast),
   value?: unknown,
-  fallbackTitle = "Done",
-): { title: string; options: ToastOptions } {
+  fallbackMessage = "Done",
+): { message: string; options: ToastOptions } {
   if (typeof content === "function") {
-    const resolved = content(value as never);
-    if (typeof resolved === "string") {
-      return { title: resolved, options: {} };
-    }
-    const { title, ...options } = resolved;
-    return {
-      title: title ?? fallbackTitle,
-      options,
-    };
+    return normalizeContent(
+      content(value as never),
+      undefined,
+      fallbackMessage,
+    );
   }
   if (typeof content === "string") {
-    return { title: content, options: {} };
+    return { message: content, options: {} };
   }
-  const { title, ...options } = content;
-  return {
-    title: title ?? fallbackTitle,
-    options,
-  };
+  const { message, title, ...rest } = content;
+  if (message !== undefined) {
+    return {
+      message,
+      options: title !== undefined ? { ...rest, title } : { ...rest },
+    };
+  }
+  if (title !== undefined) {
+    return { message: title, options: { ...rest } };
+  }
+  return { message: fallbackMessage, options: { ...rest } };
 }
 
+/** Imperative toaster API returned by {@link createToaster} and the default {@link toast}. */
 export type ToasterInstance = {
-  (title: string, options?: ToastOptions): ToastId;
-  success: (title: string, options?: ToastOptions) => ToastId;
-  error: (title: string, options?: ToastOptions) => ToastId;
-  warning: (title: string, options?: ToastOptions) => ToastId;
-  info: (title: string, options?: ToastOptions) => ToastId;
-  loading: (title: string, options?: ToastOptions) => ToastId;
-  message: (title: string, options?: ToastOptions) => ToastId;
+  /**
+   * Show a `"message"` toast.
+   * @returns Toast id (reuse via `options.id` to update in place).
+   *
+   * @example
+   * toast("Saved", { title: "Profile" })
+   * toast("Stay open", { autoClose: false })
+   */
+  (message: string, options?: ToastOptions): ToastId;
+  /** Show a success toast. */
+  success: (message: string, options?: ToastOptions) => ToastId;
+  /** Show an error toast. */
+  error: (message: string, options?: ToastOptions) => ToastId;
+  /** Show a warning toast. */
+  warning: (message: string, options?: ToastOptions) => ToastId;
+  /** Show an info toast. */
+  info: (message: string, options?: ToastOptions) => ToastId;
+  /**
+   * Show a loading toast. Defaults to sticky (`autoClose: false`) until updated or dismissed.
+   */
+  loading: (message: string, options?: ToastOptions) => ToastId;
+  /** Show a neutral message toast (same as calling the instance directly). */
+  message: (message: string, options?: ToastOptions) => ToastId;
+  /**
+   * Show a custom toast. String HTML is not escaped (trusted markup only).
+   * Default icon is hidden unless you pass `icon`.
+   *
+   * @example
+   * toast.custom('<strong>Hello</strong>')
+   * toast.custom(document.createElement('div'))
+   */
+  custom: (
+    content: string | HTMLElement,
+    options?: ToastOptions,
+  ) => ToastId;
+  /**
+   * Show loading → success/error for a promise. Updates the same toast id.
+   * On failure, shows the error toast then rethrows.
+   *
+   * @example
+   * await toast.promise(save(), {
+   *   loading: 'Saving…',
+   *   success: 'Saved',
+   *   error: 'Failed',
+   * })
+   */
   promise: <T>(promise: Promise<T>, messages: PromiseMessages<T>) => Promise<T>;
+  /**
+   * Dismiss one toast by id, or all toasts when `id` is omitted.
+   * Public dismiss always uses close reason `"Manual"`.
+   */
   dismiss: (id?: ToastId) => void;
+  /** Shallow-merge global toaster config. */
   config: (partial: Partial<ToasterConfig>) => void;
+  /** Current merged toaster config. */
   getConfig: () => ToasterConfig;
+  /** Snapshot of active toasts (read-only {@link ToastRecord}s). */
   getToasts: () => readonly ToastRecord[];
+  /**
+   * Subscribe to toast list changes.
+   * Fires immediately with the current list; returns an unsubscribe function.
+   */
   subscribe: (listener: ToastListener) => () => void;
+  /** Dismiss all toasts and tear down the portal (no-op portal in headless mode). */
   destroy: () => void;
 };
 
 function createTyped(
   store: ToastStore,
   type: ToastType,
-): (title: string, options?: ToastOptions) => ToastId {
-  return (title, options = {}) => store.add(title, { ...options, type });
+): (message: string, options?: ToastOptions) => ToastId {
+  return (message, options = {}) => store.add(message, { ...options, type });
 }
 
+/**
+ * Create an isolated toaster instance (separate store and optional portal).
+ *
+ * @param initialConfig - Merged over built-in defaults.
+ * @param options.headless - When true, no DOM portal; drive UI via `subscribe` / `getToasts`.
+ *
+ * @example
+ * const toaster = createToaster({ position: 'bottom-center' }, { headless: true })
+ * toaster.subscribe((list) => renderCustomUi(list))
+ * toaster.success('Done')
+ */
 export function createToaster(
   initialConfig: Partial<ToasterConfig> = {},
   options: { headless?: boolean } = {},
@@ -73,8 +138,8 @@ export function createToaster(
     ? null
     : new ToastRenderer(store, { enabled: true });
 
-  const base = ((title: string, opts: ToastOptions = {}) =>
-    store.add(title, opts)) as ToasterInstance;
+  const base = ((message: string, opts: ToastOptions = {}) =>
+    store.add(message, opts)) as ToasterInstance;
 
   base.success = createTyped(store, "success");
   base.error = createTyped(store, "error");
@@ -82,16 +147,17 @@ export function createToaster(
   base.info = createTyped(store, "info");
   base.loading = createTyped(store, "loading");
   base.message = createTyped(store, "message");
+  base.custom = (content, opts = {}) => store.addCustom(content, opts);
 
   base.promise = async <T>(
     promise: Promise<T>,
     messages: PromiseMessages<T>,
   ): Promise<T> => {
     const loading = normalizeContent(messages.loading, undefined, "Loading…");
-    const id = store.add(loading.title, {
+    const id = store.add(loading.message, {
       ...loading.options,
       type: "loading",
-      duration: Number.POSITIVE_INFINITY,
+      autoClose: false,
     });
 
     try {
@@ -99,8 +165,9 @@ export function createToaster(
       const success = normalizeContent(messages.success, data, "Done");
       store.update(id, {
         ...success.options,
-        title: success.title,
+        message: success.message,
         type: "success",
+        autoClose: success.options.autoClose ?? true,
         duration: success.options.duration,
       });
       return data;
@@ -108,8 +175,9 @@ export function createToaster(
       const failure = normalizeContent(messages.error, error, "Error");
       store.update(id, {
         ...failure.options,
-        title: failure.title,
+        message: failure.message,
         type: "error",
+        autoClose: failure.options.autoClose ?? true,
         duration: failure.options.duration,
       });
       throw error;

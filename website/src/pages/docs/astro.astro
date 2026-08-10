@@ -1,0 +1,24 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+---
+
+<DocsLayout
+  title="alert-notify Documentation: Astro"
+  description="Use alert-notify in Astro with a client script or framework island. Recipe only: same core API, no dedicated Astro adapter."
+  pageTitle="Astro"
+>
+  <p>
+    <span class="tier recipe">Recipe</span>
+    Use a client script or island. Same imperative API as vanilla JS. No dedicated Astro adapter.
+  </p>
+
+  <pre class="api"><code>{`---
+// client script or framework island
+---
+<script>
+  import { toast } from "alert-notify";
+  document.querySelector("button")?.addEventListener("click", () => {
+    toast.success("Saved");
+  });
+</script>`}</code></pre>
+</DocsLayout>

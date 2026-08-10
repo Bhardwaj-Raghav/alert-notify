@@ -1,0 +1,19 @@
+---
+import FrameworkLanding from "../components/FrameworkLanding.astro";
+
+const code = `<script src="https://unpkg.com/alert-notify@3/dist/alert-notify.global.js"></script>
+<script>
+  AlertNotify.toast.config({ richColors: true });
+  AlertNotify.toast.success("Hello from CDN");
+</script>`;
+---
+
+<FrameworkLanding
+  frameworkId="cdn"
+  installHint="The IIFE build injects CSS automatically. Linking style.css remains safe."
+  code={code}
+  extraNotes={[
+    "Global name: AlertNotify",
+    "Also available from jsDelivr with the same file path.",
+  ]}
+/>

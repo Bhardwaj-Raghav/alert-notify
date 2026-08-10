@@ -18,7 +18,7 @@ export const StackAndExpand: Story = {
       "padding:12px 16px;border-radius:12px;border:0;background:#115e59;color:#fff;font-weight:700;cursor:pointer";
     btn.addEventListener("click", () => {
       for (let i = 1; i <= 5; i += 1) {
-        toast.message(`Stacked ${i}`, { description: "Hover the stack to expand" });
+        toast.message(`Stacked ${i}`, { autoClose: false });
       }
     });
     root.appendChild(btn);

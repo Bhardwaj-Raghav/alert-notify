@@ -1,0 +1,10 @@
+dist
+node_modules
+coverage
+storybook-static
+site-dist
+website/dist
+website/.astro
+package-lock.json
+*.tgz
+*.log

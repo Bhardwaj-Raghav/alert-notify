@@ -1,0 +1,25 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+---
+
+<DocsLayout
+  title="alert-notify Documentation: Angular"
+  description="Use alert-notify in Angular as a recipe: import the core toast API from components or services. No Angular module ships."
+  pageTitle="Angular"
+>
+  <p>
+    <span class="tier recipe">Recipe</span>
+    There is no Angular package export. Import the core API and call it from components or services.
+    For a live demo and install snippet, see the <a href="/angular">Angular landing</a>.
+  </p>
+
+  <pre class="api"><code>{`import { toast } from "alert-notify";
+
+toast.config({ position: "top-right", richColors: true });
+toast.success("Saved");`}</code></pre>
+
+  <ul class="notes">
+    <li>Optional: call <code>toast.config</code> once in <code>AppComponent.ngOnInit</code>.</li>
+    <li>Landing page: <a href="/angular">/angular</a></li>
+  </ul>
+</DocsLayout>

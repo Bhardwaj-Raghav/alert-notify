@@ -1,79 +1,107 @@
 ---
 import "alert-notify/style.css";
-import size from "../data/size.json";
+import "../styles/site.css";
 import pkg from "../../../package.json";
 import {
   siteName,
-  title,
-  description,
-  ogTitle,
-  keywords,
+  description as defaultDescription,
+  ogTitle as defaultOgTitle,
+  title as defaultTitle,
+  keywords as defaultKeywords,
   faqs,
+  type OgType,
 } from "../data/seo";
+import { githubUrl, npmUrl } from "../data/nav";
+import { frameworkGzipList } from "../data/size";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+
+type Breadcrumb = { name: string; href: string };
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogTitle?: string;
+  keywords?: string;
+  ogType?: OgType;
+  breadcrumbs?: Breadcrumb[];
+  includeFaqSchema?: boolean;
+  includeChrome?: boolean;
+  /** TechArticle headline; defaults to title when ogType is article. */
+  articleHeadline?: string;
+}
+
+const {
+  title = defaultTitle,
+  description = defaultDescription,
+  ogTitle = defaultOgTitle,
+  keywords,
+  ogType = "website" as OgType,
+  breadcrumbs = [{ name: "Home", href: "/" }],
+  includeFaqSchema = false,
+  includeChrome = true,
+  articleHeadline,
+} = Astro.props;
 
 const baseURL = import.meta.env.BASE_URL.endsWith("/")
   ? import.meta.env.BASE_URL
   : `${import.meta.env.BASE_URL}/`;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const homeURL = new URL(baseURL, Astro.site);
 const ogImageURL = new URL(`${baseURL}og-image.png`, Astro.site);
-const sitemapURL = new URL(`${baseURL}sitemap-index.xml`, Astro.site);
-const npmUrl = "https://www.npmjs.com/package/alert-notify";
-const githubUrl = "https://github.com/Bhardwaj-Raghav/alert-notify";
+const sitemapURL = new URL(`${baseURL}sitemap.xml`, Astro.site);
+const isHome =
+  Astro.url.pathname === "/" ||
+  Astro.url.pathname === "" ||
+  Astro.url.pathname === baseURL.replace(/\/$/, "") ||
+  Astro.url.pathname === baseURL;
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "WebSite",
-      "@id": `${canonicalURL.href}#website`,
-      url: canonicalURL.href,
-      name: siteName,
-      alternateName: [
-        "alert notify",
-        "React toast",
-        "toastify alternative",
-        "toast notification library",
-      ],
-      description,
-      inLanguage: "en-US",
-      publisher: { "@id": `${canonicalURL.href}#software` },
+const graph: Record<string, unknown>[] = [
+  {
+    "@type": "WebSite",
+    "@id": `${homeURL.href}#website`,
+    url: homeURL.href,
+    name: siteName,
+    alternateName: ["alert notify", "toast notification library"],
+    description: defaultDescription,
+    inLanguage: "en-US",
+    publisher: { "@id": `${homeURL.href}#software` },
+  },
+  {
+    "@type": "WebPage",
+    "@id": `${canonicalURL.href}#webpage`,
+    url: canonicalURL.href,
+    name: title,
+    description,
+    isPartOf: { "@id": `${homeURL.href}#website` },
+    about: { "@id": `${homeURL.href}#software` },
+    primaryImageOfPage: {
+      "@type": "ImageObject",
+      url: ogImageURL.href,
+      width: 1200,
+      height: 630,
     },
-    {
-      "@type": "WebPage",
-      "@id": `${canonicalURL.href}#webpage`,
-      url: canonicalURL.href,
-      name: title,
-      description,
-      isPartOf: { "@id": `${canonicalURL.href}#website` },
-      about: { "@id": `${canonicalURL.href}#software` },
-      primaryImageOfPage: {
-        "@type": "ImageObject",
-        url: ogImageURL.href,
-        width: 1200,
-        height: 630,
-      },
-      inLanguage: "en-US",
-    },
+    inLanguage: "en-US",
+  },
+];
+
+if (isHome) {
+  graph.push(
     {
       "@type": "SoftwareApplication",
-      "@id": `${canonicalURL.href}#software`,
+      "@id": `${homeURL.href}#software`,
       name: siteName,
-      alternateName: [
-        "alert notify",
-        "alert-notify toast",
-        "React toast library",
-        "toastify alternative",
-      ],
+      alternateName: ["alert notify", "toast notification library"],
       applicationCategory: "DeveloperApplication",
       applicationSubCategory: "Toast notification library",
       operatingSystem: "Any",
-      description,
-      url: canonicalURL.href,
+      description: defaultDescription,
+      url: homeURL.href,
       downloadUrl: npmUrl,
       installUrl: npmUrl,
       codeRepository: githubUrl,
       license: "https://opensource.org/licenses/MIT",
-      keywords,
+      keywords: defaultKeywords,
       featureList: [
         "React toast notifications",
         "Vue toast notifications",
@@ -84,7 +112,6 @@ const jsonLd = {
         "Dark mode and CSS variables",
         "Zero runtime dependencies",
         "No root provider required",
-        "Alternative to react-toastify, react-hot-toast, Sonner, react-alert",
       ],
       author: {
         "@type": "Person",
@@ -98,46 +125,68 @@ const jsonLd = {
       },
       softwareVersion: pkg.version,
       softwareRequirements: "Node.js >= 18 for install via npm",
-      fileSize: `${size.jsGzipKb}KB gzip JS`,
+      fileSize: frameworkGzipList(),
       screenshot: ogImageURL.href,
       sameAs: [githubUrl, npmUrl],
     },
     {
       "@type": "SoftwareSourceCode",
-      "@id": `${canonicalURL.href}#source`,
+      "@id": `${homeURL.href}#source`,
       name: siteName,
-      description,
+      description: defaultDescription,
       codeRepository: githubUrl,
       programmingLanguage: ["TypeScript", "JavaScript"],
       runtimePlatform: ["Browser", "React", "Vue", "Svelte", "Angular", "Astro"],
       license: "https://opensource.org/licenses/MIT",
-      url: canonicalURL.href,
+      url: homeURL.href,
     },
-    {
-      "@type": "FAQPage",
-      "@id": `${canonicalURL.href}#faq`,
-      mainEntity: faqs.map((faq) => ({
-        "@type": "Question",
-        name: faq.question,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: faq.answer,
-        },
-      })),
-    },
-    {
-      "@type": "BreadcrumbList",
-      "@id": `${canonicalURL.href}#breadcrumb`,
-      itemListElement: [
-        {
-          "@type": "ListItem",
-          position: 1,
-          name: "Home",
-          item: canonicalURL.href,
-        },
-      ],
-    },
-  ],
+  );
+}
+
+if (ogType === "article") {
+  graph.push({
+    "@type": "TechArticle",
+    "@id": `${canonicalURL.href}#article`,
+    headline: articleHeadline ?? title,
+    description,
+    url: canonicalURL.href,
+    isPartOf: { "@id": `${homeURL.href}#website` },
+    about: { "@id": `${homeURL.href}#software` },
+    inLanguage: "en-US",
+  });
+}
+
+if (breadcrumbs.length > 1) {
+  graph.push({
+    "@type": "BreadcrumbList",
+    "@id": `${canonicalURL.href}#breadcrumb`,
+    itemListElement: breadcrumbs.map((crumb, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: crumb.name,
+      item: new URL(crumb.href, Astro.site).href,
+    })),
+  });
+}
+
+if (includeFaqSchema) {
+  graph.push({
+    "@type": "FAQPage",
+    "@id": `${canonicalURL.href}#faq`,
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  });
+}
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": graph,
 };
 ---
 
@@ -148,7 +197,7 @@ const jsonLd = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="keywords" content={keywords} />
+    {keywords && <meta name="keywords" content={keywords} />}
     <meta name="author" content="Raghav Bhardwaj" />
     <meta name="creator" content="Raghav Bhardwaj" />
     <meta name="publisher" content="alert-notify" />
@@ -159,16 +208,10 @@ const jsonLd = {
     <meta name="googlebot" content="index, follow" />
     <meta name="bingbot" content="index, follow" />
     <meta name="theme-color" content="#0f766e" />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="light dark" />
     <meta name="format-detection" content="telephone=no" />
     <meta name="application-name" content={siteName} />
     <meta name="apple-mobile-web-app-title" content={siteName} />
-    <meta name="category" content="developer tools, javascript, toast notifications" />
-    <meta
-      name="subject"
-      content="Toast notification library for React, Vue, Svelte, Angular, and vanilla JavaScript"
-    />
-    <meta name="rating" content="General" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
 
     <link rel="canonical" href={canonicalURL} />
@@ -181,7 +224,7 @@ const jsonLd = {
     <link rel="apple-touch-icon" href={`${baseURL}apple-touch-icon.png`} sizes="180x180" />
     <link rel="manifest" href={`${baseURL}site.webmanifest`} />
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content={siteName} />
     <meta property="og:locale" content="en_US" />
     <meta property="og:url" content={canonicalURL} />
@@ -190,7 +233,7 @@ const jsonLd = {
     <meta property="og:image" content={ogImageURL} />
     <meta
       property="og:image:alt"
-      content={`${siteName} — React toast, toastify alternative, and framework-agnostic toast notifications`}
+      content={`${siteName}: toast notifications for React, Vue, Svelte, and vanilla JS`}
     />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
@@ -204,80 +247,52 @@ const jsonLd = {
     <meta name="twitter:image" content={ogImageURL} />
     <meta
       name="twitter:image:alt"
-      content={`${siteName} — React toast and toast notification library`}
+      content={`${siteName}: toast notification library`}
     />
     <meta name="twitter:label1" content="Install" />
     <meta name="twitter:data1" content="npm i alert-notify" />
     <meta name="twitter:label2" content="Size" />
-    <meta name="twitter:data2" content={`~${size.jsGzipKb}KB gzip JS`} />
+    <meta name="twitter:data2" content={frameworkGzipList()} />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="preload"
       as="style"
-      href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap"
       rel="stylesheet"
       media="print"
       onload="this.media='all'"
     />
     <noscript>
       <link
-        href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap"
         rel="stylesheet"
       />
     </noscript>
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script is:inline>
+      (function () {
+        var key = "alert-notify-theme";
+        var stored = null;
+        try {
+          stored = localStorage.getItem(key);
+        } catch (_) {}
+        var theme = stored === "dark" || stored === "light" ? stored : null;
+        if (!theme) {
+          theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script>
   </head>
   <body>
+    {includeChrome && <SiteHeader />}
     <slot />
+    {includeChrome && <SiteFooter />}
   </body>
 </html>
-
-<style is:global>
-  :root {
-    --ink: #10231f;
-    --muted: #5b6f69;
-    --paper: #f3f7f5;
-    --panel: rgba(255, 255, 255, 0.72);
-    --line: rgba(16, 35, 31, 0.1);
-    --accent: #0f766e;
-    --accent-2: #115e59;
-    --glow: rgba(15, 118, 110, 0.18);
-    --radius: 18px;
-    --font-display: "Syne", system-ui, sans-serif;
-    --font-body: "Figtree", system-ui, sans-serif;
-  }
-
-  * {
-    box-sizing: border-box;
-  }
-
-  html {
-    scroll-behavior: smooth;
-  }
-
-  body {
-    margin: 0;
-    min-height: 100vh;
-    color: var(--ink);
-    font-family: var(--font-body);
-    background:
-      radial-gradient(ellipse 80% 50% at 10% -10%, var(--glow), transparent 55%),
-      radial-gradient(ellipse 60% 40% at 90% 0%, rgba(17, 94, 89, 0.12), transparent 50%),
-      linear-gradient(180deg, #e8f2ef 0%, var(--paper) 42%, #eef4f1 100%);
-  }
-
-  a {
-    color: var(--accent-2);
-  }
-
-  code,
-  pre {
-    font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
-  }
-</style>

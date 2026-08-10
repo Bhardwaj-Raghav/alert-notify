@@ -1,0 +1,101 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+---
+
+<DocsLayout
+  title="alert-notify Documentation: API"
+  description="Reference for alert-notify toast methods, per-toast options, promise helpers, createToaster, and headless subscribe APIs."
+  keywords="alert-notify API, toast.success, toast.promise, createToaster"
+  pageTitle="API"
+>
+  <p>
+    Full method and options reference for the core package. Nothing is required beyond importing.
+    CSS is included from the package entry. The portal auto-mounts.
+  </p>
+
+  <h2>Required setup</h2>
+  <pre class="api"><code>{`import { toast } from "alert-notify";
+
+toast.success("Hello");`}</code></pre>
+
+  <h2>Methods</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Method</th><th>Returns</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>toast(message, options?)</code></td><td><code>ToastId</code></td><td>Generic toast (<code>message</code> type)</td></tr>
+        <tr><td><code>toast.success(message, options?)</code></td><td><code>ToastId</code></td><td>Success toast</td></tr>
+        <tr><td><code>toast.error(message, options?)</code></td><td><code>ToastId</code></td><td>Error toast</td></tr>
+        <tr><td><code>toast.warning(message, options?)</code></td><td><code>ToastId</code></td><td>Warning toast</td></tr>
+        <tr><td><code>toast.info(message, options?)</code></td><td><code>ToastId</code></td><td>Info toast</td></tr>
+        <tr><td><code>toast.loading(message, options?)</code></td><td><code>ToastId</code></td><td>Loading toast (<code>autoClose: false</code> by default)</td></tr>
+        <tr><td><code>toast.message(message, options?)</code></td><td><code>ToastId</code></td><td>Neutral message toast</td></tr>
+        <tr><td><code>toast.custom(content, options?)</code></td><td><code>ToastId</code></td><td>Custom HTML string or <code>HTMLElement</code></td></tr>
+        <tr><td><code>toast.promise(promise, messages)</code></td><td><code>Promise&lt;T&gt;</code></td><td>Loading → success/error on same id</td></tr>
+        <tr><td><code>toast.dismiss(id?)</code></td><td><code>void</code></td><td>Dismiss one toast, or all if omitted</td></tr>
+        <tr><td><code>toast.config(partial)</code></td><td><code>void</code></td><td>Update global toaster defaults</td></tr>
+        <tr><td><code>toast.getConfig()</code></td><td><code>ToasterConfig</code></td><td>Read current global config</td></tr>
+        <tr><td><code>toast.getToasts()</code></td><td><code>ToastRecord[]</code></td><td>Current toast list (headless)</td></tr>
+        <tr><td><code>toast.subscribe(listener)</code></td><td><code>() =&gt; void</code></td><td>Subscribe to toast list changes</td></tr>
+        <tr><td><code>toast.destroy()</code></td><td><code>void</code></td><td>Dismiss all + remove portal</td></tr>
+        <tr><td><code>createToaster(config?, options?)</code></td><td><code>ToasterInstance</code></td><td>Isolated toaster (multi-instance)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Per-toast options</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>id</code></td><td><code>string</code></td><td>auto UUID</td><td>Stable id. Same id updates in place</td></tr>
+        <tr><td><code>type</code></td><td><code>ToastType</code></td><td>from method</td><td><code>success | error | warning | info | loading | message</code></td></tr>
+        <tr><td><code>title</code></td><td><code>string</code></td><td>-</td><td>Optional heading</td></tr>
+        <tr><td><code>duration</code></td><td><code>number</code></td><td>from config</td><td>Ms until auto-close when <code>autoClose</code> is true</td></tr>
+        <tr><td><code>autoClose</code></td><td><code>boolean</code></td><td><code>true</code> (<code>false</code> for loading)</td><td>Whether the toast auto-dismisses</td></tr>
+        <tr><td><code>icon</code></td><td><code>string | HTMLElement | false</code></td><td>built-in SVG</td><td>Custom icon HTML/node, or <code>false</code> to hide</td></tr>
+        <tr><td><code>action</code></td><td><code>{"{ label, onClick }"}</code></td><td>-</td><td>Primary action button</td></tr>
+        <tr><td><code>cancel</code></td><td><code>{"{ label, onClick }"}</code></td><td>-</td><td>Secondary cancel button</td></tr>
+        <tr><td><code>closeButton</code></td><td><code>boolean</code></td><td>from config</td><td>Show × button</td></tr>
+        <tr><td><code>dismissible</code></td><td><code>boolean</code></td><td>from config</td><td>Allow swipe / close dismiss</td></tr>
+        <tr><td><code>important</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Jump to front of the queue</td></tr>
+        <tr><td><code>className</code></td><td><code>string</code></td><td>-</td><td>Extra class on the toast element</td></tr>
+        <tr><td><code>style</code></td><td><code>object</code></td><td>-</td><td>Inline styles on the toast</td></tr>
+        <tr><td><code>onClose</code></td><td><code>(toast, reason) =&gt; void</code></td><td>-</td><td>Fired once; <code>reason</code> is <code>"Manual"</code> or <code>"Auto"</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Promise API</h2>
+  <pre class="api"><code>{`toast.promise(uploadFile(), {
+  loading: "Uploading…",
+  success: (file) => \`Uploaded \${file.name}\`,
+  error: (err) => (err instanceof Error ? err.message : "Failed"),
+});`}</code></pre>
+
+  <h2>Multiple toasters and headless</h2>
+  <pre class="api"><code>{`import { createToaster } from "alert-notify";
+
+const modalToast = createToaster({ position: "bottom-center" });
+modalToast.success("Saved in modal");
+
+const headless = createToaster({}, { headless: true });
+headless.subscribe((toasts) => {
+  // render custom UI from toasts[]
+});`}</code></pre>
+
+  <h2>Behavior notes</h2>
+  <ul class="notes">
+    <li>Title and message are HTML-escaped by default. Use <code>toast.custom()</code> for trusted markup.</li>
+    <li><code>loading</code> toasts default to sticky until updated (for example via promise).</li>
+    <li>Same <code>id</code> coalesces instead of stacking a duplicate.</li>
+    <li>Escape dismisses the focused toast. Swipe dismisses when <code>dismissible</code> is true.</li>
+    <li>SSR-safe: no DOM work until <code>document</code> exists.</li>
+  </ul>
+
+  <p>Also see <a href="/docs/config">Config</a>.</p>
+</DocsLayout>

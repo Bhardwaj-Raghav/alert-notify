@@ -18,6 +18,12 @@ const config: StorybookConfig = {
       "alert-notify": join(root, "../src/index.ts"),
       "alert-notify/style.css": join(root, "../src/styles/toast.css"),
     };
+    // esbuild 0.28+ refuses to emit destructuring for safari14 (JSC bug fixed in 14.1).
+    // Vite 6 / Storybook still default to safari14, which breaks build-storybook.
+    config.build = {
+      ...config.build,
+      target: ["chrome87", "edge88", "firefox78", "safari14.1", "es2020"],
+    };
     return config;
   },
 };

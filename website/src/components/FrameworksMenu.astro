@@ -1,0 +1,128 @@
+---
+import { frameworks } from "../data/nav";
+---
+
+<div class="frameworks-wrap" data-frameworks>
+  <button
+    type="button"
+    class="frameworks-btn"
+    id="frameworks-btn"
+    aria-haspopup="menu"
+    aria-expanded="false"
+    aria-controls="frameworks-menu"
+  >
+    Frameworks
+    <span aria-hidden="true">▾</span>
+  </button>
+  <div
+    class="frameworks-menu"
+    id="frameworks-menu"
+    role="menu"
+    aria-labelledby="frameworks-btn"
+    hidden
+  >
+    {
+      frameworks.map((fw) => (
+        <a href={fw.href} role="menuitem" data-fw-item>
+          <span class="fw-label">
+            {fw.label}<span class={`tier ${fw.tier}`}>{fw.tierLabel}</span>
+          </span>
+          <span class="fw-meta">{fw.blurb}</span>
+        </a>
+      ))
+    }
+  </div>
+</div>
+
+<script>
+  function initFrameworksMenu() {
+    const root = document.querySelector("[data-frameworks]");
+    if (!(root instanceof HTMLElement)) return;
+
+    const button = root.querySelector("#frameworks-btn");
+    const menu = root.querySelector("#frameworks-menu");
+    if (!(button instanceof HTMLButtonElement) || !(menu instanceof HTMLElement)) return;
+
+    const items = () =>
+      Array.from(menu.querySelectorAll("[data-fw-item]")).filter(
+        (el): el is HTMLElement => el instanceof HTMLElement,
+      );
+
+    let open = false;
+
+    function setOpen(next: boolean) {
+      open = next;
+      button.setAttribute("aria-expanded", open ? "true" : "false");
+      menu.classList.toggle("open", open);
+      if (open) {
+        menu.removeAttribute("hidden");
+      } else {
+        menu.setAttribute("hidden", "");
+      }
+    }
+
+    function onDocumentPointer(event: Event) {
+      const target = event.target;
+      if (!(target instanceof Node)) return;
+      if (!root.contains(target)) setOpen(false);
+    }
+
+    function onKeydown(event: KeyboardEvent) {
+      if (!open) return;
+      const list = items();
+      const active = document.activeElement;
+      const index = list.findIndex((el) => el === active);
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setOpen(false);
+        button.focus();
+        return;
+      }
+
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        const next = list[(index + 1 + list.length) % list.length] ?? list[0];
+        next?.focus();
+        return;
+      }
+
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        const next = list[(index - 1 + list.length) % list.length] ?? list[list.length - 1];
+        next?.focus();
+        return;
+      }
+
+      if (event.key === "Home") {
+        event.preventDefault();
+        list[0]?.focus();
+        return;
+      }
+
+      if (event.key === "End") {
+        event.preventDefault();
+        list[list.length - 1]?.focus();
+      }
+    }
+
+    button.addEventListener("click", () => {
+      setOpen(!open);
+      if (open) items()[0]?.focus();
+    });
+
+    document.addEventListener("pointerdown", onDocumentPointer);
+    document.addEventListener("keydown", onKeydown);
+
+    document.addEventListener(
+      "astro:before-swap",
+      () => {
+        document.removeEventListener("pointerdown", onDocumentPointer);
+        document.removeEventListener("keydown", onKeydown);
+      },
+      { once: true },
+    );
+  }
+
+  initFrameworksMenu();
+</script>

@@ -1,0 +1,106 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import {
+  frameworkGzipKb,
+  frameworkGzipList,
+  frameworkSizeRows,
+  size,
+} from "../../data/size";
+import { frameworks } from "../../data/nav";
+---
+
+<DocsLayout
+  title="alert-notify Documentation: Overview"
+  description="Learn alert-notify: install paths, support tiers (native, helper, recipe), framework guides, API, theming, FAQ, and migration."
+  pageTitle="Overview"
+>
+  <p>
+    alert-notify is a multi-framework toast library. Call <code>toast.success()</code> from anywhere.
+    The portal auto-mounts. Optional helpers sync config for React, Vue, and Svelte.
+    Measured JS gzip: <strong>{frameworkGzipList()}</strong>, plus shared ~{size.cssGzipKb}KB CSS.
+  </p>
+
+  <h2>Bundle size by path</h2>
+  <p>
+    Each number is core plus that path's adapter (minified + gzip). CSS is separate.
+    Angular is a recipe on the vanilla core, so it matches Vanilla.
+  </p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Path</th><th>What you import</th><th>JS gzip</th></tr>
+      </thead>
+      <tbody>
+        {
+          frameworkSizeRows.map((row) => (
+            <tr>
+              <td>{row.label}</td>
+              <td>{row.importHint}</td>
+              <td>~{frameworkGzipKb(row)}KB</td>
+            </tr>
+          ))
+        }
+        <tr>
+          <td><code>style.css</code></td>
+          <td>Shared styles (all paths)</td>
+          <td>~{size.cssGzipKb}KB</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Support tiers</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Tier</th><th>What it means</th><th>Stacks</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tier native">Native</span></td>
+          <td>Core package or CDN IIFE. Full API.</td>
+          <td>Vanilla JS, CDN</td>
+        </tr>
+        <tr>
+          <td><span class="tier helper">Helper</span></td>
+          <td>First-class export that syncs config and may add framework custom helpers.</td>
+          <td>React, Vue, Svelte</td>
+        </tr>
+        <tr>
+          <td><span class="tier recipe">Recipe</span></td>
+          <td>Documented use of the core API. No dedicated package export.</td>
+          <td>Angular, Astro</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Start here</h2>
+  <ul>
+    <li><a href="/docs/install">Install</a></li>
+    <li><a href="/docs/quick-start">Quick start</a></li>
+    <li><a href="/examples">Playground</a></li>
+  </ul>
+
+  <h2>Pick a stack</h2>
+  <ul>
+    {
+      frameworks.map((fw) => (
+        <li>
+          <a href={fw.docsHref}>{fw.label}</a>
+          {" "}
+          <span class={`tier ${fw.tier}`}>{fw.tierLabel}</span>
+          {" · "}
+          {fw.blurb}
+        </li>
+      ))
+    }
+    <li>
+      <a href="/docs/astro">Astro</a>
+      {" "}
+      <span class="tier recipe">Recipe</span>
+      {" · "}
+      Client script or island using the core API.
+    </li>
+  </ul>
+</DocsLayout>

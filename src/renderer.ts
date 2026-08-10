@@ -53,7 +53,6 @@ function applyInlineStyles(
       continue;
     }
     if (key in el.style) {
-      // Style keys from Partial<CSSStyleDeclaration>
       (el.style as unknown as Record<string, string>)[key] = String(value);
     } else {
       el.style.setProperty(key, String(value));
@@ -65,11 +64,54 @@ function positionClass(position: ToastPosition): string {
   return `an-toaster--${position}`;
 }
 
+function contentKey(toast: ToastRecord, config: ToasterConfig): string {
+  const custom =
+    toast.customContent === undefined
+      ? ""
+      : typeof toast.customContent === "string"
+        ? `s:${toast.customContent}`
+        : `n:${toast.customContent === null ? "null" : "el"}`;
+  const icon =
+    toast.icon === false
+      ? "false"
+      : typeof toast.icon === "string"
+        ? `s:${toast.icon}`
+        : toast.icon instanceof HTMLElement
+          ? "el"
+          : "default";
+  return [
+    toast.type,
+    toast.title ?? "",
+    toast.message,
+    custom,
+    icon,
+    toast.action?.label ?? "",
+    toast.cancel?.label ?? "",
+    String(toast.closeButton),
+    String(toast.dismissible),
+    toast.className ?? "",
+    String(toast.autoClose),
+    String(toast.duration),
+    String(toast.progressKey),
+    String(config.progressBar),
+  ].join("|");
+}
+
+function shouldShowProgress(toast: ToastRecord, config: ToasterConfig): boolean {
+  return (
+    config.progressBar &&
+    toast.autoClose &&
+    Number.isFinite(toast.duration)
+  );
+}
+
 export class ToastRenderer {
   private store: ToastStore;
   private portal: HTMLElement | null = null;
   private toaster: HTMLElement | null = null;
+  private hitbox: HTMLElement | null = null;
   private nodes = new Map<string, HTMLElement>();
+  private contentKeys = new Map<string, string>();
   private expanded = false;
   private unsubscribers: Array<() => void> = [];
   private mediaQuery: MediaQueryList | null = null;
@@ -147,7 +189,7 @@ export class ToastRenderer {
       }
       const id = toastEl.getAttribute(TOAST_ATTR);
       if (id) {
-        this.store.dismiss(id);
+        this.store.dismiss(id, "Manual");
       }
     };
     document.addEventListener("keydown", onKeyDown);
@@ -160,9 +202,11 @@ export class ToastRenderer {
     }
     this.unsubscribers = [];
     this.nodes.clear();
+    this.contentKeys.clear();
     this.portal?.remove();
     this.portal = null;
     this.toaster = null;
+    this.hitbox = null;
   }
 
   private ensurePortal(): void {
@@ -179,13 +223,24 @@ export class ToastRenderer {
     this.toaster.className = "an-toaster";
     this.toaster.setAttribute("data-an-toaster", "");
     this.toaster.tabIndex = -1;
+
+    this.hitbox = document.createElement("div");
+    this.hitbox.className = "an-toaster__hitbox";
+    this.hitbox.setAttribute("data-an-hitbox", "");
+    this.hitbox.setAttribute("aria-hidden", "true");
+    this.toaster.appendChild(this.hitbox);
+
     portal.appendChild(this.toaster);
     this.applyConfig(this.store.getConfig());
 
     this.toaster.addEventListener("mouseenter", () => {
       this.expanded = true;
       this.updateStackLayout(this.store.getToasts());
-      if (this.store.getConfig().pauseOnHover) {
+      const config = this.store.getConfig();
+      if (config.resetTimerOnHover) {
+        this.store.resetAllTimers();
+      }
+      if (config.pauseOnHover) {
         this.store.pauseAll();
       }
     });
@@ -241,6 +296,7 @@ export class ToastRenderer {
     for (const [id, node] of this.nodes) {
       if (!ids.has(id)) {
         node.dataset.removed = "true";
+        this.contentKeys.delete(id);
         const remove = () => {
           node.remove();
           this.nodes.delete(id);
@@ -278,6 +334,7 @@ export class ToastRenderer {
     li.tabIndex = 0;
 
     this.fillToast(li, toast);
+    this.contentKeys.set(toast.id, contentKey(toast, this.store.getConfig()));
     this.bindInteractions(li, toast.id);
     requestAnimationFrame(() => {
       li.dataset.mounted = "true";
@@ -292,10 +349,30 @@ export class ToastRenderer {
       "role",
       toast.type === "error" || toast.type === "warning" ? "alert" : "status",
     );
-    this.fillToast(li, toast);
-    requestAnimationFrame(() => {
-      this.store.setHeight(toast.id, li.getBoundingClientRect().height);
-    });
+
+    const key = contentKey(toast, this.store.getConfig());
+    const previous = this.contentKeys.get(toast.id);
+    if (previous !== key) {
+      this.fillToast(li, toast);
+      this.contentKeys.set(toast.id, key);
+      requestAnimationFrame(() => {
+        this.store.setHeight(toast.id, li.getBoundingClientRect().height);
+      });
+    } else {
+      this.syncProgressPause(li, toast);
+    }
+  }
+
+  private syncProgressPause(li: HTMLElement, toast: ToastRecord): void {
+    const progress = li.querySelector<HTMLElement>("[data-an-progress]");
+    if (!progress) {
+      return;
+    }
+    if (toast.pausedAt !== undefined) {
+      progress.dataset.paused = "true";
+    } else {
+      delete progress.dataset.paused;
+    }
   }
 
   private fillToast(li: HTMLElement, toast: ToastRecord): void {
@@ -303,13 +380,22 @@ export class ToastRenderer {
     li.className = ["an-toast", toast.className].filter(Boolean).join(" ");
     applyInlineStyles(li, toast.style);
 
-    const titleHtml = toast.html
-      ? toast.html
-      : `<div class="an-toast__title">${escapeHtml(toast.title)}</div>`;
-
-    const descriptionHtml = toast.description
-      ? `<div class="an-toast__description">${escapeHtml(toast.description)}</div>`
-      : "";
+    let bodyHtml = "";
+    if (toast.customContent !== undefined) {
+      if (typeof toast.customContent === "string") {
+        bodyHtml = `<div class="an-toast__custom">${toast.customContent}</div>`;
+      } else {
+        bodyHtml = `<div class="an-toast__custom" data-custom-body></div>`;
+      }
+    } else {
+      const titleHtml = toast.title
+        ? `<div class="an-toast__title">${escapeHtml(toast.title)}</div>`
+        : "";
+      const messageHtml = toast.message
+        ? `<div class="an-toast__message">${escapeHtml(toast.message)}</div>`
+        : "";
+      bodyHtml = `${titleHtml}${messageHtml}`;
+    }
 
     let iconHtml = "";
     if (toast.icon === false) {
@@ -334,21 +420,24 @@ export class ToastRenderer {
         ? `<button type="button" class="an-toast__close" data-an-close aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>`
         : "";
 
-    const progressHtml =
-      config.progressBar && Number.isFinite(toast.duration)
-        ? `<div class="an-toast__progress" data-an-progress style="--an-duration: ${toast.remaining}ms"></div>`
-        : "";
+    const progressHtml = shouldShowProgress(toast, config)
+      ? `<div class="an-toast__progress" data-an-progress data-progress-key="${toast.progressKey}" style="--an-duration: ${toast.remaining}ms"></div>`
+      : "";
 
     li.innerHTML = `
       ${iconHtml}
       <div class="an-toast__content">
-        ${titleHtml}
-        ${descriptionHtml}
+        ${bodyHtml}
         ${actionHtml || cancelHtml ? `<div class="an-toast__actions">${actionHtml}${cancelHtml}</div>` : ""}
       </div>
       ${closeHtml}
       ${progressHtml}
     `;
+
+    if (toast.customContent instanceof HTMLElement) {
+      const slot = li.querySelector("[data-custom-body]");
+      slot?.appendChild(toast.customContent);
+    }
 
     if (toast.icon instanceof HTMLElement) {
       const slot = li.querySelector("[data-custom-icon]");
@@ -359,7 +448,7 @@ export class ToastRenderer {
     if (actionBtn instanceof HTMLButtonElement && toast.action) {
       actionBtn.addEventListener("click", (event) => {
         toast.action?.onClick(event);
-        this.store.dismiss(toast.id);
+        this.store.dismiss(toast.id, "Manual");
       });
     }
 
@@ -367,23 +456,16 @@ export class ToastRenderer {
     if (cancelBtn instanceof HTMLButtonElement && toast.cancel) {
       cancelBtn.addEventListener("click", (event) => {
         toast.cancel?.onClick(event);
-        this.store.dismiss(toast.id);
+        this.store.dismiss(toast.id, "Manual");
       });
     }
 
     const closeBtn = li.querySelector("[data-an-close]");
     if (closeBtn instanceof HTMLButtonElement) {
-      closeBtn.addEventListener("click", () => this.store.dismiss(toast.id));
+      closeBtn.addEventListener("click", () => this.store.dismiss(toast.id, "Manual"));
     }
 
-    const progress = li.querySelector<HTMLElement>("[data-an-progress]");
-    if (progress) {
-      if (toast.pausedAt !== undefined) {
-        progress.dataset.paused = "true";
-      } else {
-        delete progress.dataset.paused;
-      }
-    }
+    this.syncProgressPause(li, toast);
   }
 
   private bindInteractions(li: HTMLElement, id: string): void {
@@ -395,7 +477,13 @@ export class ToastRenderer {
         return;
       }
       this.dragging = { id, startX: event.clientX, currentX: event.clientX };
-      li.setPointerCapture(event.pointerId);
+      if (typeof li.setPointerCapture === "function") {
+        try {
+          li.setPointerCapture(event.pointerId);
+        } catch {
+          // jsdom / unsupported environments
+        }
+      }
       li.dataset.swiping = "true";
     });
 
@@ -421,10 +509,10 @@ export class ToastRenderer {
       try {
         li.releasePointerCapture(event.pointerId);
       } catch {
-        // already released
+        // already released / unsupported
       }
       if (Math.abs(delta) > 80) {
-        this.store.dismiss(id);
+        this.store.dismiss(id, "Manual");
       }
     };
 
@@ -443,6 +531,7 @@ export class ToastRenderer {
 
     const ordered = [...toasts].reverse();
     let offset = 0;
+    let stackHeight = 0;
 
     ordered.forEach((toast, index) => {
       const node = this.nodes.get(toast.id);
@@ -455,16 +544,30 @@ export class ToastRenderer {
       node.style.setProperty("--an-index", String(index));
       node.style.setProperty("--an-toasts-before", String(index));
 
+      const height = toast.height || 64;
+
       if (expanded) {
         node.style.setProperty("--an-offset", `${offset}px`);
         node.style.setProperty("--an-scale", "1");
-        offset += (toast.height || 64) + config.gap;
+        offset += height + config.gap;
+        if (visible) {
+          stackHeight = offset - config.gap;
+        }
       } else {
         const scale = Math.max(0.92, 1 - index * 0.05);
         const stackOffset = index * 12;
         node.style.setProperty("--an-offset", `${stackOffset}px`);
         node.style.setProperty("--an-scale", String(scale));
+        if (visible) {
+          stackHeight = Math.max(stackHeight, height + stackOffset);
+        }
       }
     });
+
+    if (this.hitbox) {
+      const height = Math.max(0, stackHeight);
+      this.hitbox.style.height = `${height}px`;
+      this.toaster.style.minHeight = height > 0 ? `${height}px` : "";
+    }
   }
 }

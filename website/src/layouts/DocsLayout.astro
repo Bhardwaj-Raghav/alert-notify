@@ -1,0 +1,68 @@
+---
+import Base from "./Base.astro";
+import { docsNav } from "../data/nav";
+import type { OgType } from "../data/seo";
+
+interface Props {
+  title: string;
+  description: string;
+  ogTitle?: string;
+  keywords?: string;
+  pageTitle: string;
+  includeFaqSchema?: boolean;
+}
+
+const {
+  title,
+  description,
+  ogTitle = title,
+  keywords,
+  pageTitle,
+  includeFaqSchema = false,
+} = Astro.props;
+const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
+const ogType: OgType = "article";
+---
+
+<Base
+  title={title}
+  description={description}
+  ogTitle={ogTitle}
+  keywords={keywords}
+  ogType={ogType}
+  articleHeadline={pageTitle}
+  includeFaqSchema={includeFaqSchema}
+  breadcrumbs={[
+    { name: "Home", href: "/" },
+    { name: "Docs", href: "/docs" },
+    { name: pageTitle, href: pathname },
+  ]}
+>
+  <div class="docs-layout">
+    <aside class="docs-sidebar" aria-label="Docs">
+      {
+        docsNav.map((group) => (
+          <div class="docs-group">
+            <p class="docs-group-title">{group.title}</p>
+            {group.items.map((item) => (
+              <a
+                href={item.href}
+                aria-current={
+                  (pathname === item.href || (item.href !== "/docs" && pathname.startsWith(item.href)))
+                    ? "page"
+                    : undefined
+                }
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
+        ))
+      }
+    </aside>
+    <article class="docs-main prose">
+      <h1>{pageTitle}</h1>
+      <slot />
+    </article>
+  </div>
+</Base>

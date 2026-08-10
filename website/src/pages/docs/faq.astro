@@ -1,0 +1,23 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import { faqs } from "../../data/seo";
+---
+
+<DocsLayout
+  title="alert-notify Documentation: FAQ"
+  description="Answers about alert-notify vs toastify, hot-toast, and Sonner, React usage, install, and Angular/Astro recipe support."
+  keywords="alert-notify FAQ, toastify alternative, sonner alternative, react toast"
+  pageTitle="FAQ"
+  includeFaqSchema
+>
+  <div class="faq-list">
+    {
+      faqs.map((faq) => (
+        <details class="faq-item">
+          <summary>{faq.question}</summary>
+          <p>{faq.answer}</p>
+        </details>
+      ))
+    }
+  </div>
+</DocsLayout>

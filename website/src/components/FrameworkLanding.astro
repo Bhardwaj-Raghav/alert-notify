@@ -1,0 +1,153 @@
+---
+import Base from "../layouts/Base.astro";
+import InstallCopy from "../components/InstallCopy.astro";
+import { frameworks } from "../data/nav";
+import { pageMeta } from "../data/seo";
+
+interface Props {
+  frameworkId: string;
+  installHint?: string;
+  code: string;
+  extraNotes?: string[];
+}
+
+const { frameworkId, installHint, code, extraNotes = [] } = Astro.props;
+const fw = frameworks.find((item) => item.id === frameworkId);
+if (!fw) throw new Error(`Unknown framework: ${frameworkId}`);
+
+const tierHint =
+  fw.tier === "native"
+    ? "Native CDN IIFE with injected CSS."
+    : fw.tier === "helper"
+      ? "First-class helper export for config and framework content."
+      : "Recipe only: use the core API, no dedicated adapter.";
+
+const meta = pageMeta({
+  title: `alert-notify: ${fw.label} Integration / Live Demo`,
+  description: `Try alert-notify with ${fw.label}: live toast demo, install snippet, and docs link. ${fw.blurb} ${tierHint}`,
+});
+---
+
+<Base
+  title={meta.title}
+  description={meta.description}
+  ogTitle={meta.ogTitle}
+  breadcrumbs={[
+    { name: "Home", href: "/" },
+    { name: fw.label, href: fw.href },
+  ]}
+>
+  <main class="page-shell">
+    <section class="hero-grid" style="min-height:auto;padding-top:32px">
+      <div class="hero-copy">
+        <p class="section-copy" style="margin:0 0 8px">
+          <span class={`tier ${fw.tier}`}>{fw.tierLabel}</span>
+        </p>
+        <h1 style="font-size:clamp(2.4rem,6vw,3.6rem)">{fw.label}</h1>
+        <p class="lede">{fw.blurb}</p>
+        <p class="section-copy">
+          Live demo and install on this page. Step-by-step guide:
+          <a href={fw.docsHref}>{fw.label} docs</a>.
+        </p>
+        <div class="cta">
+          <a class="btn primary" href={fw.docsHref}>Full docs</a>
+          <a class="btn" href="/examples">Playground</a>
+          <InstallCopy />
+        </div>
+        {installHint && <p class="section-copy">{installHint}</p>}
+      </div>
+      <div class="hero-stage" data-fw-stage>
+        <h2>Try it</h2>
+        <p class="stage-copy">Same core toast API this stack uses.</p>
+        <div class="tabs home-stage-tabs" role="tablist" aria-label="Toast modes">
+          <button type="button" class="tab active" role="tab" aria-selected="true" data-mode-tab="success">Success</button>
+          <button type="button" class="tab" role="tab" aria-selected="false" data-mode-tab="error">Error</button>
+          <button type="button" class="tab" role="tab" aria-selected="false" data-mode-tab="promise">Promise</button>
+          <button type="button" class="tab" role="tab" aria-selected="false" data-mode-tab="undo">Undo</button>
+          <button type="button" class="tab" role="tab" aria-selected="false" data-mode-tab="stack">Stack</button>
+          <button type="button" class="tab" role="tab" aria-selected="false" data-mode-tab="dark">Dark</button>
+        </div>
+        <div class="home-stage-body">
+          <p class="home-stage-readout" data-fw-readout>Mode: success · position top-right · richColors on</p>
+          <button type="button" data-toast="dismiss" class="btn home-stage-dismiss">Dismiss all</button>
+        </div>
+        <pre class="home-stage-code"><code data-fw-code></code></pre>
+      </div>
+    </section>
+
+    <section class="panel fw-install">
+      <h2>Install snippet</h2>
+      <pre class="api"><code>{code}</code></pre>
+      {
+        extraNotes.length > 0 && (
+          <ul class="notes">
+            {extraNotes.map((note) => (
+              <li>{note}</li>
+            ))}
+          </ul>
+        )
+      }
+    </section>
+  </main>
+</Base>
+
+<script>
+  import {
+    applyDemoConfig,
+    bindToastButtons,
+    buildHomeSnippet,
+    fireToast,
+    syncToastThemeWithSite,
+    type HomeMode,
+  } from "../scripts/toast-demo";
+
+  const stage = document.querySelector("[data-fw-stage]");
+  const codeEl = document.querySelector("[data-fw-code]");
+  const readout = document.querySelector("[data-fw-readout]");
+
+  let mode: HomeMode = "success";
+
+  function siteTheme() {
+    return syncToastThemeWithSite();
+  }
+
+  function applyMode(next: HomeMode) {
+    mode = next;
+    const theme = next === "dark" ? "dark" : siteTheme();
+    applyDemoConfig({
+      position: "top-right",
+      richColors: true,
+      progressBar: true,
+      theme,
+      visibleToasts: next === "stack" ? 5 : 3,
+    });
+    if (codeEl) codeEl.textContent = buildHomeSnippet(mode);
+    if (readout) {
+      const stackNote = next === "stack" ? " · visibleToasts 5" : "";
+      readout.textContent = `Mode: ${mode} · position top-right · richColors on · theme ${theme}${stackNote}`;
+    }
+  }
+
+  applyMode("success");
+  const unbind = bindToastButtons(stage ?? document);
+
+  stage?.querySelectorAll("[data-mode-tab]").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const next = tab.getAttribute("data-mode-tab") as HomeMode | null;
+      if (!next) return;
+      stage.querySelectorAll("[data-mode-tab]").forEach((el) => {
+        const active = el === tab;
+        el.classList.toggle("active", active);
+        el.setAttribute("aria-selected", active ? "true" : "false");
+      });
+      applyMode(next);
+      fireToast(next === "dark" ? "success" : next);
+    });
+  });
+
+  window.addEventListener("alert-notify:theme", ((event: CustomEvent<{ theme: "light" | "dark" }>) => {
+    if (mode !== "dark") applyDemoConfig({ theme: event.detail.theme });
+  }) as EventListener);
+
+  document.addEventListener("astro:before-swap", () => unbind(), { once: true });
+</script>

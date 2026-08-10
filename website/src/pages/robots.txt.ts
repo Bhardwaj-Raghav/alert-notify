@@ -20,7 +20,7 @@ export const GET: APIRoute = ({ site }) => {
   }
 
   const sitemapURL = new URL(
-    `${withTrailingSlash(import.meta.env.BASE_URL)}sitemap-index.xml`,
+    `${withTrailingSlash(import.meta.env.BASE_URL)}sitemap.xml`,
     site,
   );
 

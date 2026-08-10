@@ -1,0 +1,805 @@
+---
+import Base from "../layouts/Base.astro";
+import { pageMeta } from "../data/seo";
+
+const meta = pageMeta({
+  title: "alert-notify: Examples playground",
+  description:
+    "Interactive alert-notify playground. Tune type, message, title, position, and theme, then copy a snippet for React, Vue, Svelte, vanilla, or CDN.",
+});
+
+const types = [
+  { id: "success", label: "Success" },
+  { id: "error", label: "Error" },
+  { id: "warning", label: "Warning" },
+  { id: "info", label: "Info" },
+  { id: "message", label: "Message" },
+  { id: "loading", label: "Loading" },
+  { id: "promise", label: "Promise" },
+] as const;
+
+const positions = [
+  "top-left",
+  "top-center",
+  "top-right",
+  "bottom-left",
+  "bottom-center",
+  "bottom-right",
+] as const;
+
+const stacks = [
+  { id: "vanilla", label: "Vanilla", href: "/docs/quick-start" },
+  { id: "react", label: "React", href: "/react" },
+  { id: "vue", label: "Vue", href: "/vue" },
+  { id: "svelte", label: "Svelte", href: "/svelte" },
+  { id: "cdn", label: "CDN", href: "/cdn" },
+] as const;
+---
+
+<Base
+  title={meta.title}
+  description={meta.description}
+  ogTitle={meta.ogTitle}
+  breadcrumbs={[
+    { name: "Home", href: "/" },
+    { name: "Examples", href: "/examples" },
+  ]}
+>
+  <main class="pg" data-playground>
+    <header class="pg-intro">
+      <p class="pg-kicker">Playground</p>
+      <h1>Examples</h1>
+      <p class="pg-lede">
+        Tune type, message, position, and theme on a live toast, then copy a snippet.
+        See <a href="/docs">Docs</a> for install guides.
+      </p>
+    </header>
+
+    <section class="pg-shell">
+      <div class="pg-main">
+        <div class="pg-controls" aria-label="Playground controls">
+          <div class="pg-field">
+            <span class="pg-label">Type</span>
+            <div class="pg-types" role="group" aria-label="Toast type">
+              {
+                types.map((item) => (
+                  <button
+                    type="button"
+                    class={`pg-type-btn pg-type-${item.id}`}
+                    data-pg-type={item.id}
+                  >
+                    {item.label}
+                  </button>
+                ))
+              }
+              <button type="button" class="pg-type-btn pg-type-dismiss" data-toast="dismiss">
+                Dismiss
+              </button>
+            </div>
+          </div>
+
+          <div class="pg-field">
+            <span class="pg-label">Position</span>
+            <div class="pg-pos" role="group" aria-label="Toast position">
+              {
+                positions.map((pos) => (
+                  <button
+                    type="button"
+                    class:list={["pg-pos-btn", { active: pos === "top-right" }]}
+                    data-pg-pos={pos}
+                    aria-pressed={pos === "top-right" ? "true" : "false"}
+                    title={pos}
+                  >
+                    <span class="pg-pos-dot"></span>
+                    <span class="pg-pos-text">{pos.replace("-", " ")}</span>
+                  </button>
+                ))
+              }
+            </div>
+          </div>
+
+          <div class="pg-field">
+            <span class="pg-label">Theme</span>
+            <div class="pg-seg pg-seg-3" role="group" aria-label="Toast theme">
+              <button type="button" class="pg-seg-btn active" data-pg-theme-btn="light">Light</button>
+              <button type="button" class="pg-seg-btn" data-pg-theme-btn="dark">Dark</button>
+              <button type="button" class="pg-seg-btn" data-pg-theme-btn="system">System</button>
+            </div>
+          </div>
+
+          <label class="pg-field">
+            <span class="pg-label">Message</span>
+            <input type="text" data-pg-message value="Your changes were saved." />
+          </label>
+
+          <div class="pg-field">
+            <span class="pg-label">Options</span>
+            <div class="pg-pills" role="group" aria-label="Quick options">
+              <button type="button" class="pg-pill active" data-pg-toggle="rich" aria-pressed="true">Rich colors</button>
+              <button type="button" class="pg-pill active" data-pg-toggle="progress" aria-pressed="true">Progress</button>
+              <button type="button" class="pg-pill active" data-pg-toggle="autoClose" aria-pressed="true">Auto close</button>
+              <button type="button" class="pg-pill" data-pg-toggle="undo" aria-pressed="false">Undo</button>
+              <button type="button" class="pg-pill" data-pg-toggle="important" aria-pressed="false">Important</button>
+            </div>
+          </div>
+
+          <details class="pg-more">
+            <summary>Advanced</summary>
+            <div class="pg-field-grid">
+              <label class="pg-field">
+                <span class="pg-label">Title</span>
+                <input type="text" data-pg-title value="" placeholder="optional" />
+              </label>
+              <label class="pg-field">
+                <span class="pg-label">Id</span>
+                <input type="text" data-pg-id placeholder="optional" />
+              </label>
+              <label class="pg-field">
+                <span class="pg-label">Duration</span>
+                <input type="number" data-pg-toast-duration min="500" step="500" value="4000" />
+              </label>
+              <label class="pg-field">
+                <span class="pg-label">Visible</span>
+                <input type="number" data-pg-visible min="1" max="10" value="3" />
+              </label>
+            </div>
+            <div class="pg-pills">
+              <button type="button" class="pg-pill active" data-pg-toggle="closeButton" aria-pressed="true">Close button</button>
+              <button type="button" class="pg-pill active" data-pg-toggle="dismissible" aria-pressed="true">Dismissible</button>
+              <button type="button" class="pg-pill" data-pg-toggle="hideIcon" aria-pressed="false">Hide icon</button>
+              <button type="button" class="pg-pill" data-pg-toggle="expand" aria-pressed="false">Expand</button>
+            </div>
+          </details>
+        </div>
+
+        <div class="pg-code">
+          <div class="pg-code-head">
+            <div class="pg-seg pg-seg-code" role="tablist" aria-label="Snippet stack">
+              {
+                stacks.map((item, i) => (
+                  <button
+                    type="button"
+                    class:list={["pg-seg-btn", { active: i === 0 }]}
+                    role="tab"
+                    aria-selected={i === 0}
+                    data-stack={item.id}
+                    data-stack-href={item.href}
+                    data-stack-label={item.label}
+                  >
+                    {item.label}
+                  </button>
+                ))
+              }
+            </div>
+            <button type="button" class="pg-copy" data-pg-copy>Copy</button>
+          </div>
+          <pre class="pg-snippet"><code data-pg-code></code></pre>
+          <a class="pg-code-link" href="/docs/quick-start" data-pg-stack-link>Open the Vanilla page →</a>
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .pg {
+    width: min(1080px, calc(100% - 32px));
+    margin: 0 auto 96px;
+  }
+
+  .pg-intro {
+    padding: 44px 0 28px;
+    text-align: center;
+  }
+
+  .pg-kicker {
+    margin: 0 0 10px;
+    color: var(--accent-2);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: 0.76rem;
+  }
+
+  .pg-intro h1 {
+    margin: 0;
+    font-size: clamp(2.4rem, 5vw, 3.2rem);
+  }
+
+  .pg-lede {
+    margin: 14px auto 0;
+    max-width: 36rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .pg-shell {
+    border: 1px solid var(--line);
+    border-radius: 28px;
+    background: var(--panel);
+    backdrop-filter: blur(14px);
+    overflow: hidden;
+    box-shadow: 0 30px 70px -48px rgba(16, 35, 31, 0.45);
+  }
+
+  .pg-main {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.05fr);
+    gap: 0;
+    min-height: 560px;
+  }
+
+  .pg-controls {
+    padding: 24px;
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pg-field {
+    display: block;
+    margin-bottom: 18px;
+  }
+
+  .pg-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .pg-field-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .pg-field-grid .pg-field {
+    margin-bottom: 0;
+  }
+
+  .pg-field input {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 11px 12px;
+    background: var(--surface-solid);
+    color: var(--ink);
+    font: inherit;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .pg-field input:focus {
+    outline: none;
+    border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+  }
+
+  .pg-seg {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--ink) 4%, var(--surface-solid));
+    border: 1px solid var(--line);
+  }
+
+  .pg-seg-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .pg-seg-code {
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  .pg-seg-btn {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-weight: 700;
+    font-size: 0.86rem;
+    padding: 8px 11px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.12s ease;
+  }
+
+  .pg-seg-btn:hover {
+    color: var(--ink);
+  }
+
+  .pg-seg-btn.active {
+    background: var(--accent);
+    color: #ecfdf8;
+  }
+
+  html[data-theme="dark"] .pg-seg-btn.active {
+    color: #042f2e;
+  }
+
+  .pg-pos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+
+  .pg-pos-btn {
+    appearance: none;
+    border: 1px solid var(--line);
+    background: var(--surface-solid);
+    border-radius: 12px;
+    min-height: 44px;
+    padding: 8px;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    gap: 4px;
+    transition: border-color 0.15s ease, background 0.15s ease, transform 0.12s ease;
+  }
+
+  .pg-pos-btn:hover {
+    border-color: color-mix(in srgb, var(--accent) 40%, var(--line));
+  }
+
+  .pg-pos-btn.active {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, var(--surface-solid));
+  }
+
+  .pg-pos-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--muted);
+  }
+
+  .pg-pos-btn.active .pg-pos-dot {
+    background: var(--accent);
+  }
+
+  .pg-pos-text {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: lowercase;
+  }
+
+  .pg-pos-btn.active .pg-pos-text {
+    color: var(--accent-2);
+  }
+
+  .pg-types {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .pg-type-btn {
+    appearance: none;
+    border: 1px solid var(--line);
+    background: var(--surface-solid);
+    color: var(--ink);
+    border-radius: 10px;
+    padding: 9px 12px;
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease, filter 0.15s ease;
+  }
+
+  .pg-type-btn:hover {
+    filter: brightness(0.97);
+  }
+
+  .pg-type-success {
+    color: #14532d;
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+  }
+
+  .pg-type-error {
+    color: #9f1239;
+    background: #fff1f2;
+    border-color: #fecdd3;
+  }
+
+  .pg-type-warning {
+    color: #92400e;
+    background: #fffbeb;
+    border-color: #fde68a;
+  }
+
+  .pg-type-info {
+    color: #1e40af;
+    background: #eff6ff;
+    border-color: #bfdbfe;
+  }
+
+  .pg-type-message,
+  .pg-type-loading,
+  .pg-type-promise {
+    color: #334155;
+    background: #f8fafc;
+    border-color: #cbd5e1;
+  }
+
+  .pg-type-dismiss {
+    color: var(--muted);
+    background: var(--surface-solid);
+    border-color: var(--line);
+  }
+
+  html[data-theme="dark"] .pg-type-success {
+    color: #ecfdf5;
+    background: #052e16;
+    border-color: #166534;
+  }
+
+  html[data-theme="dark"] .pg-type-error {
+    color: #fff1f2;
+    background: #4c0519;
+    border-color: #9f1239;
+  }
+
+  html[data-theme="dark"] .pg-type-warning {
+    color: #fffbeb;
+    background: #422006;
+    border-color: #a16207;
+  }
+
+  html[data-theme="dark"] .pg-type-info {
+    color: #eff6ff;
+    background: #172554;
+    border-color: #1d4ed8;
+  }
+
+  html[data-theme="dark"] .pg-type-message,
+  html[data-theme="dark"] .pg-type-loading,
+  html[data-theme="dark"] .pg-type-promise {
+    color: #e2e8f0;
+    background: #1e293b;
+    border-color: #475569;
+  }
+
+  html[data-theme="dark"] .pg-type-btn:hover {
+    filter: brightness(1.08);
+  }
+
+  .pg-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .pg-pill {
+    appearance: none;
+    border: 1px solid var(--line);
+    background: var(--surface-solid);
+    color: var(--muted);
+    border-radius: 10px;
+    padding: 8px 12px;
+    font: inherit;
+    font-size: 0.86rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .pg-pill.active {
+    color: var(--accent-2);
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+    background: color-mix(in srgb, var(--accent) 12%, var(--surface-solid));
+  }
+
+  .pg-more {
+    margin-top: 4px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line);
+  }
+
+  .pg-more summary {
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--muted);
+    font-size: 0.9rem;
+    list-style: none;
+    width: fit-content;
+  }
+
+  .pg-more summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .pg-more[open] summary {
+    color: var(--ink);
+    margin-bottom: 14px;
+  }
+
+  .pg-code {
+    padding: 18px 20px 20px;
+    background: color-mix(in srgb, var(--ink) 2.5%, transparent);
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+  }
+
+  .pg-code-head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .pg-copy {
+    appearance: none;
+    border: 1px solid var(--line);
+    background: var(--surface-solid);
+    color: var(--ink);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .pg-snippet {
+    margin: 0;
+    padding: 16px 18px;
+    border-radius: 14px;
+    background: var(--code-bg);
+    color: var(--code-fg);
+    overflow: auto;
+    font-size: 0.86rem;
+    line-height: 1.55;
+    flex: 1;
+    min-height: 280px;
+  }
+
+  .pg-code-link {
+    display: inline-block;
+    margin-top: 12px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .pg-code-link:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 900px) {
+    .pg-main {
+      grid-template-columns: 1fr;
+      min-height: 0;
+    }
+
+    .pg-controls {
+      border-right: 0;
+      border-bottom: 1px solid var(--line);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .pg-field-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .pg-pos-text {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import {
+    applyDemoConfig,
+    buildSnippet,
+    defaultDemoConfig,
+    defaultToastOpts,
+    fireToast,
+    syncToastThemeWithSite,
+    type DemoConfig,
+    type SnippetStack,
+    type ToastPlayOptions,
+  } from "../scripts/toast-demo";
+
+  const root = document.querySelector("[data-playground]");
+  if (root instanceof HTMLElement) {
+    const config: DemoConfig = {
+      ...defaultDemoConfig,
+      theme: syncToastThemeWithSite(),
+    };
+    const toastOpts: ToastPlayOptions = { ...defaultToastOpts };
+    const flags = {
+      rich: true,
+      progress: true,
+      autoClose: true,
+      undo: false,
+      important: false,
+      closeButton: true,
+      dismissible: true,
+      hideIcon: false,
+      expand: false,
+    };
+
+    let type = "success";
+    let stack: SnippetStack = "vanilla";
+
+    const codeEl = root.querySelector("[data-pg-code]");
+    const stackLink = root.querySelector("[data-pg-stack-link]");
+
+    function currentToastOpts(): ToastPlayOptions {
+      return {
+        ...toastOpts,
+        autoClose: flags.autoClose,
+        closeButton: flags.closeButton,
+        dismissible: flags.dismissible,
+        important: flags.important,
+        hideIcon: flags.hideIcon,
+        actionLabel: flags.undo ? "Undo" : "",
+        cancelLabel: "",
+      };
+    }
+
+    function fireCurrent() {
+      const kind = flags.undo && type === "success" ? "undo" : type;
+      fireToast(kind, currentToastOpts());
+    }
+
+    function refresh(options?: { fire?: boolean }) {
+      config.richColors = flags.rich;
+      config.progressBar = flags.progress;
+      config.expand = flags.expand;
+      applyDemoConfig({
+        ...config,
+        duration: toastOpts.duration,
+        autoClose: flags.autoClose,
+        closeButton: flags.closeButton,
+        dismissible: flags.dismissible,
+      });
+
+      if (codeEl) {
+        codeEl.textContent = buildSnippet(stack, config, currentToastOpts(), type);
+      }
+      root.querySelectorAll("[data-pg-theme-btn]").forEach((btn) => {
+        btn.classList.toggle("active", btn.getAttribute("data-pg-theme-btn") === config.theme);
+      });
+      if (options?.fire) fireCurrent();
+    }
+
+    root.querySelectorAll("[data-pg-type]").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const next = tab.getAttribute("data-pg-type");
+        if (!next) return;
+        type = next;
+        refresh({ fire: true });
+      });
+    });
+
+    root.querySelectorAll("[data-pg-pos]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const next = btn.getAttribute("data-pg-pos");
+        if (!next) return;
+        config.position = next as DemoConfig["position"];
+        root.querySelectorAll("[data-pg-pos]").forEach((el) => {
+          const active = el === btn;
+          el.classList.toggle("active", active);
+          el.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+        refresh({ fire: true });
+      });
+    });
+
+    root.querySelectorAll("[data-pg-theme-btn]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const next = btn.getAttribute("data-pg-theme-btn");
+        if (!next) return;
+        config.theme = next as DemoConfig["theme"];
+        refresh({ fire: true });
+      });
+    });
+
+    root.querySelectorAll("[data-pg-toggle]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const key = btn.getAttribute("data-pg-toggle") as keyof typeof flags | null;
+        if (!key || !(key in flags)) return;
+        flags[key] = !flags[key];
+        btn.classList.toggle("active", flags[key]);
+        btn.setAttribute("aria-pressed", flags[key] ? "true" : "false");
+        refresh();
+      });
+    });
+
+    const messageInput = root.querySelector("[data-pg-message]");
+    const titleInput = root.querySelector("[data-pg-title]");
+    const idInput = root.querySelector("[data-pg-id]");
+    const durationInput = root.querySelector("[data-pg-toast-duration]");
+    const visibleInput = root.querySelector("[data-pg-visible]");
+
+    messageInput?.addEventListener("input", () => {
+      if (messageInput instanceof HTMLInputElement) {
+        toastOpts.message = messageInput.value;
+        refresh();
+      }
+    });
+    titleInput?.addEventListener("input", () => {
+      if (titleInput instanceof HTMLInputElement) {
+        toastOpts.title = titleInput.value;
+        refresh();
+      }
+    });
+    idInput?.addEventListener("input", () => {
+      if (idInput instanceof HTMLInputElement) {
+        toastOpts.id = idInput.value;
+        refresh();
+      }
+    });
+    durationInput?.addEventListener("input", () => {
+      if (durationInput instanceof HTMLInputElement) {
+        toastOpts.duration = Number(durationInput.value);
+        refresh();
+      }
+    });
+    visibleInput?.addEventListener("input", () => {
+      if (visibleInput instanceof HTMLInputElement) {
+        config.visibleToasts = Number(visibleInput.value);
+        refresh();
+      }
+    });
+
+    messageInput?.addEventListener("keydown", (event) => {
+      if (event instanceof KeyboardEvent && event.key === "Enter") fireCurrent();
+    });
+
+    root.querySelector('[data-toast="dismiss"]')?.addEventListener("click", () => fireToast("dismiss"));
+
+    root.querySelectorAll("[data-stack]").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const next = tab.getAttribute("data-stack") as SnippetStack | null;
+        if (!next) return;
+        stack = next;
+        root.querySelectorAll("[data-stack]").forEach((el) => {
+          const active = el === tab;
+          el.classList.toggle("active", active);
+          el.setAttribute("aria-selected", active ? "true" : "false");
+        });
+        if (stackLink instanceof HTMLAnchorElement) {
+          stackLink.href = tab.getAttribute("data-stack-href") || "/docs";
+          stackLink.textContent = `Open the ${tab.getAttribute("data-stack-label") || "docs"} page →`;
+        }
+        refresh();
+      });
+    });
+
+    root.querySelector("[data-pg-copy]")?.addEventListener("click", async () => {
+      const text = codeEl?.textContent ?? "";
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        /* ignore */
+      }
+      const btn = root.querySelector("[data-pg-copy]");
+      if (btn instanceof HTMLElement) {
+        btn.textContent = "Copied";
+        window.setTimeout(() => {
+          btn.textContent = "Copy";
+        }, 1200);
+      }
+    });
+
+    refresh();
+  }
+</script>

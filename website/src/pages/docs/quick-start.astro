@@ -1,0 +1,39 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+---
+
+<DocsLayout
+  title="alert-notify Documentation: Quick start"
+  description="Show your first alert-notify toast in minutes: install, call toast.success, then set optional global defaults with toast.config."
+  pageTitle="Quick start"
+>
+  <p>
+    Get a working toast with the core API. This path works in any JavaScript app. Framework helpers are optional.
+  </p>
+
+  <h2>1. Install</h2>
+  <pre class="api"><code>{`npm install alert-notify`}</code></pre>
+
+  <h2>2. Call toast</h2>
+  <pre class="api"><code>{`import { toast } from "alert-notify";
+
+toast.success("Your profile was saved.", { title: "Profile updated" });
+toast.error("Please try again.", { title: "Something went wrong" });
+toast.promise(save(), {
+  loading: "Saving…",
+  success: "Saved",
+  error: (err) => (err instanceof Error ? err.message : "Failed"),
+});`}</code></pre>
+
+  <h2>3. Optional defaults</h2>
+  <pre class="api"><code>{`toast.config({
+  position: "top-right",
+  theme: "light",
+  richColors: true,
+});`}</code></pre>
+
+  <p>
+    Next, pick a stack guide under Choose integration, or open the
+    <a href="/examples">playground</a>.
+  </p>
+</DocsLayout>

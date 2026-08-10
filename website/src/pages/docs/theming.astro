@@ -1,0 +1,48 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+---
+
+<DocsLayout
+  title="alert-notify Documentation: Theming"
+  description="Configure light, dark, and system themes for alert-notify, enable richColors, and override CSS variables on .an-toaster."
+  pageTitle="Theming"
+>
+  <p>
+    Control toast colors with theme mode, richColors, and CSS variables. Override tokens after the package stylesheet.
+  </p>
+
+  <h2>Theme mode</h2>
+  <pre class="api"><code>{`toast.config({ theme: "light" }); // default
+toast.config({ theme: "system" }); // OS + html.dark / data-theme
+toast.config({ theme: "dark" });
+toast.config({ richColors: true });`}</code></pre>
+
+  <p>
+    With <code>theme: "system"</code> the toaster tracks <code>prefers-color-scheme</code>,
+    <code>html.dark</code> / <code>html.light</code>, and <code>html[data-theme]</code>.
+  </p>
+
+  <h2>CSS variables</h2>
+  <p>
+    Override colors on <code>.an-toaster</code> in your stylesheet after the package CSS.
+  </p>
+  <pre class="api"><code>{`.an-toaster {
+  --an-bg: #ffffff;
+  --an-fg: #0f172a;
+  --an-muted: #475569;
+  --an-border: rgba(15, 23, 42, 0.1);
+  --an-success: #15803d;
+  --an-error: #e11d48;
+  --an-warning: #b45309;
+  --an-info: #1d4ed8;
+  --an-success-bg: #ecfdf5;
+  --an-error-bg: #fff1f2;
+  --an-warning-bg: #fffbeb;
+  --an-info-bg: #eff6ff;
+}
+
+.an-toaster[data-theme="dark"] {
+  --an-bg: #1e293b;
+  --an-fg: #f8fafc;
+}`}</code></pre>
+</DocsLayout>

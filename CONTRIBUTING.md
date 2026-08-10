@@ -11,43 +11,44 @@ npm ci
 npm run build
 ```
 
-The marketing site lives in `website/` and depends on the built package (`file:..`), so build the library first:
+The marketing site lives in `website/` and is driven from the root (`astro --root website`).
 
-```bash
-npm ci --prefix website
-```
+Key public routes: `/`, `/examples`, `/docs/*`, `/changelog`, and framework landings (`/react`, `/vue`, `/svelte`, `/angular`, `/cdn`). Docs sidebar and `llms.txt` share `website/src/data/nav.ts`.
 
 ## Scripts
 
 | Command | What it does |
 |---------|----------------|
 | `npm run build` | Build library + CSS into `dist/` |
-| `npm run dev` | Watch-mode library build |
+| `npm run dev` | Vite playground on port 5173 |
+| `npm run dev:lib` | Watch-mode library build |
+| `npm run website` | Astro site on port 5174 |
+| `npm run website:build` | Production site build |
 | `npm test` | Vitest (jsdom) |
 | `npm run test:watch` | Vitest watch |
 | `npm run typecheck` | `tsc --noEmit` |
+| `npm run lint` | ESLint |
 | `npm run storybook` | Storybook on port 6006 |
-| `npm run website:dev` | Astro site (needs `dist/` first) |
-| `npm run website:build` | Production site build |
 
 Before opening a PR, run what CI runs:
 
 ```bash
+npm run lint
 npm run typecheck
 npm test
 npm run build
 npm run build-storybook
-npm ci --prefix website
-npm run build --prefix website
+npm run website:build
 ```
 
 ## Layout
 
-- `src/` — core toaster, store, renderer, CSS; thin wrappers under `react/`, `vue/`, `svelte/`
-- `tests/` — unit tests
-- `stories/` — Storybook
-- `website/` — Astro landing page (private; not published to npm)
-- `dist/` — build output (gitignored; what npm ships)
+- `src/`: core toaster, store, renderer, CSS; thin wrappers under `react/`, `vue/`, `svelte/`
+- `playground/`: Vite sandbox for local package testing
+- `tests/`: unit tests
+- `stories/`: Storybook
+- `website/`: Astro landing page (private; not published to npm)
+- `dist/`: build output (gitignored; what npm ships)
 
 Keep the core framework-agnostic. Framework packages should stay thin sync wrappers around `toast` / `createToaster`.
 
@@ -57,7 +58,7 @@ Keep the core framework-agnostic. Framework packages should stay thin sync wrapp
 2. Prefer small, focused PRs.
 3. Match existing style; don’t reformat unrelated files.
 4. Add or update tests when you change behavior.
-5. Bundle size matters — avoid new runtime dependencies unless there’s a strong reason.
+5. Bundle size matters. Avoid new runtime dependencies unless there’s a strong reason.
 6. Don’t commit secrets. Use `website/.env.example` as the template for site env vars.
 
 ## Issues

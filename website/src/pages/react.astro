@@ -1,0 +1,29 @@
+---
+import FrameworkLanding from "../components/FrameworkLanding.astro";
+
+const code = `import { toast } from "alert-notify";
+import { Toaster, custom } from "alert-notify/react";
+
+export function App() {
+  return (
+    <>
+      <Toaster position="top-right" richColors />
+      <button onClick={() => toast.success("Saved")}>Save</button>
+      <button onClick={() => custom(<div>Custom React content</div>)}>
+        Custom
+      </button>
+    </>
+  );
+}`;
+---
+
+<FrameworkLanding
+  frameworkId="react"
+  installHint="The React entry is a Client Component, so Next.js App Router can import Toaster from a Server Component parent."
+  code={code}
+  extraNotes={[
+    "Toaster is optional. It only syncs config props.",
+    "custom() mounts React nodes into a toast body.",
+    "Peer: react and react-dom >= 17.",
+  ]}
+/>

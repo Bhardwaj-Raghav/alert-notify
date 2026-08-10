@@ -1,0 +1,21 @@
+---
+import FrameworkLanding from "../components/FrameworkLanding.astro";
+
+const code = `<script>
+  import { toast } from "alert-notify";
+  import Toaster from "alert-notify/svelte";
+</script>
+
+<Toaster position="top-right" richColors />
+<button onclick={() => toast.success("Saved")}>Save</button>`;
+---
+
+<FrameworkLanding
+  frameworkId="svelte"
+  code={code}
+  extraNotes={[
+    "There is no Svelte custom() helper.",
+    "For custom DOM content, use toast.custom(element) from the core package.",
+    "Peer: svelte >= 5.",
+  ]}
+/>

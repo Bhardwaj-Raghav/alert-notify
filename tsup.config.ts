@@ -20,7 +20,13 @@ export default defineConfig([
     ...shared,
     entry: { react: "src/react/index.tsx" },
     clean: false,
-    external: ["react", "react-dom", "react/jsx-runtime", "alert-notify"],
+    external: [
+      "react",
+      "react-dom",
+      "react-dom/client",
+      "react/jsx-runtime",
+      "alert-notify",
+    ],
     esbuildOptions(options) {
       options.jsx = "automatic";
     },
