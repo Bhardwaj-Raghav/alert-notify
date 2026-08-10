@@ -19,19 +19,19 @@
       "gzipKb": 5.7
     },
     "svelte": {
-      "raw": 21473,
-      "gzip": 6021,
+      "raw": 21470,
+      "gzip": 6013,
       "gzipKb": 5.9
     }
   },
-  "jsRaw": 21473,
-  "jsGzip": 6021,
-  "cssRaw": 11993,
-  "cssGzip": 2760,
+  "jsRaw": 21470,
+  "jsGzip": 6013,
+  "cssRaw": 11985,
+  "cssGzip": 2752,
   "jsGzipKb": 5.9,
   "jsGzipKbMin": 5.3,
   "jsGzipKbMax": 5.9,
   "cssGzipKb": 2.7,
-  "totalGzip": 8781,
+  "totalGzip": 8765,
   "totalGzipKb": 8.6
 }

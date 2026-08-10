@@ -23,27 +23,63 @@ export type ToasterProps = Partial<ToasterConfig>;
  * <Toaster position="top-center" theme="system" />
  * toast.success("Saved")
  */
-export function Toaster(props: ToasterProps): null {
+export function Toaster({
+  position,
+  theme,
+  duration,
+  autoClose,
+  closeButton,
+  dismissible,
+  richColors,
+  visibleToasts,
+  expand,
+  gap,
+  offset,
+  dir,
+  pauseOnHover,
+  resetTimerOnHover,
+  pauseOnWindowBlur,
+  progressBar,
+  toasterClassName,
+}: ToasterProps): null {
   useEffect(() => {
-    coreToast.config(props);
+    const config: Partial<ToasterConfig> = {};
+    if (position !== undefined) config.position = position;
+    if (theme !== undefined) config.theme = theme;
+    if (duration !== undefined) config.duration = duration;
+    if (autoClose !== undefined) config.autoClose = autoClose;
+    if (closeButton !== undefined) config.closeButton = closeButton;
+    if (dismissible !== undefined) config.dismissible = dismissible;
+    if (richColors !== undefined) config.richColors = richColors;
+    if (visibleToasts !== undefined) config.visibleToasts = visibleToasts;
+    if (expand !== undefined) config.expand = expand;
+    if (gap !== undefined) config.gap = gap;
+    if (offset !== undefined) config.offset = offset;
+    if (dir !== undefined) config.dir = dir;
+    if (pauseOnHover !== undefined) config.pauseOnHover = pauseOnHover;
+    if (resetTimerOnHover !== undefined) config.resetTimerOnHover = resetTimerOnHover;
+    if (pauseOnWindowBlur !== undefined) config.pauseOnWindowBlur = pauseOnWindowBlur;
+    if (progressBar !== undefined) config.progressBar = progressBar;
+    if (toasterClassName !== undefined) config.toasterClassName = toasterClassName;
+    coreToast.config(config);
   }, [
-    props.position,
-    props.theme,
-    props.duration,
-    props.autoClose,
-    props.closeButton,
-    props.dismissible,
-    props.richColors,
-    props.visibleToasts,
-    props.expand,
-    props.gap,
-    props.offset,
-    props.dir,
-    props.pauseOnHover,
-    props.resetTimerOnHover,
-    props.pauseOnWindowBlur,
-    props.progressBar,
-    props.toasterClassName,
+    position,
+    theme,
+    duration,
+    autoClose,
+    closeButton,
+    dismissible,
+    richColors,
+    visibleToasts,
+    expand,
+    gap,
+    offset,
+    dir,
+    pauseOnHover,
+    resetTimerOnHover,
+    pauseOnWindowBlur,
+    progressBar,
+    toasterClassName,
   ]);
 
   return null;
