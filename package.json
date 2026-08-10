@@ -56,7 +56,7 @@
     "size": "npm run build",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build -o storybook-static",
-    "prepublishOnly": "npm run typecheck && npm run test && npm run build"
+    "prepublishOnly": "npm run typecheck && npm run build && npm run test"
   },
   "peerDependencies": {
     "react": ">=17",
