@@ -41,17 +41,6 @@ function isCoreIcon(
   );
 }
 
-function isMountable(
-  icon: SvelteToastOptions["icon"],
-): icon is SvelteMountable {
-  return (
-    typeof icon === "object" &&
-    icon !== null &&
-    !(icon instanceof HTMLElement) &&
-    "component" in icon
-  );
-}
-
 function mountSvelteContent(
   content: SvelteMountable | SvelteMountFactory,
   className: string,
