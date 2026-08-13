@@ -6,6 +6,12 @@ import type { ToastPosition, ToastRecord, ToasterConfig } from "./types";
 const PORTAL_ATTR = "data-alert-notify-portal";
 const TOAST_ATTR = "data-an-toast-id";
 
+type ToasterStack = {
+  toaster: HTMLElement;
+  hitbox: HTMLElement;
+  expanded: boolean;
+};
+
 function isBrowser(): boolean {
   return typeof document !== "undefined" && typeof window !== "undefined";
 }
@@ -64,6 +70,17 @@ function positionClass(position: ToastPosition): string {
   return `an-toaster--${position}`;
 }
 
+function resolvePosition(
+  toast: ToastRecord,
+  config: ToasterConfig,
+): ToastPosition {
+  return toast.position ?? config.position;
+}
+
+function resolveRichColors(toast: ToastRecord, config: ToasterConfig): boolean {
+  return toast.richColors ?? config.richColors;
+}
+
 function contentKey(toast: ToastRecord, config: ToasterConfig): string {
   const custom =
     toast.customContent === undefined
@@ -94,6 +111,8 @@ function contentKey(toast: ToastRecord, config: ToasterConfig): string {
     String(toast.duration),
     String(toast.progressKey),
     String(config.progressBar),
+    resolvePosition(toast, config),
+    String(resolveRichColors(toast, config)),
   ].join("|");
 }
 
@@ -108,11 +127,10 @@ function shouldShowProgress(toast: ToastRecord, config: ToasterConfig): boolean 
 export class ToastRenderer {
   private store: ToastStore;
   private portal: HTMLElement | null = null;
-  private toaster: HTMLElement | null = null;
-  private hitbox: HTMLElement | null = null;
+  private stacks = new Map<ToastPosition, ToasterStack>();
   private nodes = new Map<string, HTMLElement>();
+  private nodePositions = new Map<string, ToastPosition>();
   private contentKeys = new Map<string, string>();
-  private expanded = false;
   private unsubscribers: Array<() => void> = [];
   private mediaQuery: MediaQueryList | null = null;
   private dragging: {
@@ -193,7 +211,9 @@ export class ToastRenderer {
       }
     };
     document.addEventListener("keydown", onKeyDown);
-    this.unsubscribers.push(() => document.removeEventListener("keydown", onKeyDown));
+    this.unsubscribers.push(() =>
+      document.removeEventListener("keydown", onKeyDown),
+    );
   }
 
   destroy(): void {
@@ -202,11 +222,11 @@ export class ToastRenderer {
     }
     this.unsubscribers = [];
     this.nodes.clear();
+    this.nodePositions.clear();
     this.contentKeys.clear();
+    this.stacks.clear();
     this.portal?.remove();
     this.portal = null;
-    this.toaster = null;
-    this.hitbox = null;
   }
 
   private ensurePortal(): void {
@@ -217,70 +237,123 @@ export class ToastRenderer {
     const portal = document.createElement("div");
     portal.setAttribute(PORTAL_ATTR, "");
     document.body.appendChild(portal);
-
     this.portal = portal;
-    this.toaster = document.createElement("ol");
-    this.toaster.className = "an-toaster";
-    this.toaster.setAttribute("data-an-toaster", "");
-    this.toaster.tabIndex = -1;
-
-    this.hitbox = document.createElement("div");
-    this.hitbox.className = "an-toaster__hitbox";
-    this.hitbox.setAttribute("data-an-hitbox", "");
-    this.hitbox.setAttribute("aria-hidden", "true");
-    this.toaster.appendChild(this.hitbox);
-
-    portal.appendChild(this.toaster);
     this.applyConfig(this.store.getConfig());
+  }
 
-    this.toaster.addEventListener("mouseenter", () => {
-      this.expanded = true;
+  private ensureStack(position: ToastPosition): ToasterStack {
+    const existing = this.stacks.get(position);
+    if (existing) {
+      return existing;
+    }
+
+    if (!this.portal) {
+      this.ensurePortal();
+    }
+
+    const toaster = document.createElement("ol");
+    toaster.className = "an-toaster";
+    toaster.setAttribute("data-an-toaster", "");
+    toaster.dataset.position = position;
+    toaster.tabIndex = -1;
+
+    const hitbox = document.createElement("div");
+    hitbox.className = "an-toaster__hitbox";
+    hitbox.setAttribute("data-an-hitbox", "");
+    hitbox.setAttribute("aria-hidden", "true");
+    toaster.appendChild(hitbox);
+
+    const stack: ToasterStack = { toaster, hitbox, expanded: false };
+
+    toaster.addEventListener("mouseenter", () => {
+      stack.expanded = true;
       this.updateStackLayout(this.store.getToasts());
       const config = this.store.getConfig();
       if (config.resetTimerOnHover) {
-        this.store.resetAllTimers();
+        this.resetTimersForPosition(position);
       }
       if (config.pauseOnHover) {
-        this.store.pauseAll();
+        this.pauseToastsForPosition(position);
       }
     });
-    this.toaster.addEventListener("mouseleave", () => {
-      this.expanded = false;
+    toaster.addEventListener("mouseleave", () => {
+      stack.expanded = false;
       this.updateStackLayout(this.store.getToasts());
       if (this.store.getConfig().pauseOnHover) {
-        this.store.resumeAll();
+        this.resumeToastsForPosition(position);
       }
     });
+
+    this.portal?.appendChild(toaster);
+    this.stacks.set(position, stack);
+    this.applyConfigToStack(stack, position, this.store.getConfig());
+    return stack;
+  }
+
+  private pauseToastsForPosition(position: ToastPosition): void {
+    const config = this.store.getConfig();
+    for (const toast of this.store.getToasts()) {
+      if (resolvePosition(toast, config) === position) {
+        this.store.pause(toast.id);
+      }
+    }
+  }
+
+  private resumeToastsForPosition(position: ToastPosition): void {
+    const config = this.store.getConfig();
+    for (const toast of this.store.getToasts()) {
+      if (resolvePosition(toast, config) === position) {
+        this.store.resume(toast.id);
+      }
+    }
+  }
+
+  private resetTimersForPosition(position: ToastPosition): void {
+    const config = this.store.getConfig();
+    for (const toast of this.store.getToasts()) {
+      if (resolvePosition(toast, config) === position) {
+        this.store.resetTimer(toast.id);
+      }
+    }
   }
 
   private applyConfig(config: ToasterConfig): void {
-    if (!this.toaster) {
-      return;
+    for (const [position, stack] of this.stacks) {
+      this.applyConfigToStack(stack, position, config);
     }
+  }
 
+  private applyConfigToStack(
+    stack: ToasterStack,
+    position: ToastPosition,
+    config: ToasterConfig,
+  ): void {
     const theme = resolveTheme(config.theme);
-    this.toaster.className = [
+    stack.toaster.className = [
       "an-toaster",
-      positionClass(config.position),
+      positionClass(position),
       config.toasterClassName ?? "",
     ]
       .filter(Boolean)
       .join(" ");
 
-    this.toaster.dataset.theme = theme;
-    this.toaster.dataset.richColors = config.richColors ? "true" : "false";
-    this.toaster.dataset.expanded = this.expanded || config.expand ? "true" : "false";
-    this.toaster.dataset.yPosition = config.position.startsWith("top") ? "top" : "bottom";
-    this.toaster.dataset.xPosition = config.position.endsWith("left")
+    stack.toaster.dataset.theme = theme;
+    stack.toaster.dataset.position = position;
+    stack.toaster.dataset.expanded =
+      stack.expanded || config.expand ? "true" : "false";
+    stack.toaster.dataset.yPosition = position.startsWith("top")
+      ? "top"
+      : "bottom";
+    stack.toaster.dataset.xPosition = position.endsWith("left")
       ? "left"
-      : config.position.endsWith("right")
+      : position.endsWith("right")
         ? "right"
         : "center";
 
-    this.toaster.style.setProperty("--an-gap", `${config.gap}px`);
-    this.toaster.style.setProperty("--an-offset", offsetValue(config.offset));
-    this.toaster.dir = config.dir === "auto" ? "" : config.dir;
-    applyInlineStyles(this.toaster, config.style);
+    stack.toaster.style.setProperty("--an-gap", `${config.gap}px`);
+    stack.toaster.style.setProperty("--an-offset", offsetValue(config.offset));
+    stack.toaster.dir = config.dir === "auto" ? "" : config.dir;
+    applyInlineStyles(stack.toaster, config.style);
   }
 
   private render(toasts: readonly ToastRecord[]): void {
@@ -288,15 +361,14 @@ export class ToastRenderer {
       return;
     }
     this.ensurePortal();
-    if (!this.toaster) {
-      return;
-    }
 
+    const config = this.store.getConfig();
     const ids = new Set(toasts.map((toast) => toast.id));
     for (const [id, node] of this.nodes) {
       if (!ids.has(id)) {
         node.dataset.removed = "true";
         this.contentKeys.delete(id);
+        this.nodePositions.delete(id);
         const remove = () => {
           node.remove();
           this.nodes.delete(id);
@@ -307,17 +379,43 @@ export class ToastRenderer {
     }
 
     for (const toast of toasts) {
+      const position = resolvePosition(toast, config);
+      const stack = this.ensureStack(position);
       let node = this.nodes.get(toast.id);
       if (!node) {
         node = this.createToastElement(toast);
         this.nodes.set(toast.id, node);
-        this.toaster.appendChild(node);
+        this.nodePositions.set(toast.id, position);
+        stack.toaster.appendChild(node);
       } else {
+        const previousPosition = this.nodePositions.get(toast.id);
+        if (previousPosition !== position) {
+          stack.toaster.appendChild(node);
+          this.nodePositions.set(toast.id, position);
+        }
         this.updateToastElement(node, toast);
       }
     }
 
+    this.pruneEmptyStacks(toasts);
     this.updateStackLayout(toasts);
+  }
+
+  private pruneEmptyStacks(toasts: readonly ToastRecord[]): void {
+    const config = this.store.getConfig();
+    const active = new Set(
+      toasts.map((toast) => resolvePosition(toast, config)),
+    );
+    for (const [position, stack] of this.stacks) {
+      if (active.has(position)) {
+        continue;
+      }
+      const hasNodes = [...this.nodePositions.values()].includes(position);
+      if (!hasNodes) {
+        stack.toaster.remove();
+        this.stacks.delete(position);
+      }
+    }
   }
 
   private createToastElement(toast: ToastRecord): HTMLElement {
@@ -329,7 +427,10 @@ export class ToastRenderer {
       "role",
       toast.type === "error" || toast.type === "warning" ? "alert" : "status",
     );
-    li.setAttribute("aria-live", toast.type === "error" ? "assertive" : "polite");
+    li.setAttribute(
+      "aria-live",
+      toast.type === "error" ? "assertive" : "polite",
+    );
     li.setAttribute("aria-atomic", "true");
     li.tabIndex = 0;
 
@@ -378,6 +479,7 @@ export class ToastRenderer {
   private fillToast(li: HTMLElement, toast: ToastRecord): void {
     const config = this.store.getConfig();
     li.className = ["an-toast", toast.className].filter(Boolean).join(" ");
+    li.dataset.richColors = resolveRichColors(toast, config) ? "true" : "false";
     applyInlineStyles(li, toast.style);
 
     let bodyHtml = "";
@@ -462,7 +564,9 @@ export class ToastRenderer {
 
     const closeBtn = li.querySelector("[data-an-close]");
     if (closeBtn instanceof HTMLButtonElement) {
-      closeBtn.addEventListener("click", () => this.store.dismiss(toast.id, "Manual"));
+      closeBtn.addEventListener("click", () =>
+        this.store.dismiss(toast.id, "Manual"),
+      );
     }
 
     this.syncProgressPause(li, toast);
@@ -521,53 +625,59 @@ export class ToastRenderer {
   }
 
   private updateStackLayout(toasts: readonly ToastRecord[]): void {
-    if (!this.toaster) {
-      return;
+    const config = this.store.getConfig();
+    const byPosition = new Map<ToastPosition, ToastRecord[]>();
+
+    for (const toast of toasts) {
+      const position = resolvePosition(toast, config);
+      const list = byPosition.get(position) ?? [];
+      list.push(toast);
+      byPosition.set(position, list);
     }
 
-    const config = this.store.getConfig();
-    const expanded = this.expanded || config.expand;
-    this.toaster.dataset.expanded = expanded ? "true" : "false";
+    for (const [position, stack] of this.stacks) {
+      const group = byPosition.get(position) ?? [];
+      const expanded = stack.expanded || config.expand;
+      stack.toaster.dataset.expanded = expanded ? "true" : "false";
 
-    const ordered = [...toasts].reverse();
-    let offset = 0;
-    let stackHeight = 0;
+      const ordered = [...group].reverse();
+      let offset = 0;
+      let stackHeight = 0;
 
-    ordered.forEach((toast, index) => {
-      const node = this.nodes.get(toast.id);
-      if (!node) {
-        return;
-      }
-
-      const visible = index < config.visibleToasts;
-      node.dataset.visible = visible ? "true" : "false";
-      node.style.setProperty("--an-index", String(index));
-      node.style.setProperty("--an-toasts-before", String(index));
-
-      const height = toast.height || 64;
-
-      if (expanded) {
-        node.style.setProperty("--an-offset", `${offset}px`);
-        node.style.setProperty("--an-scale", "1");
-        offset += height + config.gap;
-        if (visible) {
-          stackHeight = offset - config.gap;
+      ordered.forEach((toast, index) => {
+        const node = this.nodes.get(toast.id);
+        if (!node) {
+          return;
         }
-      } else {
-        const scale = Math.max(0.92, 1 - index * 0.05);
-        const stackOffset = index * 12;
-        node.style.setProperty("--an-offset", `${stackOffset}px`);
-        node.style.setProperty("--an-scale", String(scale));
-        if (visible) {
-          stackHeight = Math.max(stackHeight, height + stackOffset);
-        }
-      }
-    });
 
-    if (this.hitbox) {
+        const visible = index < config.visibleToasts;
+        node.dataset.visible = visible ? "true" : "false";
+        node.style.setProperty("--an-index", String(index));
+        node.style.setProperty("--an-toasts-before", String(index));
+
+        const height = toast.height || 64;
+
+        if (expanded) {
+          node.style.setProperty("--an-offset", `${offset}px`);
+          node.style.setProperty("--an-scale", "1");
+          offset += height + config.gap;
+          if (visible) {
+            stackHeight = offset - config.gap;
+          }
+        } else {
+          const scale = Math.max(0.92, 1 - index * 0.05);
+          const stackOffset = index * 12;
+          node.style.setProperty("--an-offset", `${stackOffset}px`);
+          node.style.setProperty("--an-scale", String(scale));
+          if (visible) {
+            stackHeight = Math.max(stackHeight, height + stackOffset);
+          }
+        }
+      });
+
       const height = Math.max(0, stackHeight);
-      this.hitbox.style.height = `${height}px`;
-      this.toaster.style.minHeight = height > 0 ? `${height}px` : "";
+      stack.hitbox.style.height = `${height}px`;
+      stack.toaster.style.minHeight = height > 0 ? `${height}px` : "";
     }
   }
 }

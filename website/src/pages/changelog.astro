@@ -6,7 +6,7 @@ import { pageMeta } from "../data/seo";
 const meta = pageMeta({
   title: "alert-notify: Changelog",
   description:
-    "Release history for alert-notify, including the 3.0 message-first API changes and published 2.x / 1.x lines.",
+    "Release history for alert-notify, including 3.1 per-toast options and framework icons, the 3.0 message-first API, and earlier 2.x / 1.x lines.",
 });
 
 /** Escape HTML, then light markdown: `code` and [label](href). */
@@ -37,7 +37,9 @@ function formatInline(text: string): string {
     <section class="section">
       <h1 style="margin:0;font-size:clamp(2rem,4vw,2.8rem)">Changelog</h1>
       <p class="section-copy">
-        From the package <code>CHANGELOG.md</code>. See <a href="/docs/migration">Migration</a> for upgrade tables.
+        From the package <code>CHANGELOG.md</code>. Latest is <strong>3.1.0 </strong>
+        (per-toast options, framework icons, icon/progress colors).
+        See <a href="/docs/migration">Migration</a> for upgrade tables from 1.x / 2.x.
       </p>
       {
         releases.map((release) => (

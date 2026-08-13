@@ -25,7 +25,7 @@ toast.success("Hello");`}</code></pre>
         <tr><th>Method</th><th>Returns</th><th>Description</th></tr>
       </thead>
       <tbody>
-        <tr><td><code>toast(message, options?)</code></td><td><code>ToastId</code></td><td>Generic toast (<code>message</code> type)</td></tr>
+        <tr><td><code>toast(message, options?)</code></td><td><code>ToastId</code></td><td>Generic toast (<code>message</code> type). Message may be <code>string | undefined</code></td></tr>
         <tr><td><code>toast.success(message, options?)</code></td><td><code>ToastId</code></td><td>Success toast</td></tr>
         <tr><td><code>toast.error(message, options?)</code></td><td><code>ToastId</code></td><td>Error toast</td></tr>
         <tr><td><code>toast.warning(message, options?)</code></td><td><code>ToastId</code></td><td>Warning toast</td></tr>
@@ -35,6 +35,7 @@ toast.success("Hello");`}</code></pre>
         <tr><td><code>toast.custom(content, options?)</code></td><td><code>ToastId</code></td><td>Custom HTML string or <code>HTMLElement</code></td></tr>
         <tr><td><code>toast.promise(promise, messages)</code></td><td><code>Promise&lt;T&gt;</code></td><td>Loading → success/error on same id</td></tr>
         <tr><td><code>toast.dismiss(id?)</code></td><td><code>void</code></td><td>Dismiss one toast, or all if omitted</td></tr>
+        <tr><td><code>toast.isActive(id)</code></td><td><code>boolean</code></td><td>Whether that toast id is still open</td></tr>
         <tr><td><code>toast.config(partial)</code></td><td><code>void</code></td><td>Update global toaster defaults</td></tr>
         <tr><td><code>toast.getConfig()</code></td><td><code>ToasterConfig</code></td><td>Read current global config</td></tr>
         <tr><td><code>toast.getToasts()</code></td><td><code>ToastRecord[]</code></td><td>Current toast list (headless)</td></tr>
@@ -57,14 +58,17 @@ toast.success("Hello");`}</code></pre>
         <tr><td><code>title</code></td><td><code>string</code></td><td>-</td><td>Optional heading</td></tr>
         <tr><td><code>duration</code></td><td><code>number</code></td><td>from config</td><td>Ms until auto-close when <code>autoClose</code> is true</td></tr>
         <tr><td><code>autoClose</code></td><td><code>boolean</code></td><td><code>true</code> (<code>false</code> for loading)</td><td>Whether the toast auto-dismisses</td></tr>
-        <tr><td><code>icon</code></td><td><code>string | HTMLElement | false</code></td><td>built-in SVG</td><td>Custom icon HTML/node, or <code>false</code> to hide</td></tr>
+        <tr><td><code>icon</code></td><td><code>string | HTMLElement | false</code></td><td>built-in SVG</td><td>Custom icon HTML/node, or <code>false</code> to hide. Framework entries also accept framework nodes</td></tr>
         <tr><td><code>action</code></td><td><code>{"{ label, onClick }"}</code></td><td>-</td><td>Primary action button</td></tr>
         <tr><td><code>cancel</code></td><td><code>{"{ label, onClick }"}</code></td><td>-</td><td>Secondary cancel button</td></tr>
         <tr><td><code>closeButton</code></td><td><code>boolean</code></td><td>from config</td><td>Show × button</td></tr>
         <tr><td><code>dismissible</code></td><td><code>boolean</code></td><td>from config</td><td>Allow swipe / close dismiss</td></tr>
         <tr><td><code>important</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Jump to front of the queue</td></tr>
+        <tr><td><code>position</code></td><td><code>ToastPosition</code></td><td>from config</td><td>Override stack corner for this toast</td></tr>
+        <tr><td><code>richColors</code></td><td><code>boolean</code></td><td>from config</td><td>Override tinted surface for this toast</td></tr>
         <tr><td><code>className</code></td><td><code>string</code></td><td>-</td><td>Extra class on the toast element</td></tr>
         <tr><td><code>style</code></td><td><code>object</code></td><td>-</td><td>Inline styles on the toast</td></tr>
+        <tr><td><code>onOpen</code></td><td><code>(toast) =&gt; void</code></td><td>-</td><td>Fired once when the toast is first created</td></tr>
         <tr><td><code>onClose</code></td><td><code>(toast, reason) =&gt; void</code></td><td>-</td><td>Fired once; <code>reason</code> is <code>"Manual"</code> or <code>"Auto"</code></td></tr>
       </tbody>
     </table>
@@ -92,7 +96,9 @@ headless.subscribe((toasts) => {
   <ul class="notes">
     <li>Title and message are HTML-escaped by default. Use <code>toast.custom()</code> for trusted markup.</li>
     <li><code>loading</code> toasts default to sticky until updated (for example via promise).</li>
-    <li>Same <code>id</code> coalesces instead of stacking a duplicate.</li>
+    <li>Same <code>id</code> coalesces instead of stacking a duplicate. <code>onOpen</code> does not re-fire on coalesce.</li>
+    <li>Per-toast <code>position</code> uses a separate stack from the default corner.</li>
+    <li>Per-toast <code>richColors</code> overrides the toaster default for that toast only.</li>
     <li>Escape dismisses the focused toast. Swipe dismisses when <code>dismissible</code> is true.</li>
     <li>SSR-safe: no DOM work until <code>document</code> exists.</li>
   </ul>

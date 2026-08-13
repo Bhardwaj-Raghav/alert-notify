@@ -11,6 +11,9 @@ describe("TypeScript API surface", () => {
     expectTypeOf<ToastOptions>().toHaveProperty("title");
     expectTypeOf<ToastOptions>().toHaveProperty("autoClose");
     expectTypeOf<ToastOptions>().toHaveProperty("onClose");
+    expectTypeOf<ToastOptions>().toHaveProperty("onOpen");
+    expectTypeOf<ToastOptions>().toHaveProperty("richColors");
+    expectTypeOf<ToastOptions>().toHaveProperty("position");
     expectTypeOf<ToastOptions["title"]>().toEqualTypeOf<string | undefined>();
     expectTypeOf<ToastOptions["autoClose"]>().toEqualTypeOf<
       boolean | undefined
@@ -30,12 +33,15 @@ describe("TypeScript API surface", () => {
     expectTypeOf<ToastOptions>().not.toHaveProperty("html");
   });
 
-  it("standard helpers accept string message and optional title", () => {
+  it("standard helpers accept string | undefined message", () => {
     const toaster = createToaster({}, { headless: true });
-    expectTypeOf(toaster.success).parameter(0).toEqualTypeOf<string>();
+    expectTypeOf(toaster.success).parameter(0).toEqualTypeOf<
+      string | undefined
+    >();
     expectTypeOf(toaster.custom).parameter(0).toEqualTypeOf<
       string | HTMLElement
     >();
+    expectTypeOf(toaster.isActive).parameter(0).toEqualTypeOf<string>();
     toaster.destroy();
   });
 
@@ -43,6 +49,9 @@ describe("TypeScript API surface", () => {
     const options: ToastOptions = {
       title: "Heading",
       autoClose: false,
+      richColors: true,
+      position: "bottom-left",
+      onOpen: (_toast) => undefined,
       onClose: (_toast, reason) => {
         expect(reason === "Manual" || reason === "Auto").toBe(true);
       },

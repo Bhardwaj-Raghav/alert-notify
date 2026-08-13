@@ -45,6 +45,8 @@ ensureStyleImport(join(dist, "react.js"), 'import "./style.css";', {
 ensureStyleImport(join(dist, "react.cjs"), 'require("./style.css");', {
   useClient: true,
 });
+ensureStyleImport(join(dist, "svelte", "toast.js"), 'import "../style.css";');
+ensureStyleImport(join(dist, "svelte", "toast.cjs"), 'require("../style.css");');
 
 const css = readFileSync(join(dist, "style.css"), "utf8");
 const globalPath = join(dist, "alert-notify.global.js");
@@ -76,7 +78,7 @@ const entrySources = {
   vanilla: readDist("index.js"),
   react: `${readDist("index.js")}\n${readDist("react.js")}`,
   vue: `${readDist("index.js")}\n${readDist("vue.js")}`,
-  svelte: `${readDist("index.js")}\n${readDist("svelte", "Toaster.svelte")}`,
+  svelte: `${readDist("index.js")}\n${readDist("svelte", "Toaster.svelte")}\n${readDist("svelte", "toast.js")}`,
 };
 
 const entrySizes = Object.fromEntries(

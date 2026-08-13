@@ -15,11 +15,21 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
   <pre class="api"><code>{`toast.config({ theme: "light" }); // default
 toast.config({ theme: "system" }); // OS + html.dark / data-theme
 toast.config({ theme: "dark" });
-toast.config({ richColors: true });`}</code></pre>
+toast.config({ richColors: true });
+
+// Per-toast override
+toast.success("Saved", { richColors: true });`}</code></pre>
 
   <p>
     With <code>theme: "system"</code> the toaster tracks <code>prefers-color-scheme</code>,
     <code>html.dark</code> / <code>html.light</code>, and <code>html[data-theme]</code>.
+  </p>
+
+  <h2>Icons and progress</h2>
+  <p>
+    Built-in icons use explicit <code>stroke: var(--an-success)</code> (and matching tokens for error, warning, info).
+    They are not driven by <code>currentColor</code>, so a global <code>* &#123; color: … &#125;</code> rule cannot recolor them.
+    Progress bars use a lighter tint of the same accent token as the toast type.
   </p>
 
   <h2>CSS variables</h2>

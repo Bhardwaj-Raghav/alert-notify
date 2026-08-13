@@ -46,7 +46,7 @@ export const frameworks: FrameworkEntry[] = [
     docsHref: "/docs/react",
     tier: "helper",
     tierLabel: "Helper",
-    blurb: "Optional Toaster plus custom() for React nodes.",
+    blurb: "Optional Toaster, React-aware toast with JSX icons, and custom().",
   },
   {
     id: "vue",
@@ -55,7 +55,7 @@ export const frameworks: FrameworkEntry[] = [
     docsHref: "/docs/vue",
     tier: "helper",
     tierLabel: "Helper",
-    blurb: "Optional Toaster plus custom() for Vue VNodes.",
+    blurb: "Optional Toaster, Vue-aware toast with VNode icons, and custom().",
   },
   {
     id: "svelte",
@@ -64,7 +64,7 @@ export const frameworks: FrameworkEntry[] = [
     docsHref: "/docs/svelte",
     tier: "helper",
     tierLabel: "Helper",
-    blurb: "Optional Toaster. Custom DOM via core toast.custom().",
+    blurb: "Optional Toaster plus svelte/toast for component icons and custom().",
   },
   {
     id: "angular",
@@ -191,7 +191,14 @@ ${frameworkLines}
 ## Support tiers
 
 - Native: core \`toast\` / \`createToaster\`, CDN IIFE
-- Helper: \`alert-notify/react\`, \`alert-notify/vue\`, \`alert-notify/svelte\`
+- Helper: \`alert-notify/react\`, \`alert-notify/vue\`, \`alert-notify/svelte\` (+ \`alert-notify/svelte/toast\`)
 - Recipe: Angular, Astro (import core, no dedicated adapter)
+
+## Notable API
+
+- Per-toast options: position, richColors, className, onOpen, onClose, icon
+- toast.isActive(id)
+- Message helpers accept string | undefined
+- Framework icons: ReactNode (react), VNode (vue), \{ component, props \} (svelte/toast)
 `;
 }

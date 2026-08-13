@@ -151,3 +151,49 @@ export const AllTypes: Story = {
     return root;
   },
 };
+
+export const ColorMatrix: Story = {
+  name: "Colors / richColors",
+  render: () => {
+    toast.config({ position: "top-right", progressBar: true, duration: 8000 });
+    const root = document.createElement("div");
+    root.style.cssText =
+      "display:flex;flex-direction:column;gap:10px;max-width:420px;font-family:system-ui,sans-serif";
+    const types = ["success", "error", "warning", "info"] as const;
+
+    const makeRow = (richColors: boolean) => {
+      const row = document.createElement("div");
+      row.style.cssText = "display:flex;flex-wrap:wrap;gap:8px;align-items:center";
+      const label = document.createElement("span");
+      label.textContent = richColors ? "richColors on" : "richColors off";
+      label.style.cssText = "min-width:110px;font-size:13px;color:#475569";
+      row.appendChild(label);
+      for (const type of types) {
+        const btn = document.createElement("button");
+        btn.textContent = type;
+        btn.style.cssText =
+          "padding:8px 10px;border-radius:10px;border:1px solid #ddd;background:#fff;cursor:pointer;text-transform:capitalize";
+        btn.addEventListener("click", () =>
+          toast[type](
+            `Multi-line ${type} message.\nSecond line checks icon centering.`,
+            { richColors, className: "story-toast" },
+          ),
+        );
+        row.appendChild(btn);
+      }
+      return row;
+    };
+
+    const positions = document.createElement("button");
+    positions.textContent = "Per-toast positions";
+    positions.style.cssText =
+      "padding:10px 12px;border-radius:10px;border:1px solid #ddd;background:#fff;cursor:pointer;align-self:flex-start";
+    positions.addEventListener("click", () => {
+      toast.success("Top right", { position: "top-right" });
+      toast.info("Bottom left", { position: "bottom-left" });
+    });
+
+    root.append(makeRow(false), makeRow(true), positions);
+    return root;
+  },
+};

@@ -4,29 +4,38 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
 
 <DocsLayout
   title="alert-notify Documentation: Vue"
-  description="Use alert-notify in Vue 3 with optional Toaster, custom() for VNodes, and the shared imperative toast API."
+  description="Use alert-notify in Vue 3 with optional Toaster, Vue-aware toast with VNode icons, and custom() for VNodes."
   pageTitle="Vue"
 >
   <p>
     <span class="tier helper">Helper</span>
-    Vue 3 helper export with optional Toaster and <code>custom()</code> for VNodes.
+    Vue 3 helper export with optional Toaster, Vue-aware <code>toast</code>, and <code>custom()</code> for VNodes.
     For a live demo and install snippet, see the <a href="/vue">Vue landing</a>.
   </p>
 
   <pre class="api"><code>{`<script setup>
-import { toast } from "alert-notify";
-import { Toaster, custom } from "alert-notify/vue";
+import { toast, Toaster, custom } from "alert-notify/vue";
 import { h } from "vue";
 </script>
 
 <template>
   <Toaster position="top-right" :rich-colors="true" />
   <button @click="toast.success('Saved')">Save</button>
+  <button
+    @click="
+      toast.info('Pay with card', {
+        icon: h('img', { src: '/card.png', alt: '' }),
+      })
+    "
+  >
+    With icon
+  </button>
   <button @click="custom(h('div', 'Custom Vue content'))">Custom</button>
 </template>`}</code></pre>
 
   <ul class="notes">
     <li>Peer dependency: vue &gt;= 3.</li>
+    <li>Import <code>toast</code> from <code>alert-notify/vue</code> when passing VNode icons.</li>
     <li>Landing page: <a href="/vue">/vue</a></li>
   </ul>
 </DocsLayout>

@@ -1,14 +1,22 @@
 ---
 import FrameworkLanding from "../components/FrameworkLanding.astro";
 
-const code = `import { toast } from "alert-notify";
-import { Toaster, custom } from "alert-notify/react";
+const code = `import { toast, Toaster, custom } from "alert-notify/react";
 
 export function App() {
   return (
     <>
       <Toaster position="top-right" richColors />
       <button onClick={() => toast.success("Saved")}>Save</button>
+      <button
+        onClick={() =>
+          toast.info("Pay with card", {
+            icon: <img src="/card.png" alt="" />,
+          })
+        }
+      >
+        With icon
+      </button>
       <button onClick={() => custom(<div>Custom React content</div>)}>
         Custom
       </button>
@@ -23,6 +31,7 @@ export function App() {
   code={code}
   extraNotes={[
     "Toaster is optional. It only syncs config props.",
+    "Import toast from alert-notify/react for JSX icons.",
     "custom() mounts React nodes into a toast body.",
     "Peer: react and react-dom >= 17.",
   ]}

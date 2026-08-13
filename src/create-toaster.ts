@@ -32,7 +32,7 @@ function normalizeContent(
   const { message, title, ...rest } = content;
   if (message !== undefined) {
     return {
-      message,
+      message: message ?? "",
       options: title !== undefined ? { ...rest, title } : { ...rest },
     };
   }
@@ -52,21 +52,21 @@ export type ToasterInstance = {
    * toast("Saved", { title: "Profile" })
    * toast("Stay open", { autoClose: false })
    */
-  (message: string, options?: ToastOptions): ToastId;
+  (message: string | undefined, options?: ToastOptions): ToastId;
   /** Show a success toast. */
-  success: (message: string, options?: ToastOptions) => ToastId;
+  success: (message: string | undefined, options?: ToastOptions) => ToastId;
   /** Show an error toast. */
-  error: (message: string, options?: ToastOptions) => ToastId;
+  error: (message: string | undefined, options?: ToastOptions) => ToastId;
   /** Show a warning toast. */
-  warning: (message: string, options?: ToastOptions) => ToastId;
+  warning: (message: string | undefined, options?: ToastOptions) => ToastId;
   /** Show an info toast. */
-  info: (message: string, options?: ToastOptions) => ToastId;
+  info: (message: string | undefined, options?: ToastOptions) => ToastId;
   /**
    * Show a loading toast. Defaults to sticky (`autoClose: false`) until updated or dismissed.
    */
-  loading: (message: string, options?: ToastOptions) => ToastId;
+  loading: (message: string | undefined, options?: ToastOptions) => ToastId;
   /** Show a neutral message toast (same as calling the instance directly). */
-  message: (message: string, options?: ToastOptions) => ToastId;
+  message: (message: string | undefined, options?: ToastOptions) => ToastId;
   /**
    * Show a custom toast. String HTML is not escaped (trusted markup only).
    * Default icon is hidden unless you pass `icon`.
@@ -96,6 +96,10 @@ export type ToasterInstance = {
    * Public dismiss always uses close reason `"Manual"`.
    */
   dismiss: (id?: ToastId) => void;
+  /**
+   * Whether a toast with the given id is currently in the active list.
+   */
+  isActive: (id: ToastId) => boolean;
   /** Shallow-merge global toaster config. */
   config: (partial: Partial<ToasterConfig>) => void;
   /** Current merged toaster config. */
@@ -114,8 +118,9 @@ export type ToasterInstance = {
 function createTyped(
   store: ToastStore,
   type: ToastType,
-): (message: string, options?: ToastOptions) => ToastId {
-  return (message, options = {}) => store.add(message, { ...options, type });
+): (message: string | undefined, options?: ToastOptions) => ToastId {
+  return (message, options = {}) =>
+    store.add(message ?? "", { ...options, type });
 }
 
 /**
@@ -138,8 +143,8 @@ export function createToaster(
     ? null
     : new ToastRenderer(store, { enabled: true });
 
-  const base = ((message: string, opts: ToastOptions = {}) =>
-    store.add(message, opts)) as ToasterInstance;
+  const base = ((message: string | undefined, opts: ToastOptions = {}) =>
+    store.add(message ?? "", opts)) as ToasterInstance;
 
   base.success = createTyped(store, "success");
   base.error = createTyped(store, "error");
@@ -185,6 +190,7 @@ export function createToaster(
   };
 
   base.dismiss = (id?: ToastId) => store.dismiss(id);
+  base.isActive = (id: ToastId) => store.isActive(id);
   base.config = (partial) => store.setConfig(partial);
   base.getConfig = () => store.getConfig();
   base.getToasts = () => store.getToasts();

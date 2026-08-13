@@ -141,7 +141,7 @@
   box-sizing: border-box;
   display: grid;
   grid-template-columns: auto 1fr auto;
-  align-items: start;
+  align-items: center;
   gap: 12px;
   padding: 14px 16px;
   border: 1px solid var(--an-border);
@@ -156,7 +156,7 @@
     system-ui,
     -apple-system,
     sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.4;
   pointer-events: auto;
   cursor: grab;
@@ -235,36 +235,39 @@
   place-items: center;
   width: 20px;
   height: 20px;
-  margin-top: 1px;
   flex-shrink: 0;
-  color: var(--an-muted);
+  align-self: center;
 }
 
 .an-toast__icon svg {
   width: 18px;
   height: 18px;
-  stroke: currentColor;
   fill: none;
+  stroke: var(--an-muted);
 }
 
-.an-toast[data-type="success"] .an-toast__icon {
-  color: var(--an-success);
+.an-toast[data-type="success"] .an-toast__icon svg {
+  stroke: var(--an-success);
 }
 
-.an-toast[data-type="error"] .an-toast__icon {
-  color: var(--an-error);
+.an-toast[data-type="error"] .an-toast__icon svg {
+  stroke: var(--an-error);
 }
 
-.an-toast[data-type="warning"] .an-toast__icon {
-  color: var(--an-warning);
+.an-toast[data-type="warning"] .an-toast__icon svg {
+  stroke: var(--an-warning);
 }
 
-.an-toast[data-type="info"] .an-toast__icon {
-  color: var(--an-info);
+.an-toast[data-type="info"] .an-toast__icon svg {
+  stroke: var(--an-info);
 }
 
-.an-toast[data-type="loading"] .an-toast__icon {
-  color: var(--an-loading);
+.an-toast[data-type="loading"] .an-toast__icon svg {
+  stroke: var(--an-loading);
+}
+
+.an-toast[data-type="message"] .an-toast__icon svg {
+  stroke: var(--an-muted);
 }
 
 .an-spinner {
@@ -286,7 +289,7 @@
 }
 
 .an-toast__message {
-  font-size: 13px;
+  font-size: 16px;
   color: var(--an-muted);
   word-break: break-word;
 }
@@ -337,6 +340,7 @@
 .an-toast__close {
   grid-column: 3;
   justify-self: end;
+  align-self: start;
   appearance: none;
   border: 0;
   background: transparent;
@@ -372,6 +376,22 @@
   animation: an-progress var(--an-duration, 4000ms) linear forwards;
 }
 
+.an-toast[data-type="success"] .an-toast__progress {
+  background: color-mix(in srgb, var(--an-success) 40%, transparent);
+}
+
+.an-toast[data-type="error"] .an-toast__progress {
+  background: color-mix(in srgb, var(--an-error) 40%, transparent);
+}
+
+.an-toast[data-type="warning"] .an-toast__progress {
+  background: color-mix(in srgb, var(--an-warning) 40%, transparent);
+}
+
+.an-toast[data-type="info"] .an-toast__progress {
+  background: color-mix(in srgb, var(--an-info) 40%, transparent);
+}
+
 .an-toast__progress[data-paused="true"] {
   animation-play-state: paused;
 }
@@ -382,60 +402,60 @@
 }
 
 /* Rich colors: tinted surface; text uses high-contrast fg (not the accent hue) */
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="success"] {
+.an-toast[data-rich-colors="true"][data-type="success"] {
   background: var(--an-success-bg);
   border-color: var(--an-success-border);
   color: var(--an-success-fg);
 }
 
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="error"] {
+.an-toast[data-rich-colors="true"][data-type="error"] {
   background: var(--an-error-bg);
   border-color: var(--an-error-border);
   color: var(--an-error-fg);
 }
 
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="warning"] {
+.an-toast[data-rich-colors="true"][data-type="warning"] {
   background: var(--an-warning-bg);
   border-color: var(--an-warning-border);
   color: var(--an-warning-fg);
 }
 
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="info"] {
+.an-toast[data-rich-colors="true"][data-type="info"] {
   background: var(--an-info-bg);
   border-color: var(--an-info-border);
   color: var(--an-info-fg);
 }
 
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="success"] .an-toast__title,
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="success"] .an-toast__message,
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="success"] .an-toast__close,
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="success"] .an-toast__cancel,
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="error"] .an-toast__title,
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="error"] .an-toast__message,
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="error"] .an-toast__close,
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="error"] .an-toast__cancel,
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="warning"] .an-toast__title,
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="warning"] .an-toast__message,
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="warning"] .an-toast__close,
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="warning"] .an-toast__cancel,
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="info"] .an-toast__title,
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="info"] .an-toast__message,
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="info"] .an-toast__close,
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="info"] .an-toast__cancel {
+.an-toast[data-rich-colors="true"][data-type="success"] .an-toast__title,
+.an-toast[data-rich-colors="true"][data-type="success"] .an-toast__message,
+.an-toast[data-rich-colors="true"][data-type="success"] .an-toast__close,
+.an-toast[data-rich-colors="true"][data-type="success"] .an-toast__cancel,
+.an-toast[data-rich-colors="true"][data-type="error"] .an-toast__title,
+.an-toast[data-rich-colors="true"][data-type="error"] .an-toast__message,
+.an-toast[data-rich-colors="true"][data-type="error"] .an-toast__close,
+.an-toast[data-rich-colors="true"][data-type="error"] .an-toast__cancel,
+.an-toast[data-rich-colors="true"][data-type="warning"] .an-toast__title,
+.an-toast[data-rich-colors="true"][data-type="warning"] .an-toast__message,
+.an-toast[data-rich-colors="true"][data-type="warning"] .an-toast__close,
+.an-toast[data-rich-colors="true"][data-type="warning"] .an-toast__cancel,
+.an-toast[data-rich-colors="true"][data-type="info"] .an-toast__title,
+.an-toast[data-rich-colors="true"][data-type="info"] .an-toast__message,
+.an-toast[data-rich-colors="true"][data-type="info"] .an-toast__close,
+.an-toast[data-rich-colors="true"][data-type="info"] .an-toast__cancel {
   color: inherit;
 }
 
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="success"] .an-toast__message,
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="error"] .an-toast__message,
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="warning"] .an-toast__message,
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="info"] .an-toast__message {
+.an-toast[data-rich-colors="true"][data-type="success"] .an-toast__message,
+.an-toast[data-rich-colors="true"][data-type="error"] .an-toast__message,
+.an-toast[data-rich-colors="true"][data-type="warning"] .an-toast__message,
+.an-toast[data-rich-colors="true"][data-type="info"] .an-toast__message {
   opacity: 0.85;
 }
 
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="success"] .an-toast__cancel,
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="error"] .an-toast__cancel,
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="warning"] .an-toast__cancel,
-.an-toaster[data-rich-colors="true"] .an-toast[data-type="info"] .an-toast__cancel {
+.an-toast[data-rich-colors="true"][data-type="success"] .an-toast__cancel,
+.an-toast[data-rich-colors="true"][data-type="error"] .an-toast__cancel,
+.an-toast[data-rich-colors="true"][data-type="warning"] .an-toast__cancel,
+.an-toast[data-rich-colors="true"][data-type="info"] .an-toast__cancel {
   border-color: color-mix(in srgb, currentColor 28%, transparent);
   opacity: 1;
 }

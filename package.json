@@ -1,7 +1,7 @@
 {
   "name": "alert-notify",
-  "version": "3.0.0",
-  "description": "Framework-agnostic toast notifications. Same toast.success() API for vanilla JS, React, Vue, Svelte, Angular, Astro, and CDN. No provider required. Vanilla/Angular ~5.3KB · React ~5.6KB · Vue ~5.7KB · Svelte ~5.9KB gzip JS per path + ~2.7KB CSS.",
+  "version": "3.1.0",
+  "description": "Framework-agnostic toast notifications. Same toast.success() API for vanilla JS, React, Vue, Svelte, Angular, Astro, and CDN. No provider required. Vanilla ~5.9KB · React ~6.7KB · Vue ~6.5KB · Svelte ~6.8KB gzip JS per path + ~2.7KB CSS.",
   "license": "MIT",
   "author": "Raghav Bhardwaj",
   "type": "module",
@@ -28,6 +28,11 @@
       "types": "./dist/svelte/Toaster.svelte",
       "svelte": "./dist/svelte/Toaster.svelte",
       "default": "./dist/svelte/Toaster.svelte"
+    },
+    "./svelte/toast": {
+      "types": "./dist/svelte/toast.d.ts",
+      "import": "./dist/svelte/toast.js",
+      "require": "./dist/svelte/toast.cjs"
     },
     "./style.css": "./dist/style.css",
     "./package.json": "./package.json"

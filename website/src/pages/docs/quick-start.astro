@@ -30,6 +30,14 @@ toast.promise(save(), {
   position: "top-right",
   theme: "light",
   richColors: true,
+});
+
+// Per-toast overrides
+toast.info("Heads up", {
+  position: "bottom-left",
+  richColors: true,
+  className: "my-toast",
+  onOpen: () => {},
 });`}</code></pre>
 
   <p>

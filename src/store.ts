@@ -74,6 +74,7 @@ export class ToastStore {
     ToastId,
     (toast: ToastRecord, reason: ToastCloseReason) => void
   >();
+  private onOpenHandlers = new Map<ToastId, (toast: ToastRecord) => void>();
 
   constructor(config: Partial<ToasterConfig> = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config };
@@ -92,6 +93,10 @@ export class ToastStore {
 
   getToasts(): readonly ToastRecord[] {
     return this.toasts;
+  }
+
+  isActive(id: ToastId): boolean {
+    return this.toasts.some((toast) => toast.id === id);
   }
 
   subscribe(listener: ToastListener): () => void {
@@ -115,13 +120,15 @@ export class ToastStore {
     const type: ToastType = options.type ?? "message";
     const autoClose = resolveAutoClose(type, options, this.config);
     const duration = resolveDuration(type, options, this.config, autoClose);
+    const normalizedMessage = message ?? "";
 
     const existingIndex = this.toasts.findIndex((toast) => toast.id === id);
+    const isNew = existingIndex < 0;
     const record: ToastRecord = {
       id,
       type,
       title: options.title,
-      message,
+      message: normalizedMessage,
       duration,
       autoClose,
       icon: options.icon,
@@ -130,17 +137,23 @@ export class ToastStore {
       closeButton: options.closeButton ?? this.config.closeButton,
       dismissible: options.dismissible ?? this.config.dismissible,
       important: options.important ?? false,
+      position: options.position,
+      richColors: options.richColors,
       className: options.className,
       style: options.style,
       createdAt: Date.now(),
       remaining: duration,
       progressKey: 0,
       height: 0,
+      onOpen: options.onOpen,
       onClose: options.onClose,
     };
 
     if (options.onClose) {
       this.onCloseHandlers.set(id, options.onClose);
+    }
+    if (options.onOpen) {
+      this.onOpenHandlers.set(id, options.onOpen);
     }
 
     if (existingIndex >= 0) {
@@ -162,6 +175,9 @@ export class ToastStore {
 
     this.emit();
     this.schedule(id);
+    if (isNew) {
+      this.fireOnOpen(record);
+    }
     return id;
   }
 
@@ -175,6 +191,7 @@ export class ToastStore {
     const duration = resolveDuration(type, options, this.config, autoClose);
 
     const existingIndex = this.toasts.findIndex((toast) => toast.id === id);
+    const isNew = existingIndex < 0;
     const record: ToastRecord = {
       id,
       type,
@@ -189,17 +206,23 @@ export class ToastStore {
       closeButton: options.closeButton ?? this.config.closeButton,
       dismissible: options.dismissible ?? this.config.dismissible,
       important: options.important ?? false,
+      position: options.position,
+      richColors: options.richColors,
       className: options.className,
       style: options.style,
       createdAt: Date.now(),
       remaining: duration,
       progressKey: 0,
       height: 0,
+      onOpen: options.onOpen,
       onClose: options.onClose,
     };
 
     if (options.onClose) {
       this.onCloseHandlers.set(id, options.onClose);
+    }
+    if (options.onOpen) {
+      this.onOpenHandlers.set(id, options.onOpen);
     }
 
     if (existingIndex >= 0) {
@@ -221,6 +244,9 @@ export class ToastStore {
 
     this.emit();
     this.schedule(id);
+    if (isNew) {
+      this.fireOnOpen(record);
+    }
     return id;
   }
 
@@ -280,8 +306,12 @@ export class ToastStore {
       closeButton: patch.closeButton ?? current.closeButton,
       dismissible: patch.dismissible ?? current.dismissible,
       important: patch.important ?? current.important,
+      position: patch.position !== undefined ? patch.position : current.position,
+      richColors:
+        patch.richColors !== undefined ? patch.richColors : current.richColors,
       className: patch.className ?? current.className,
       style: patch.style ?? current.style,
+      onOpen: patch.onOpen ?? current.onOpen,
       onClose: patch.onClose ?? current.onClose,
       createdAt: Date.now(),
       pausedAt: undefined,
@@ -289,6 +319,9 @@ export class ToastStore {
 
     if (patch.onClose) {
       this.onCloseHandlers.set(id, patch.onClose);
+    }
+    if (patch.onOpen) {
+      this.onOpenHandlers.set(id, patch.onOpen);
     }
 
     this.clearTimer(id);
@@ -325,6 +358,7 @@ export class ToastStore {
     const onClose = this.onCloseHandlers.get(id) ?? toast.onClose;
     onClose?.(toast, reason);
     this.onCloseHandlers.delete(id);
+    this.onOpenHandlers.delete(id);
   }
 
   setHeight(id: ToastId, height: number): void {
@@ -434,6 +468,11 @@ export class ToastStore {
     for (const toast of this.toasts) {
       this.resetTimer(toast.id);
     }
+  }
+
+  private fireOnOpen(toast: ToastRecord): void {
+    const onOpen = this.onOpenHandlers.get(toast.id) ?? toast.onOpen;
+    onOpen?.(toast);
   }
 
   private schedule(id: ToastId): void {

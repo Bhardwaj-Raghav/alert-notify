@@ -70,6 +70,7 @@ export type ToastOptions = {
    * Custom icon. A string is inserted as raw HTML (trusted markup only).
    * Prefer `HTMLElement` or `false` when the value is not developer-controlled.
    * For `toast.custom()`, omitting `icon` defaults to `false` (no default icon).
+   * Framework entries (`alert-notify/react`, `/vue`, `/svelte`) also accept framework nodes.
    */
   icon?: string | HTMLElement | false;
   /** Primary action button. Click runs `onClick`, then dismisses. */
@@ -92,10 +93,25 @@ export type ToastOptions = {
    * @default false
    */
   important?: boolean;
+  /**
+   * Stack anchor for this toast. Overrides the toaster `position` config.
+   * @default from toaster config
+   */
+  position?: ToastPosition;
+  /**
+   * Tinted success/error/warning/info surface for this toast.
+   * Overrides the toaster `richColors` config when set.
+   * @default from toaster config
+   */
+  richColors?: boolean;
   /** Extra CSS class on the toast element. */
   className?: string;
   /** Inline styles on the toast element. */
   style?: Partial<CSSStyleDeclaration> | Record<string, string>;
+  /**
+   * Called once when a toast is first created (not on same-id in-place replace).
+   */
+  onOpen?: (toast: ToastRecord) => void;
   /** Called once when the toast closes, with the close reason. */
   onClose?: (toast: ToastRecord, reason: ToastCloseReason) => void;
 };
@@ -131,6 +147,16 @@ export type ToastRecord = {
   dismissible: boolean;
   /** Whether this toast was prepended as important. */
   important: boolean;
+  /**
+   * Per-toast position override, if set.
+   * Resolved against toaster config at render time when omitted.
+   */
+  position?: ToastPosition;
+  /**
+   * Per-toast richColors override, if set.
+   * Resolved against toaster config at render time when omitted.
+   */
+  richColors?: boolean;
   /** Extra CSS class on the toast element. */
   className?: string;
   /** Inline styles on the toast element. */
@@ -145,6 +171,8 @@ export type ToastRecord = {
   progressKey: number;
   /** Measured toast height in px (for stacking). */
   height: number;
+  /** Open callback registered when the toast was created. */
+  onOpen?: (toast: ToastRecord) => void;
   /** Close callback registered when the toast was created. */
   onClose?: (toast: ToastRecord, reason: ToastCloseReason) => void;
 };
@@ -152,7 +180,7 @@ export type ToastRecord = {
 /** Global toaster defaults. Merged by `toast.config` / `createToaster`. */
 export type ToasterConfig = {
   /**
-   * Stack anchor on screen.
+   * Default stack anchor on screen. Per-toast `position` overrides this when set.
    * @default "top-right"
    */
   position: ToastPosition;
@@ -182,7 +210,8 @@ export type ToasterConfig = {
    */
   dismissible: boolean;
   /**
-   * Stronger success/error/warning/info colors. Does not affect loading or message.
+   * Default stronger success/error/warning/info colors. Does not affect loading or message.
+   * Per-toast `richColors` overrides this when set.
    * @default false
    */
   richColors: boolean;

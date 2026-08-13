@@ -4,34 +4,34 @@
   "maxEntry": "svelte",
   "entries": {
     "vanilla": {
-      "raw": 19508,
-      "gzip": 5475,
-      "gzipKb": 5.3
-    },
-    "react": {
-      "raw": 20760,
-      "gzip": 5884,
-      "gzipKb": 5.7
-    },
-    "vue": {
-      "raw": 20429,
-      "gzip": 5790,
-      "gzipKb": 5.7
-    },
-    "svelte": {
-      "raw": 21470,
+      "raw": 21191,
       "gzip": 6013,
       "gzipKb": 5.9
+    },
+    "react": {
+      "raw": 23690,
+      "gzip": 6825,
+      "gzipKb": 6.7
+    },
+    "vue": {
+      "raw": 23158,
+      "gzip": 6651,
+      "gzipKb": 6.5
+    },
+    "svelte": {
+      "raw": 24501,
+      "gzip": 6993,
+      "gzipKb": 6.8
     }
   },
-  "jsRaw": 21470,
-  "jsGzip": 6013,
-  "cssRaw": 11985,
-  "cssGzip": 2752,
-  "jsGzipKb": 5.9,
-  "jsGzipKbMin": 5.3,
-  "jsGzipKbMax": 5.9,
+  "jsRaw": 24501,
+  "jsGzip": 6993,
+  "cssRaw": 12273,
+  "cssGzip": 2789,
+  "jsGzipKb": 6.8,
+  "jsGzipKbMin": 5.9,
+  "jsGzipKbMax": 6.8,
   "cssGzipKb": 2.7,
-  "totalGzip": 8765,
-  "totalGzipKb": 8.6
+  "totalGzip": 9782,
+  "totalGzipKb": 9.6
 }

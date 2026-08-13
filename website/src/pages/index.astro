@@ -10,8 +10,7 @@ const getRunning = [
     id: "react",
     label: "React",
     href: "/react",
-    code: `import { toast } from "alert-notify";
-import { Toaster } from "alert-notify/react";
+    code: `import { toast, Toaster } from "alert-notify/react";
 
 export function App() {
   return (
@@ -45,8 +44,7 @@ toast.success("Saved");`,
     label: "Vue",
     href: "/vue",
     code: `<script setup>
-import { toast } from "alert-notify";
-import { Toaster } from "alert-notify/vue";
+import { toast, Toaster } from "alert-notify/vue";
 </script>
 
 <template>
@@ -59,8 +57,8 @@ import { Toaster } from "alert-notify/vue";
     label: "Svelte",
     href: "/svelte",
     code: `<script>
-  import { toast } from "alert-notify";
   import Toaster from "alert-notify/svelte";
+  import { toast } from "alert-notify/svelte/toast";
 </script>
 
 <Toaster position="top-right" richColors />

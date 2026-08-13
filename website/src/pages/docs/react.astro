@@ -4,24 +4,33 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
 
 <DocsLayout
   title="alert-notify Documentation: React"
-  description="Use alert-notify in React: optional Toaster for config props, custom() for React nodes, and the shared imperative toast API."
+  description="Use alert-notify in React: optional Toaster for config props, React-aware toast with JSX icons, and custom() for React nodes."
   pageTitle="React"
 >
   <p>
     <span class="tier helper">Helper</span>
     Optional <code>&lt;Toaster /&gt;</code> near the root syncs config as props.
+    Import <code>toast</code> from <code>alert-notify/react</code> when passing JSX icons.
     The React entry is a Client Component (<code>"use client"</code>).
     For a live demo and install snippet, see the <a href="/react">React landing</a>.
   </p>
 
-  <pre class="api"><code>{`import { toast } from "alert-notify";
-import { Toaster, custom } from "alert-notify/react";
+  <pre class="api"><code>{`import { toast, Toaster, custom } from "alert-notify/react";
 
 export function App() {
   return (
     <>
       <Toaster position="top-right" richColors />
       <button onClick={() => toast.success("Saved")}>Save</button>
+      <button
+        onClick={() =>
+          toast.info("Pay with card", {
+            icon: <img src="/card.png" alt="" />,
+          })
+        }
+      >
+        With icon
+      </button>
       <button
         onClick={() =>
           custom(<div>Custom React content</div>, { autoClose: false })
@@ -36,6 +45,7 @@ export function App() {
   <ul class="notes">
     <li>Peer dependencies: react and react-dom &gt;= 17.</li>
     <li>Toaster is optional. The portal still auto-mounts without it.</li>
+    <li>Core <code>alert-notify</code> toast accepts <code>string | HTMLElement</code> icons only. Use the React entry for JSX.</li>
     <li>Landing page: <a href="/react">/react</a></li>
   </ul>
 </DocsLayout>

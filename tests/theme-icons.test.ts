@@ -39,7 +39,7 @@ describe("icon colors", () => {
     document.body.innerHTML = "";
   });
 
-  it("default icons use stroke=currentColor", () => {
+  it("default icons do not use stroke=currentColor", () => {
     for (const type of [
       "success",
       "error",
@@ -48,7 +48,7 @@ describe("icon colors", () => {
       "loading",
       "message",
     ] as const) {
-      expect(getDefaultIcon(type)).toContain('stroke="currentColor"');
+      expect(getDefaultIcon(type)).not.toContain('stroke="currentColor"');
     }
   });
 
@@ -65,11 +65,35 @@ describe("icon colors", () => {
       toaster.dismiss();
       toaster[type](`${type} toast`);
       const icon = document.querySelector(".an-toast__icon svg");
-      expect(icon?.getAttribute("stroke")).toBe("currentColor");
+      expect(icon).toBeTruthy();
+      expect(icon?.getAttribute("stroke")).toBeNull();
       expect(
         document.querySelector(`[data-type="${type}"] .an-toast__icon`),
       ).toBeTruthy();
+      expect(
+        document
+          .querySelector(`[data-type="${type}"]`)
+          ?.getAttribute("data-rich-colors"),
+      ).toBe("true");
     }
+    toaster.destroy();
+  });
+
+  it("per-toast richColors overrides container", () => {
+    const toaster = createToaster({ autoClose: false, richColors: false });
+    toaster.success("Tinted", { richColors: true });
+    expect(
+      document
+        .querySelector('[data-type="success"]')
+        ?.getAttribute("data-rich-colors"),
+    ).toBe("true");
+    toaster.dismiss();
+    toaster.error("Plain", { richColors: false });
+    expect(
+      document
+        .querySelector('[data-type="error"]')
+        ?.getAttribute("data-rich-colors"),
+    ).toBe("false");
     toaster.destroy();
   });
 });

@@ -2,14 +2,22 @@
 import FrameworkLanding from "../components/FrameworkLanding.astro";
 
 const code = `<script setup>
-import { toast } from "alert-notify";
-import { Toaster, custom } from "alert-notify/vue";
+import { toast, Toaster, custom } from "alert-notify/vue";
 import { h } from "vue";
 </script>
 
 <template>
   <Toaster position="top-right" :rich-colors="true" />
   <button @click="toast.success('Saved')">Save</button>
+  <button
+    @click="
+      toast.info('Pay with card', {
+        icon: h('img', { src: '/card.png', alt: '' }),
+      })
+    "
+  >
+    With icon
+  </button>
   <button @click="custom(h('div', 'Custom Vue content'))">Custom</button>
 </template>`;
 ---
@@ -19,6 +27,7 @@ import { h } from "vue";
   code={code}
   extraNotes={[
     "Toaster is optional. It only syncs config props.",
+    "Import toast from alert-notify/vue for VNode icons.",
     "custom() accepts Vue VNodes.",
     "Peer: vue >= 3.",
   ]}

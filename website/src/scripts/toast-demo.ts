@@ -356,8 +356,7 @@ ${toastCall}`;
   }
 
   if (stack === "react") {
-    return `import { toast } from "alert-notify";
-import { Toaster } from "alert-notify/react";
+    return `import { toast, Toaster } from "alert-notify/react";
 
 export function App() {
   return (
@@ -375,8 +374,7 @@ export function App() {
 
   if (stack === "vue") {
     return `<script setup>
-import { toast } from "alert-notify";
-import { Toaster } from "alert-notify/vue";
+import { toast, Toaster } from "alert-notify/vue";
 
 function show() {
   ${toastCall.replace(/\n/g, "\n  ")}
@@ -393,8 +391,8 @@ function show() {
 
   if (stack === "svelte") {
     return `<script>
-  import { toast } from "alert-notify";
   import Toaster from "alert-notify/svelte";
+  import { toast } from "alert-notify/svelte/toast";
 
   function show() {
     ${toastCall.replace(/\n/g, "\n    ")}

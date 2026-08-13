@@ -4,31 +4,43 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
 
 <DocsLayout
   title="alert-notify Documentation: Svelte"
-  description="Use alert-notify in Svelte 5 with optional Toaster.svelte. Custom DOM content uses core toast.custom()."
+  description="Use alert-notify in Svelte 5 with optional Toaster.svelte, Svelte-aware toast icons, and custom() for components."
   pageTitle="Svelte"
 >
   <p>
     <span class="tier helper">Helper</span>
-    Svelte ships <code>Toaster.svelte</code> only. There is no Svelte <code>custom()</code> helper.
+    Svelte ships <code>Toaster.svelte</code> plus <code>toast</code> / <code>custom</code> from
+    <code>alert-notify/svelte/toast</code>.
     For a live demo and install snippet, see the <a href="/svelte">Svelte landing</a>.
   </p>
 
   <pre class="api"><code>{`<script>
-  import { toast } from "alert-notify";
   import Toaster from "alert-notify/svelte";
+  import { toast, custom } from "alert-notify/svelte/toast";
+  import Icon from "./Icon.svelte";
 </script>
 
 <Toaster position="top-right" richColors />
-<button onclick={() => toast.success("Saved")}>Save</button>`}</code></pre>
+<button onclick={() => toast.success("Saved")}>Save</button>
+<button
+  onclick={() =>
+    toast.info("Pay with card", {
+      icon: { component: Icon, props: { name: "card" } },
+    })
+  }
+>
+  With icon
+</button>`}</code></pre>
 
-  <h2>Custom DOM content</h2>
-  <pre class="api"><code>{`import { toast } from "alert-notify";
-const el = document.createElement("div");
-el.textContent = "Custom";
-toast.custom(el);`}</code></pre>
+  <h2>Custom Svelte content</h2>
+  <pre class="api"><code>{`import { custom } from "alert-notify/svelte/toast";
+import Panel from "./Panel.svelte";
+
+custom({ component: Panel, props: { title: "Hello" } }, { autoClose: false });`}</code></pre>
 
   <ul class="notes">
     <li>Peer dependency: svelte &gt;= 5.</li>
+    <li>Keep using core <code>toast.custom(el)</code> for plain DOM nodes.</li>
     <li>Landing page: <a href="/svelte">/svelte</a></li>
   </ul>
 </DocsLayout>

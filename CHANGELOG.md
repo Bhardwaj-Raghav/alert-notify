@@ -5,6 +5,32 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0] - 2026-08-12
+
+### Added
+
+- Per-toast `richColors`, `position`, and `onOpen` (overrides toaster defaults when set).
+- `toast.isActive(id)` to check whether a toast is still open.
+- React, Vue, and Svelte toast helpers accept framework nodes as `icon`.
+  - React: import `toast` from `alert-notify/react`
+  - Vue: import `toast` from `alert-notify/vue`
+  - Svelte: import `toast` / `custom` from `alert-notify/svelte/toast`
+- Svelte `custom({ component, props })` for mounting components into a toast body.
+
+### Changed
+
+- Typed helpers accept `string | undefined` messages (`toast.error(maybeMessage)` works without casts).
+- Default toast font size is `16px`.
+- Icons use explicit CSS `stroke` variables per type instead of `currentColor`.
+- Progress bar uses a lighter tint of the toast type accent (success / error / warning / info).
+- Icons are vertically centered; the close button stays top-right.
+- Per-toast positions render in separate toaster stacks.
+- Docs, README, examples playground, and framework guides cover the new options.
+
+### Fixed
+
+- Global `* { color: … }` rules no longer restyle built-in toast icons.
+
 ## [3.0.0] - 2026-08-09
 
 ### Breaking
@@ -89,6 +115,7 @@ See [Migration](https://alert-notify.vercel.app/docs/migration) for the full upg
 
 - Initial public release on npm.
 
+[3.1.0]: https://github.com/Bhardwaj-Raghav/alert-notify/releases/tag/v3.1.0
 [3.0.0]: https://github.com/Bhardwaj-Raghav/alert-notify/releases/tag/v3.0.0
 [2.0.1]: https://github.com/Bhardwaj-Raghav/alert-notify/releases/tag/v2.0.1
 [2.0.0]: https://github.com/Bhardwaj-Raghav/alert-notify/releases/tag/v2.0.0

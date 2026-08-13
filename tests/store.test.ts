@@ -173,4 +173,41 @@ describe("ToastStore", () => {
     expect(store.getToasts()[0]?.customContent).toBe("<strong>Hi</strong>");
     expect(store.getToasts()[0]?.icon).toBe(false);
   });
+
+  it("isActive reflects open and dismissed toasts", () => {
+    const store = new ToastStore({ autoClose: false });
+    const id = store.add("Active");
+    expect(store.isActive(id)).toBe(true);
+    expect(store.isActive("missing")).toBe(false);
+    store.dismiss(id);
+    expect(store.isActive(id)).toBe(false);
+  });
+
+  it("fires onOpen once for new toasts and not on id replace", () => {
+    const store = new ToastStore({ autoClose: false });
+    const onOpen = vi.fn();
+    store.add("First", { id: "same", onOpen });
+    expect(onOpen).toHaveBeenCalledOnce();
+    store.add("Second", { id: "same", onOpen });
+    expect(onOpen).toHaveBeenCalledOnce();
+  });
+
+  it("persists per-toast richColors and position", () => {
+    const store = new ToastStore();
+    store.add("Moved", {
+      richColors: true,
+      position: "bottom-left",
+      className: "my-toast",
+    });
+    const toast = store.getToasts()[0];
+    expect(toast?.richColors).toBe(true);
+    expect(toast?.position).toBe("bottom-left");
+    expect(toast?.className).toBe("my-toast");
+  });
+
+  it("coerces undefined message to empty string", () => {
+    const store = new ToastStore({ autoClose: false });
+    store.add(undefined as unknown as string, { type: "error" });
+    expect(store.getToasts()[0]?.message).toBe("");
+  });
 });

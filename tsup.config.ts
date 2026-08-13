@@ -38,6 +38,13 @@ export default defineConfig([
     external: ["vue", "alert-notify"],
   },
   {
+    ...shared,
+    entry: { "svelte/toast": "src/svelte/toast.ts" },
+    clean: false,
+    external: ["svelte", "alert-notify"],
+    outDir: "dist",
+  },
+  {
     entry: { "alert-notify": "src/index.ts" },
     format: ["iife"],
     globalName: "AlertNotify",

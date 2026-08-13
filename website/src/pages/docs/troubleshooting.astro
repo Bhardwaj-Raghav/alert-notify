@@ -34,16 +34,17 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
 
   <h2>Wrong import for framework helpers</h2>
   <ul>
-    <li>React: <code>alert-notify/react</code></li>
-    <li>Vue: <code>alert-notify/vue</code></li>
-    <li>Svelte: <code>alert-notify/svelte</code> (default Toaster import)</li>
-    <li>Angular / Astro: core <code>alert-notify</code> only</li>
+    <li>React: <code>alert-notify/react</code> (use this <code>toast</code> for JSX icons)</li>
+    <li>Vue: <code>alert-notify/vue</code> (use this <code>toast</code> for VNode icons)</li>
+    <li>Svelte Toaster: <code>alert-notify/svelte</code></li>
+    <li>Svelte toast / custom: <code>alert-notify/svelte/toast</code></li>
+    <li>Angular / Astro: core <code>alert-notify</code> only (DOM <code>icon</code> or SVG string)</li>
   </ul>
 
   <h2>Svelte custom content</h2>
   <p>
-    There is no Svelte <code>custom()</code> helper. Build a DOM node and pass it to
-    <code>toast.custom(el)</code>.
+    Prefer <code>custom(&#123; component, props &#125;)</code> from <code>alert-notify/svelte/toast</code>.
+    Plain DOM nodes still work with core <code>toast.custom(el)</code>.
   </p>
 
   <h2>Still stuck?</h2>
